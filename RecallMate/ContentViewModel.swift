@@ -25,6 +25,7 @@ class ContentViewModel: ObservableObject {
     @Published var currentSessionId: UUID?
 
 
+
     
     init(viewContext: NSManagedObjectContext, memo: Memo?) {
         self.viewContext = viewContext
@@ -246,8 +247,9 @@ class ContentViewModel: ObservableObject {
     
     // 既存の saveMemo メソッドを修正
     func saveMemo(completion: @escaping () -> Void) {
-        guard !title.isEmpty, !pageRange.isEmpty else {
-            print("⚠️ タイトルとページ範囲を入力してください！")
+        // タイトルのみ必須にする（ページ範囲は任意）
+        guard !title.isEmpty else {
+            print("⚠️ タイトルを入力してください！")
             return
         }
         
@@ -270,7 +272,7 @@ class ContentViewModel: ObservableObject {
         }
         
         memoToSave.title = title
-        memoToSave.pageRange = pageRange
+        memoToSave.pageRange = pageRange // 空でも保存可能
         memoToSave.content = content
         memoToSave.recallScore = recallScore
         memoToSave.lastReviewedDate = Date()

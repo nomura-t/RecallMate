@@ -23,6 +23,9 @@ struct ContentView: View {
     @State private var showTagSelection = false
     @State private var sessionId: UUID? = nil
     
+    // 「使い方」ボタンと状態変数を追加
+    @State private var showUsageModal = false
+    
     // すべてのタグを取得
     @FetchRequest(
         entity: Tag.entity(),
@@ -52,6 +55,16 @@ struct ContentView: View {
                             .foregroundColor(.blue)
                     }
                     Spacer()
+                    
+                    // 使い方ボタンを追加
+                    Button(action: {
+                        showUsageModal = true
+                    }) {
+                        Label("使い方", systemImage: "info.circle")
+                            .font(.headline)
+                            .padding()
+                            .foregroundColor(.blue)
+                    }
                 }
                 
                 Form {
@@ -169,7 +182,34 @@ struct ContentView: View {
                                             )
                                             .cornerRadius(16)
                                         }
-                                    }
+                                        .buttonStyle(BorderlessButtonStyle()) // ここに移動
+                                        .contentShape(Rectangle()) // ここに移動
+                                        .highPriorityGesture( // ここに移動
+                                            TapGesture()
+                                                .onEnded { _ in
+                                                    // 選択/解除のトグル
+                                                    if viewModel.selectedTags.contains(where: { $0.id == tag.id }) {
+                                                        // 解除
+                                                        if let index = viewModel.selectedTags.firstIndex(where: { $0.id == tag.id }) {
+                                                            viewModel.selectedTags.remove(at: index)
+                                                        }
+                                                    } else {
+                                                        // 選択
+                                                        viewModel.selectedTags.append(tag)
+                                                    }
+                                                    
+                                                    // 変更フラグをセット
+                                                    viewModel.contentChanged = true
+                                                    viewModel.recordActivityOnSave = true
+                                                    
+                                                    // タグ変更時に即時保存（追加）
+                                                    if memo != nil {
+                                                        DispatchQueue.main.async {
+                                                            viewModel.updateAndSaveTags()
+                                                        }
+                                                    }
+                                                }
+                                        )                                    }
                                     
                                     // 新規タグ作成ボタン
                                     Button(action: {
@@ -188,6 +228,14 @@ struct ContentView: View {
                                         .foregroundColor(.blue)
                                         .cornerRadius(16)
                                     }
+                                    .buttonStyle(BorderlessButtonStyle()) // 明示的にボタンスタイルを設定
+                                    .contentShape(Rectangle()) // タップ領域を明確に定義
+                                    .highPriorityGesture( // 高優先度のジェスチャーとして設定
+                                        TapGesture()
+                                            .onEnded { _ in
+                                                showTagSelection = true
+                                            }
+                                    )
                                 }
                                 .padding(.bottom, 4)
                             }
@@ -335,6 +383,15 @@ struct ContentView: View {
                 )
             }
             .environmentObject(ViewSettings())
+            .overlay(
+                Group {
+                    if showUsageModal {
+                        UsageModalView(isPresented: $showUsageModal)
+                            .transition(.opacity)
+                            .animation(.easeInOut, value: showUsageModal)
+                    }
+                }
+            )
         }
     }
 }
