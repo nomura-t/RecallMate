@@ -1,57 +1,51 @@
-//
-//  Persistence.swift
-//  RecallMate
-//
-//  Created by 野村哲裕 on 2025/02/24.
-//
-
 import CoreData
 
 struct PersistenceController {
     static let shared = PersistenceController()
 
-    @MainActor
+    // ✅ `preview` を追加
     static let preview: PersistenceController = {
-        let result = PersistenceController(inMemory: true)
-        let viewContext = result.container.viewContext
-        for _ in 0..<10 {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
+        let controller = PersistenceController(inMemory: true)
+        let viewContext = controller.container.viewContext
+
+        // 📝 ダミーデータを 3 つ追加
+        for i in 0..<3 {
+            let newMemo = Memo(context: viewContext)
+            newMemo.id = UUID()
+            newMemo.title = "サンプルメモ \(i + 1)"
+            newMemo.pageRange = "10-20"
+            newMemo.content = "これはサンプルデータです。"
+            newMemo.recallScore = Int16(arc4random_uniform(100))
+            newMemo.lastReviewedDate = Date()
+            newMemo.nextReviewDate = Calendar.current.date(byAdding: .day, value: i * 2, to: Date())
         }
+
         do {
             try viewContext.save()
         } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            print("❌ プレビュー用データの保存に失敗: \(error)")
         }
-        return result
+
+        return controller
     }()
 
     let container: NSPersistentContainer
 
     init(inMemory: Bool = false) {
         container = NSPersistentContainer(name: "RecallMate")
-        if inMemory {
-            container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
-        }
-        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
-            if let error = error as NSError? {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
 
-                /*
-                 Typical reasons for an error here include:
-                 * The parent directory does not exist, cannot be created, or disallows writing.
-                 * The persistent store is not accessible, due to permissions or data protection when the device is locked.
-                 * The device is out of space.
-                 * The store could not be migrated to the current model version.
-                 Check the error message to determine what the actual problem was.
-                 */
-                fatalError("Unresolved error \(error), \(error.userInfo)")
-            }
-        })
-        container.viewContext.automaticallyMergesChangesFromParent = true
+        if inMemory {
+            container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
+        }
+
+        let description = container.persistentStoreDescriptions.first
+                description?.setOption(true as NSNumber, forKey: NSMigratePersistentStoresAutomaticallyOption)
+                description?.setOption(true as NSNumber, forKey: NSInferMappingModelAutomaticallyOption)
+
+                container.loadPersistentStores { (storeDescription, error) in
+                    if let error = error as NSError? {
+                        fatalError("❌ Core Data の読み込みエラー: \(error)")
+                    }
+                }
     }
 }
