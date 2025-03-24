@@ -283,6 +283,7 @@ struct ContentView: View {
                     .frame(maxWidth: .infinity, alignment: .center) // ボタン自体は中央に配置
                     .padding(.horizontal, 20) // フォーム内での余白
                     .padding(.vertical, 8)
+                    .contentShape(Rectangle()) // タップ領域を矩形に設定
                     .highPriorityGesture(
                         TapGesture()
                             .onEnded { _ in
