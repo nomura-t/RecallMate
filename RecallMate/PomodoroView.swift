@@ -4,6 +4,9 @@ struct PomodoroView: View {
     @StateObject private var pomodoroTimer = PomodoroTimer()
     @State private var showSettings = false
     
+    // 使い方モーダルの表示状態を管理する変数を追加
+    @State private var showUsageModal = false
+    
     // タイマープログレスの色
     private func progressColor() -> Color {
         switch pomodoroTimer.currentSession {
@@ -20,17 +23,48 @@ struct PomodoroView: View {
         NavigationStack {
             VStack {
                 // セッション情報
-                Text(pomodoroTimer.currentSession.title)
-                    .font(.title)
-                    .fontWeight(.bold)
-                    .padding(.top)
-                
-                // セッションカウンター
-                if pomodoroTimer.currentSession == .work {
-                    Text("セッション: \(pomodoroTimer.sessionCount + 1)")
-                        .font(.headline)
-                        .foregroundColor(.secondary)
+                HStack {
+                    Spacer()
+                    
+                    VStack {
+                        Text(pomodoroTimer.currentSession.title)
+                            .font(.title)
+                            .fontWeight(.bold)
+                        
+                        // セッションカウンター
+                        if pomodoroTimer.currentSession == .work {
+                            Text("セッション: \(pomodoroTimer.sessionCount + 1)")
+                                .font(.headline)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    
+                    Spacer()
+                    
+                    // 使い方ボタンを追加
+                    Button(action: {
+                        showUsageModal = true
+                    }) {
+                        Image(systemName: "info.circle")
+                            .font(.system(size: 22))
+                            .foregroundColor(.blue)
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                    .padding(.trailing, 16)
+                    .highPriorityGesture(
+                        TapGesture()
+                            .onEnded { _ in
+                                showUsageModal = true
+                                
+                                // ハプティックフィードバック
+                                let generator = UIImpactFeedbackGenerator(style: .light)
+                                generator.impactOccurred()
+                            }
+                    )
                 }
+                .padding(.top)
                 
                 // 通知許可状態を表示
                 if !pomodoroTimer.notificationsEnabled {
@@ -142,10 +176,19 @@ struct PomodoroView: View {
             .sheet(isPresented: $showSettings) {
                 PomodoroSettingsView(pomodoroTimer: pomodoroTimer)
             }
+            .overlay(
+                // 「使い方」モーダルの表示
+                Group {
+                    if showUsageModal {
+                        PomodoroUsageModalView(isPresented: $showUsageModal)
+                            .transition(.opacity)
+                            .animation(.easeInOut, value: showUsageModal)
+                    }
+                }
+            )
         }
     }
 }
-
 // 設定画面
 struct PomodoroSettingsView: View {
     @ObservedObject var pomodoroTimer: PomodoroTimer
