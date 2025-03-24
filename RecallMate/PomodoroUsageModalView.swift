@@ -211,21 +211,6 @@ struct PomodoroUsageModalView: View {
     }
 }
 
-//struct BulletPoint: View {
-//    let text: String
-//    
-//    var body: some View {
-//        HStack(alignment: .top, spacing: 6) {
-//            Text("•")
-//                .font(.caption)
-//            
-//            Text(text)
-//                .font(.caption)
-//                .foregroundColor(.secondary)
-//        }
-//    }
-//}
-
 struct IconExplanation: View {
     let icon: String
     let text: String

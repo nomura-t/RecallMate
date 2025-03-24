@@ -21,12 +21,13 @@ struct PomodoroView: View {
     
     var body: some View {
         NavigationStack {
-            VStack {
-                // セッション情報
-                HStack {
+            ZStack {
+                // メインコンテンツ
+                VStack {
                     Spacer()
                     
-                    VStack {
+                    // セッション情報 - 中央配置
+                    VStack(spacing: 8) {
                         Text(pomodoroTimer.currentSession.title)
                             .font(.title)
                             .fontWeight(.bold)
@@ -38,137 +39,169 @@ struct PomodoroView: View {
                                 .foregroundColor(.secondary)
                         }
                     }
+                    .frame(maxWidth: .infinity)
+                    
+                    // 通知許可状態を表示
+                    if !pomodoroTimer.notificationsEnabled {
+                        HStack {
+                            Image(systemName: "bell.slash")
+                                .foregroundColor(.red)
+                            Text("通知が許可されていません。設定アプリで許可してください。")
+                                .font(.caption)
+                                .foregroundColor(.red)
+                        }
+                        .padding(.horizontal)
+                        .padding(.vertical, 10)
+                        .onTapGesture {
+                            // 設定アプリを開く
+                            if let url = URL(string: UIApplication.openSettingsURLString) {
+                                UIApplication.shared.open(url)
+                            }
+                        }
+                    }
+                    
+                    // タイマー表示
+                    ZStack {
+                        // 背景円
+                        Circle()
+                            .stroke(Color.gray.opacity(0.2), style: StrokeStyle(lineWidth: 20, lineCap: .round))
+                        
+                        // プログレス円
+                        Circle()
+                            .trim(from: 0, to: pomodoroTimer.progress)
+                            .stroke(progressColor(), style: StrokeStyle(lineWidth: 20, lineCap: .round))
+                            .rotationEffect(.degrees(-90))
+                            .animation(.easeInOut, value: pomodoroTimer.progress)
+                        
+                        // 残り時間
+                        Text(pomodoroTimer.formattedTimeRemaining())
+                            .font(.system(size: 60, weight: .bold, design: .rounded))
+                    }
+                    .padding(40)
+                    .frame(height: 300)
+                    
+                    // コントロールボタン
+                    HStack(spacing: 40) {
+                        // リセットボタン
+                        Button(action: {
+                            pomodoroTimer.reset()
+                            
+                            let generator = UIImpactFeedbackGenerator(style: .medium)
+                            generator.impactOccurred()
+                        }) {
+                            Image(systemName: "arrow.clockwise")
+                                .font(.title)
+                                .foregroundColor(.primary)
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(BorderlessButtonStyle())
+                        
+                        // 再生/一時停止ボタン
+                        Button(action: {
+                            // 通知許可を再確認
+                            pomodoroTimer.recheckNotificationPermission()
+                            
+                            switch pomodoroTimer.timerState {
+                            case .stopped:
+                                pomodoroTimer.start()
+                            case .running:
+                                pomodoroTimer.pause()
+                            case .paused:
+                                pomodoroTimer.resume()
+                            }
+                            
+                            let generator = UIImpactFeedbackGenerator(style: .medium)
+                            generator.impactOccurred()
+                        }) {
+                            Image(systemName: pomodoroTimer.timerState == .running ? "pause.fill" : "play.fill")
+                                .font(.system(size: 50))
+                                .foregroundColor(progressColor())
+                                .frame(width: 60, height: 60)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(BorderlessButtonStyle())
+                        
+                        // 設定ボタン
+                        Button(action: {
+                            showSettings = true
+                            
+                            let generator = UIImpactFeedbackGenerator(style: .medium)
+                            generator.impactOccurred()
+                        }) {
+                            Image(systemName: "gear")
+                                .font(.title)
+                                .foregroundColor(.primary)
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(BorderlessButtonStyle())
+                    }
+                    .padding(.vertical, 40)
+                    
+                    // セッション説明
+                    HStack {
+                        Spacer()
+                        
+                        switch pomodoroTimer.currentSession {
+                        case .work:
+                            Text("🧠 集中して作業しましょう")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        case .shortBreak:
+                            Text("☕️ 短い休憩でリフレッシュ")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        case .longBreak:
+                            Text("🌿 長い休憩でしっかり回復")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Spacer()
+                    }
+                    .padding(.bottom, 20)
                     
                     Spacer()
-                    
-                    // 使い方ボタンを追加
-                    Button(action: {
-                        showUsageModal = true
-                    }) {
-                        Image(systemName: "info.circle")
-                            .font(.system(size: 22))
-                            .foregroundColor(.blue)
-                            .frame(width: 44, height: 44)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(BorderlessButtonStyle())
-                    .padding(.trailing, 16)
-                    .highPriorityGesture(
-                        TapGesture()
-                            .onEnded { _ in
-                                showUsageModal = true
-                                
-                                // ハプティックフィードバック
-                                let generator = UIImpactFeedbackGenerator(style: .light)
-                                generator.impactOccurred()
-                            }
-                    )
                 }
-                .padding(.top)
                 
-                // 通知許可状態を表示
-                if !pomodoroTimer.notificationsEnabled {
+                // 使い方ボタン - 右上に配置
+                VStack {
                     HStack {
-                        Image(systemName: "bell.slash")
-                            .foregroundColor(.red)
-                        Text("通知が許可されていません。設定アプリで許可してください。")
-                            .font(.caption)
-                            .foregroundColor(.red)
-                    }
-                    .padding(.horizontal)
-                    .padding(.vertical, 10)
-                    .onTapGesture {
-                        // 設定アプリを開く
-                        if let url = URL(string: UIApplication.openSettingsURLString) {
-                            UIApplication.shared.open(url)
-                        }
-                    }
-                }
-                
-                // タイマー表示
-                ZStack {
-                    // 背景円
-                    Circle()
-                        .stroke(Color.gray.opacity(0.2), style: StrokeStyle(lineWidth: 20, lineCap: .round))
-                    
-                    // プログレス円
-                    Circle()
-                        .trim(from: 0, to: pomodoroTimer.progress)
-                        .stroke(progressColor(), style: StrokeStyle(lineWidth: 20, lineCap: .round))
-                        .rotationEffect(.degrees(-90))
-                        .animation(.easeInOut, value: pomodoroTimer.progress)
-                    
-                    // 残り時間
-                    Text(pomodoroTimer.formattedTimeRemaining())
-                        .font(.system(size: 60, weight: .bold, design: .rounded))
-                }
-                .padding(40)
-                .frame(height: 300)
-                
-                // コントロールボタン
-                HStack(spacing: 40) {
-                    // リセットボタン
-                    Button(action: {
-                        pomodoroTimer.reset()
-                    }) {
-                        Image(systemName: "arrow.clockwise")
-                            .font(.title)
-                            .foregroundColor(.primary)
-                    }
-                    
-                    // 再生/一時停止ボタン
-                    Button(action: {
-                        // 通知許可を再確認
-                        pomodoroTimer.recheckNotificationPermission()
+                        Spacer()
                         
-                        switch pomodoroTimer.timerState {
-                        case .stopped:
-                            pomodoroTimer.start()
-                        case .running:
-                            pomodoroTimer.pause()
-                        case .paused:
-                            pomodoroTimer.resume()
+                        Button(action: {
+                            showUsageModal = true
+                            
+                            let generator = UIImpactFeedbackGenerator(style: .light)
+                            generator.impactOccurred()
+                        }) {
+                            Image(systemName: "info.circle")
+                                .font(.system(size: 22))
+                                .foregroundColor(.blue)
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
                         }
-                    }) {
-                        Image(systemName: pomodoroTimer.timerState == .running ? "pause.fill" : "play.fill")
-                            .font(.system(size: 50))
-                            .foregroundColor(progressColor())
+                        .buttonStyle(BorderlessButtonStyle())
+                        .highPriorityGesture(
+                            TapGesture()
+                                .onEnded { _ in
+                                    showUsageModal = true
+                                    
+                                    let generator = UIImpactFeedbackGenerator(style: .light)
+                                    generator.impactOccurred()
+                                }
+                        )
                     }
+                    .padding(.top, 10)
+                    .padding(.trailing, 16)
                     
-                    // 設定ボタン
-                    Button(action: {
-                        showSettings = true
-                    }) {
-                        Image(systemName: "gear")
-                            .font(.title)
-                            .foregroundColor(.primary)
-                    }
+                    Spacer()
                 }
-                .padding(.vertical, 40)
-                
-                // セッション説明
-                VStack(alignment: .leading, spacing: 5) {
-                    switch pomodoroTimer.currentSession {
-                    case .work:
-                        Text("🧠 集中して作業しましょう")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    case .shortBreak:
-                        Text("☕️ 短い休憩でリフレッシュ")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    case .longBreak:
-                        Text("🌿 長い休憩でしっかり回復")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    }
-                }
-                .padding()
-                
-                Spacer()
             }
             .padding()
             .navigationTitle("")
+            .navigationBarHidden(true)
             .onAppear {
                 // 画面表示時に通知許可を確認
                 pomodoroTimer.recheckNotificationPermission()
@@ -189,7 +222,7 @@ struct PomodoroView: View {
         }
     }
 }
-// 設定画面
+
 struct PomodoroSettingsView: View {
     @ObservedObject var pomodoroTimer: PomodoroTimer
     @Environment(\.dismiss) private var dismiss
