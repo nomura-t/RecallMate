@@ -75,7 +75,11 @@ class PomodoroTimer: ObservableObject {
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
-    
+    // PomodoroTimer.swift に追加するメソッド
+    public func resetSessionCount() {
+        sessionCount = 0
+        print("セッションカウントをリセットしました")
+    }
     // 通知カテゴリの設定
     private func setupNotificationCategories() {
         let startAction = UNNotificationAction(identifier: "START_ACTION", title: "次のセッションを開始", options: .foreground)
@@ -171,14 +175,28 @@ class PomodoroTimer: ObservableObject {
     
     // タイマーを開始
     func start() {
+        // セッションに応じた残り時間を確実に設定
+        if timerState == .stopped {
+            switch currentSession {
+            case .work:
+                timeRemaining = workDuration
+            case .shortBreak:
+                timeRemaining = shortBreakDuration
+            case .longBreak:
+                timeRemaining = longBreakDuration
+            }
+            savedTimeRemaining = timeRemaining
+        }
+        
         startTime = Date()
         timerState = .running
         
         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             self?.updateTimer()
         }
+        
+        print("⏱️ タイマースタート: \(currentSession.title), 残り時間: \(timeRemaining)秒")
     }
-    
     // タイマーを一時停止
     func pause() {
         timer?.invalidate()
@@ -290,8 +308,9 @@ class PomodoroTimer: ObservableObject {
         
         savedTimeRemaining = timeRemaining
         progress = 1.0
+        
+        print("⏱️ セッション設定: \(currentSession.title), 残り時間: \(timeRemaining)秒")
     }
-    
     // 通知を送信
     private func sendNotification() {
         // アプリがフォアグラウンドの場合でも通知を表示
