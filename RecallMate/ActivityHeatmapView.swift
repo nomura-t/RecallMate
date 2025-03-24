@@ -22,25 +22,33 @@ struct ActivityHeatmapView: View {
         VStack(alignment: .leading, spacing: 16) {
             // 年選択コントロール
             HStack {
-                
                 Spacer()
                 
                 Button(action: {
                     selectedYear -= 1
+                    print("年を減らしました: \(selectedYear)")  // デバッグ用
                 }) {
                     Image(systemName: "chevron.left")
+                        .frame(width: 44, height: 22)  // タップ領域を拡大
+                        .contentShape(Rectangle())     // タップ可能な領域を明確に
                 }
+                .buttonStyle(PlainButtonStyle())       // ボタンスタイルを明示的に設定
                 
                 Text("\(selectedYear)年")
                     .font(.subheadline)
-                    .frame(width: 80)
+                    .frame(width:.infinity)  // 幅を広げる
                 
                 Button(action: {
-                    let currentYear = Calendar.current.component(.year, from: Date())
-                    selectedYear = min(currentYear, selectedYear + 1)
+                    // 制限を緩和（例：現在の年から10年先まで許可）
+                    let maxAllowedYear = Calendar.current.component(.year, from: Date()) + 10
+                    selectedYear = min(maxAllowedYear, selectedYear + 1)
+                    print("年を増やしました: \(selectedYear)")  // デバッグ用
                 }) {
                     Image(systemName: "chevron.right")
+                        .frame(width: 44, height: 22)  // タップ領域を拡大
+                        .contentShape(Rectangle())     // タップ可能な領域を明確に
                 }
+                .buttonStyle(PlainButtonStyle())       // ボタンスタイルを明示的に設定
             }
             .padding(.horizontal)
             

@@ -189,7 +189,10 @@ struct RetentionView: View {
                         retentionSummarySection
                         
                         // メモリスト
-                        Section(header: Text("メモの記憶定着度")) {
+                        Section(header: Text("メモの記憶定着度")
+                            .frame(maxWidth: .infinity, alignment: .trailing)  // 右寄せにする
+                            .padding(.trailing, 16)  // 右側に少し余白を追加
+                        ) {
                             if filteredMemos.isEmpty {
                                 Text("条件に一致するメモがありません")
                                     .font(.subheadline)
@@ -204,7 +207,11 @@ struct RetentionView: View {
                                 }
                             }
                         }
+                        .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0)) // リスト行のインセットを最小限に
                     }
+                    .listStyle(PlainListStyle()) // プレーンスタイルを使用
+                    .environment(\.horizontalSizeClass, .regular) // 横幅を広く見せる
+
                 }
             }
             .navigationTitle("")
@@ -409,7 +416,7 @@ struct RetentionView: View {
                     // ページ範囲を表示（存在する場合のみ）
                     if let pageRange = memo.pageRange, !pageRange.isEmpty {
                         Text("(\(pageRange))")
-                            .font(.subheadline)
+                            .font(.caption)
                             .foregroundColor(.gray)
                     }
                     
@@ -417,7 +424,7 @@ struct RetentionView: View {
                     
                     // 記憶定着度
                     Text("\(retentionScore(for: memo))%")
-                        .font(.headline)
+                        .font(.subheadline)
                         .foregroundColor(progressColor(for: Int16(retentionScore(for: memo))))
                 }
                 
@@ -461,11 +468,14 @@ struct RetentionView: View {
                     }
                 }
             }
-            .padding(.vertical, 4)
+            .padding(.vertical, 6)
         }
+        .padding(.horizontal, 8)
         .background(Color(.systemBackground))
         .cornerRadius(10)
         .shadow(color: Color.black.opacity(0.15), radius: 4, x: 0, y: 2)
+        .frame(maxWidth: .infinity) // カードの幅を最大に
+        .padding(.horizontal, 8)  // カード自体の左右マージンを追加
     }
     
     // 各種ヘルパー関数
