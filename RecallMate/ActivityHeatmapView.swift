@@ -116,6 +116,7 @@ struct ActivityHeatmapView: View {
 
 // 月ラベルを表示するビュー
 struct MonthLabelsView: View {
+    // 日本語の月名を使用
     private let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     
     var body: some View {
@@ -125,13 +126,16 @@ struct MonthLabelsView: View {
                 .fill(Color.clear)
                 .frame(width: 30, height: 20)
             
-            // 月ラベル
-            ForEach(0..<12, id: \.self) { monthIndex in
-                Text(months[monthIndex])
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                    .frame(width: 31 * 4 + 4 * 3) // 1週間分の幅（4日 + 間隔3）
+            // 月ラベルを横に並べる
+            HStack(spacing: 22) { // 間隔を調整
+                ForEach(0..<12, id: \.self) { monthIndex in
+                    Text(months[monthIndex])
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                        .frame(width: 50, alignment: .leading) // 幅を最小限に
+                }
             }
+            .padding(.leading, 0) // 左の余白を削除
         }
     }
 }

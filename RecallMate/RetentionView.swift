@@ -66,8 +66,6 @@ struct RetentionView: View {
         }
     }
     
-    @State private var selectedMemo: Memo? = nil
-    @State private var showingDetailGraph = false
     
     var body: some View {
         NavigationStack {
@@ -202,6 +200,7 @@ struct RetentionView: View {
                             } else {
                                 ForEach(filteredMemos) { memo in
                                     retentionRow(for: memo)
+                                        .padding(.vertical, 4)
                                 }
                             }
                         }
@@ -209,11 +208,6 @@ struct RetentionView: View {
                 }
             }
             .navigationTitle("")
-            .sheet(isPresented: $showingDetailGraph) {
-                if let memo = selectedMemo {
-                    RetentionGraphView(memo: memo)
-                }
-            }
         }
     }
     
@@ -403,10 +397,9 @@ struct RetentionView: View {
     
     // 各メモの記憶定着度表示行
     private func retentionRow(for memo: Memo) -> some View {
-        Button(action: {
-            selectedMemo = memo
-            showingDetailGraph = true
-        }) {
+        // NavigationLinkをHStackに変更
+        HStack {
+            // タイトルとページ範囲を表示
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     // タイトルとページ範囲を表示
@@ -470,7 +463,9 @@ struct RetentionView: View {
             }
             .padding(.vertical, 4)
         }
-        .buttonStyle(PlainButtonStyle())
+        .background(Color(.systemBackground))
+        .cornerRadius(10)
+        .shadow(color: Color.black.opacity(0.15), radius: 4, x: 0, y: 2)
     }
     
     // 各種ヘルパー関数
