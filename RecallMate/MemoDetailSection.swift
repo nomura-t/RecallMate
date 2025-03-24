@@ -76,12 +76,85 @@ struct MemoDetailSection: View {
                     }
                 }
                 
-                TextEditor(text: $viewModel.content)
-                    .font(.system(size: CGFloat(appSettings.memoFontSize)))
-                    .frame(minHeight: 120)
-                    .padding(4)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(8)
+                // 修正：TextEditorにプレースホルダーを追加
+                ZStack(alignment: .topLeading) {
+                    TextEditor(text: $viewModel.content)
+                        .font(.system(size: CGFloat(appSettings.memoFontSize)))
+                        .frame(minHeight: 120)
+                        .padding(4)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                    
+                    // プレースホルダー：viewModel.contentが空の場合にのみ表示
+                    if viewModel.content.isEmpty {
+                        VStack(alignment: .leading, spacing: 16) {
+                            HStack(spacing: 10) {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.blue)
+                                        .frame(width: 30, height: 30)
+                                    Text("1")
+                                        .font(.headline)
+                                        .foregroundColor(.white)
+                                }
+                                
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("覚えたいことを教科書を見ないで書き出す")
+                                        .font(.headline)
+                                        .foregroundColor(.gray)
+                                    
+                                    Text("まずは自分の力で思い出してみましょう。わからなくても大丈夫！")
+                                        .font(.subheadline)
+                                        .foregroundColor(.gray.opacity(0.8))
+                                }
+                            }
+                            
+                            HStack(spacing: 10) {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.blue)
+                                        .frame(width: 30, height: 30)
+                                    Text("2")
+                                        .font(.headline)
+                                        .foregroundColor(.white)
+                                }
+                                
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("わからない点は教科書で確認する")
+                                        .font(.headline)
+                                        .foregroundColor(.gray)
+                                    
+                                    Text("思い出せなかった部分を確認して、知識を補いましょう。")
+                                        .font(.subheadline)
+                                        .foregroundColor(.gray.opacity(0.8))
+                                }
+                            }
+                            
+                            HStack(spacing: 10) {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.blue)
+                                        .frame(width: 30, height: 30)
+                                    Text("3")
+                                        .font(.headline)
+                                        .foregroundColor(.white)
+                                }
+                                
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("①と②を繰り返す")
+                                        .font(.headline)
+                                        .foregroundColor(.gray)
+                                    
+                                    Text("再度挑戦して、どれだけ覚えているか試してみましょう。")
+                                        .font(.subheadline)
+                                        .foregroundColor(.gray.opacity(0.8))
+                                }
+                            }
+                        }
+                        .padding(8)
+                        .allowsHitTesting(false) // プレースホルダーをタップしても入力を邪魔しない
+                    }
+                }
             }
             .padding(.top, 4) // 上に余白を追加して問題カードとの間隔を確保
             .alert("内容をリセット", isPresented: $showContentResetAlert) {
