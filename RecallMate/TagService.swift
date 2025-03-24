@@ -1,4 +1,3 @@
-// TagService.swift
 import Foundation
 import CoreData
 import SwiftUI
@@ -8,19 +7,19 @@ class TagService {
     
     private init() {}
     
-    // 利用可能な色のリスト
+    // 利用可能な色のリスト - すべて小文字に統一
     let availableColors = [
         // 基本色
         "red", "orange", "yellow", "green", "blue", "purple", "pink",
         
         // 追加色 - 明るい色
-        "lightBlue", "lightGreen", "lightPink", "lightPurple", "cyan", "teal",
+        "lightblue", "lightgreen", "lightpink", "lightpurple", "cyan", "teal",
         
         // 追加色 - 暗い色
-        "darkBlue", "darkGreen", "darkRed", "brown", "navy", "indigo",
+        "darkblue", "darkgreen", "darkred", "brown", "navy", "indigo",
         
         // 追加色 - グレースケール
-        "black", "gray", "lightGray"
+        "black", "gray", "lightgray"
     ]
     
     // 新しいタグを作成
@@ -35,7 +34,8 @@ class TagService {
         let newTag = Tag(context: context)
         newTag.id = UUID()
         newTag.name = name
-        newTag.color = color
+        // 色を小文字に統一して保存
+        newTag.color = color.lowercased()
         newTag.createdAt = Date()
         
         do {
@@ -87,9 +87,87 @@ class TagService {
         }
     }
     
-    // 色文字列からSwiftUI Colorに変換
+    // タグを編集するメソッド（throwsなし）
+    func editTag(
+        _ tag: Tag,
+        newName: String? = nil,
+        newColor: String? = nil,
+        in context: NSManagedObjectContext
+    ) -> Bool {
+        var modified = false
+        
+        print("タグ編集開始 - ID: \(tag.id?.uuidString ?? "不明"), 現在の名前: \(tag.name ?? "無名"), 現在の色: \(tag.color ?? "未設定")")
+        print("変更内容 - 新しい名前: \(newName ?? "変更なし"), 新しい色: \(newColor ?? "変更なし")")
+        
+        do {
+            // 名前の変更がある場合
+            if let newName = newName, !newName.isEmpty {
+                let trimmedName = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+                
+                // 同じ名前のタグが既に存在するかチェック（自分自身を除く）
+                if let tagId = tag.id {
+                    let fetchRequest: NSFetchRequest<Tag> = Tag.fetchRequest()
+                    fetchRequest.predicate = NSPredicate(format: "name ==[c] %@ AND id != %@", trimmedName, tagId as CVarArg)
+                    
+                    let existingTags = try context.fetch(fetchRequest)
+                    guard existingTags.isEmpty else {
+                        // 同じ名前のタグが既に存在する
+                        print("❌ 同じ名前のタグが既に存在します: \(trimmedName)")
+                        return false
+                    }
+                }
+                
+                // 名前を更新
+                if tag.name != trimmedName {
+                    tag.name = trimmedName
+                    modified = true
+                    print("✅ タグ名を更新: \(trimmedName)")
+                }
+            }
+            
+            // 色を更新（指定されている場合）
+            if let newColor = newColor, !newColor.isEmpty {
+                // 比較用に小文字に変換
+                let normalizedNewColor = newColor.lowercased()
+                let normalizedOldColor = tag.color?.lowercased() ?? ""
+                
+                // 色が実際に変更されている場合のみ更新
+                if normalizedOldColor != normalizedNewColor {
+                    // 色が有効か確認 - 無効な場合はデフォルト色を使用
+                    if availableColors.contains(where: { $0.lowercased() == normalizedNewColor }) {
+                        tag.color = normalizedNewColor
+                        modified = true
+                        print("✅ タグ色を更新: \(normalizedNewColor)")
+                    } else {
+                        // 無効な色の場合はデフォルト色を使用
+                        tag.color = "blue"
+                        modified = true
+                        print("⚠️ 無効な色名: \(newColor) - デフォルト色(blue)を使用します")
+                    }
+                }
+            }
+            
+            // 変更があった場合のみ保存
+            if modified {
+                try context.save()
+                print("✅ タグの変更を保存しました")
+            } else {
+                print("ℹ️ 変更なし - 保存をスキップします")
+            }
+            
+            return true
+        } catch {
+            print("❌ タグ更新エラー: \(error.localizedDescription)")
+            context.rollback()
+            return false
+        }
+    }
+    
+    // 色文字列からSwiftUI Colorに変換（throwsなし）
     func colorFromString(_ colorName: String) -> Color {
-        switch colorName.lowercased() {
+        let lowerName = colorName.lowercased()
+        
+        switch lowerName {
         // 基本色
         case "red": return .red
         case "orange": return .orange
@@ -121,7 +199,9 @@ class TagService {
         case "lightgray": return Color.gray.opacity(0.5)
         
         // デフォルト
-        default: return .blue
+        default:
+            print("⚠️ 未定義の色名: \(colorName) - デフォルト色(blue)を使用します")
+            return .blue
         }
     }
 }

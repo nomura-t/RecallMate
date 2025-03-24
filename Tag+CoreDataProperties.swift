@@ -37,8 +37,12 @@ extension Tag {
     }
     
     // 色のColor変換（SwiftUI用）
+    // SwiftUI Colorに変換するためのヘルパーメソッド
     func swiftUIColor() -> Color {
-        Color(uiColor())
+        if let colorName = self.color {
+            return TagService.shared.colorFromString(colorName)
+        }
+        return .blue // デフォルト色
     }
 }
 

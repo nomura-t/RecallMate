@@ -312,7 +312,7 @@ struct ContentView: View {
                         } : nil
                     )
                     .environment(\.managedObjectContext, viewContext)
-                    .navigationTitle("タグ")
+                    .navigationTitle("")
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
                             Button("完了") { showTagSelection = false }

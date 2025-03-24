@@ -1,0 +1,14 @@
+# Xcode user data
+*.xcuserdatad/
+*.xcuserstate
+*.xcscmblueprint
+xcuserdata/
+xcshareddata/
+DerivedData/
+# Xcode user-specific files
+*.xcuserdata
+*.xcuserstate
+*.xcscmblueprint
+
+# Derived data
+DerivedData/

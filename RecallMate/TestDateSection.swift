@@ -13,7 +13,7 @@ struct TestDateSection: View {
                         if value {
                             // テスト日が未設定の場合、デフォルトで2週間後に設定
                             if viewModel.testDate == nil {
-                                viewModel.testDate = Calendar.current.date(byAdding: .day, value: 14, to: Date())
+                                viewModel.testDate = Date()
                             }
                             // ドラムロールを自動的に表示
                             viewModel.showTestDatePicker = true
@@ -50,18 +50,6 @@ struct TestDateSection: View {
                             .padding(.vertical, 8)
                         }
                         .padding(.vertical, 8)
-                    }
-                    
-                    // テスト日のみ表示（スケジュール削除）
-                    if let testDate = viewModel.testDate {
-                        // 復習スケジュールの計算自体は保持（内部処理のため）
-                        let _ = viewModel.calculateReviewScheduleBasedOnTestDate()
-                        
-                        // テスト日表示だけを残す
-                        Text(viewModel.formattedDate(testDate))
-                            .fontWeight(.bold)
-                            .foregroundColor(.blue)
-                            .padding(.top, 4)
                     }
                 }
             }
