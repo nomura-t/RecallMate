@@ -59,15 +59,31 @@ struct QuestionCarouselView: View {
             // 編集ボタン - 常に同じ位置に
             Button {
                 showQuestionEditor = true
+                // ハプティックフィードバックを追加
+                let generator = UIImpactFeedbackGenerator(style: .light)
+                generator.impactOccurred()
+                
             } label: {
                 Image(systemName: "ellipsis.circle.fill")
                     .font(.system(size: 22))
                     .foregroundColor(.blue)
                     .shadow(color: Color.primary.opacity(0.2), radius: 1, x: 0, y: 1)
+                    .frame(width: 44, height: 44) // タップ領域を広げる
+                    .contentShape(Rectangle()) // タップ領域を明確に
             }
             .buttonStyle(PlainButtonStyle())
             .padding(.top, 16)
             .padding(.trailing, 16)
+            .highPriorityGesture( // 高優先度のジェスチャーとして設定
+                TapGesture()
+                    .onEnded { _ in
+                        showQuestionEditor = true
+                        
+                        // ハプティックフィードバックを追加
+                        let generator = UIImpactFeedbackGenerator(style: .light)
+                        generator.impactOccurred()
+                    }
+            )
         }
         .frame(height: cardHeight + 32)
         .padding(.vertical, 8)
@@ -80,7 +96,7 @@ struct QuestionCarouselView: View {
         }
     }
     
-    // プレースホルダーカード
+// プレースホルダーカード - 修正バージョン
     private var placeholderCard: some View {
         VStack(spacing: 12) {
             Text("問題を追加してみましょう！")
@@ -97,6 +113,10 @@ struct QuestionCarouselView: View {
             
             Button {
                 showQuestionEditor = true
+                
+                // ハプティックフィードバックを追加
+                let generator = UIImpactFeedbackGenerator(style: .light)
+                generator.impactOccurred()
             } label: {
                 Text("問題を追加")
                     .font(.subheadline)
@@ -107,6 +127,18 @@ struct QuestionCarouselView: View {
                     .cornerRadius(8)
             }
             .buttonStyle(BorderlessButtonStyle())
+            .contentShape(Rectangle()) // タップ領域を明確に
+            .padding(.vertical, 8) // タップ領域を少し広げる
+            .highPriorityGesture( // 高優先度のジェスチャーとして設定
+                TapGesture()
+                    .onEnded { _ in
+                        showQuestionEditor = true
+                        
+                        // ハプティックフィードバックを追加
+                        let generator = UIImpactFeedbackGenerator(style: .light)
+                        generator.impactOccurred()
+                    }
+            )
             
             Spacer(minLength: 0)
         }
@@ -117,7 +149,7 @@ struct QuestionCarouselView: View {
         .cornerRadius(10)
         .shadow(color: Color.primary.opacity(0.15), radius: 4, x: 0, y: 2)
     }
-    
+
     // questionCard を修正
     @ViewBuilder
     private var questionCard: some View {
