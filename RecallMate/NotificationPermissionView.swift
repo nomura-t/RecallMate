@@ -5,6 +5,10 @@ import UserNotifications
 struct NotificationPermissionView: View {
     @Binding var isPresented: Bool
     @State private var notificationStatus: UNAuthorizationStatus = .notDetermined
+    // コールバック関数を追加
+    var onPermissionGranted: (() -> Void)? = nil
+    var onPermissionDenied: (() -> Void)? = nil
+
     
     var body: some View {
         ZStack {
@@ -51,14 +55,10 @@ struct NotificationPermissionView: View {
                 
                 // ボタン
                 HStack(spacing: 20) {
-                    Button("後で") {
-                        isPresented = false
-                    }
-                    .foregroundColor(.gray)
-                    .padding()
-                    
-                    Button(action: requestNotifications) {
-                        Text("通知を許可")
+                    Button(action: {
+                        requestNotifications()
+                    }) {
+                        Text("設定を開く")
                             .bold()
                             .foregroundColor(.white)
                             .padding()
@@ -66,6 +66,14 @@ struct NotificationPermissionView: View {
                             .background(Color.blue)
                             .cornerRadius(10)
                     }
+                    
+                    // キャンセルボタンのアクションを修正
+                    Button("後で") {
+                        isPresented = false
+                        onPermissionDenied?()
+                    }
+                    .foregroundColor(.gray)
+                    .padding()
                 }
                 .padding(.bottom)
             }
@@ -79,8 +87,21 @@ struct NotificationPermissionView: View {
             checkNotificationStatus()
         }
     }
-    
-    // 通知ステータスの確認
+    // 通知許可をリクエスト - コールバックを呼び出すように修正
+    private func requestNotifications() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            DispatchQueue.main.async {
+                if granted {
+                    // 許可されたらスケジュール設定
+                    StreakNotificationManager.shared.scheduleStreakReminder()
+                    onPermissionGranted?()
+                } else {
+                    onPermissionDenied?()
+                }
+                isPresented = false
+            }
+        }
+    }    // 通知ステータスの確認
     private func checkNotificationStatus() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
@@ -90,25 +111,6 @@ struct NotificationPermissionView: View {
                 if notificationStatus == .authorized {
                     isPresented = false
                 }
-            }
-        }
-    }
-    
-    // 通知許可をリクエスト
-    private func requestNotifications() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            DispatchQueue.main.async {
-                if granted {
-                    // 許可された場合
-                    // 習慣化リマインダーと通知のセットアップ
-                    StreakNotificationManager.shared.scheduleStreakReminder()
-                    
-                    // 習慣化チャレンジの通知もセットアップ
-                    // (必要に応じて呼び出し)
-                }
-                
-                // 処理完了後にモーダルを閉じる
-                isPresented = false
             }
         }
     }

@@ -1,8 +1,10 @@
+// SettingsView.swift の修正版
 import SwiftUI
 import Foundation
+import UserNotifications
 
 struct SettingsView: View {
-    @State private var notificationEnabled = true
+    @State private var notificationEnabled = UserDefaults.standard.bool(forKey: "notificationsEnabled")
     @State private var currentNotificationTime = ""
     
     // 設定クラスをEnvironmentObjectとして追加
@@ -13,6 +15,8 @@ struct SettingsView: View {
     @State private var showMissingAppAlert = false
     @State private var missingAppName = ""
     @State private var shareText = "RecallMateアプリを使って科学的に記憶力を強化しています。長期記憶の定着に最適なアプリです！ https://apps.apple.com/app/recallmate/id000000000" // 実際のApp StoreリンクIDに変更する
+    @State private var showNotificationPermission = false
+
     
     var body: some View {
         NavigationStack {
@@ -30,6 +34,11 @@ struct SettingsView: View {
                     // UserDefaultsの値を表示
                     let taskCount = UserDefaults.standard.integer(forKey: "task_completion_count")
                     Text("タスク完了カウント: \(taskCount)/15")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                    
+                    // 通知関連のデバッグ情報
+                    Text("通知状態: \(UserDefaults.standard.bool(forKey: "notificationsEnabled") ? "有効" : "無効")")
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
@@ -72,14 +81,28 @@ struct SettingsView: View {
                 }
                 
                 Section(header: Text("一般設定")) {
-                    Toggle("通知を有効にする", isOn: $notificationEnabled)
-                        .onChange(of: notificationEnabled) { enabled in
-                            if enabled {
-                                StreakNotificationManager.shared.scheduleStreakReminder()
+                    // SettingsView.swift の修正版（Toggle部分のみ）
+                    Toggle("通知を有効にする", isOn: Binding<Bool>(
+                        get: {
+                            self.notificationEnabled
+                        },
+                        set: { newValue in
+                            if newValue {
+                                // 通知を有効化しようとしている場合
+                                // トグルの値はまだ変更せず、モーダルを表示
+                                showNotificationPermission = true
                             } else {
-                                // 通知を無効化する処理（必要に応じて）
+                                // 通知を無効化する場合
+                                self.notificationEnabled = false
+                                UserDefaults.standard.set(false, forKey: "notificationsEnabled")
+                                self.cancelAllNotifications()
+                                StreakNotificationManager.shared.disableNotifications()
+                                
+                                // iOS設定アプリの通知設定画面に遷移
+                                openAppNotificationSettings()
                             }
                         }
+                    ))
                 }
                 
                 // テキストフォントサイズ設定セクション
@@ -149,6 +172,21 @@ struct SettingsView: View {
                 )
             }
             .onAppear {
+                // 最初にUserDefaultsから設定を取得
+                self.notificationEnabled = UserDefaults.standard.bool(forKey: "notificationsEnabled")
+                
+                // 次に、現在の通知許可状態を確認して表示を更新
+                UNUserNotificationCenter.current().getNotificationSettings { settings in
+                    DispatchQueue.main.async {
+                        // システムの通知設定とUserDefaultsの設定を同期させる
+                        let isEnabled = settings.authorizationStatus == .authorized
+                        self.notificationEnabled = isEnabled
+                        UserDefaults.standard.set(isEnabled, forKey: "notificationsEnabled")
+                        
+                        print("🔔 通知設定をチェック - システム: \(isEnabled), アプリ内: \(self.notificationEnabled)")
+                    }
+                }
+                
                 // ビューが表示されるたびに現在の通知時間を更新
                 currentNotificationTime = StreakNotificationManager.shared.getPreferredTimeString()
                 
@@ -169,6 +207,28 @@ struct SettingsView: View {
                 }
             }
         }
+        // モーダル表示を追加
+        .overlay(
+            Group {
+                if showNotificationPermission {
+                    NotificationPermissionView(
+                        isPresented: $showNotificationPermission,
+                        onPermissionGranted: {
+                            // 許可された場合の処理
+                            self.notificationEnabled = true
+                            UserDefaults.standard.set(true, forKey: "notificationsEnabled")
+                        },
+                        onPermissionDenied: {
+                            // キャンセルされた場合の処理
+                            self.notificationEnabled = false
+                            UserDefaults.standard.set(false, forKey: "notificationsEnabled")
+                        }
+                    )
+                    .transition(.opacity)
+                    .animation(.easeInOut, value: showNotificationPermission)
+                }
+            }
+        )
     }
     
     // LINEで共有
@@ -193,6 +253,49 @@ struct SettingsView: View {
     func showAlertForMissingApp(name: String) {
         missingAppName = name
         showMissingAppAlert = true
+    }
+    
+    // 全ての通知をキャンセル
+    private func cancelAllNotifications() {
+        print("🔕 通知を無効化します")
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+    }
+    
+    // 通知許可をリクエスト
+    private func requestNotificationPermission() {
+        print("🔔 通知許可をリクエストします")
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            DispatchQueue.main.async {
+                // 許可されなかった場合はトグルを戻す
+                if !granted {
+                    print("❌ 通知許可が拒否されました")
+                    self.notificationEnabled = false
+                    UserDefaults.standard.set(false, forKey: "notificationsEnabled")
+                } else {
+                    print("✅ 通知許可が承認されました")
+                    self.notificationEnabled = true
+                    UserDefaults.standard.set(true, forKey: "notificationsEnabled")
+                    
+                    // 通知が許可されたので、通知をスケジュール
+                    StreakNotificationManager.shared.scheduleStreakReminder()
+                }
+            }
+        }
+    }
+    public func openAppNotificationSettings() {
+        // iOS 16以降の場合は通知設定画面に直接遷移
+        if #available(iOS 16.0, *) {
+            if let bundleId = Bundle.main.bundleIdentifier,
+               let url = URL(string: UIApplication.openNotificationSettingsURLString + "?bundleIdentifier=\(bundleId)") {
+                UIApplication.shared.open(url)
+            }
+        } else {
+            // iOS 16未満の場合は設定アプリを開く
+            if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(settingsURL)
+            }
+        }
     }
 }
 

@@ -21,7 +21,12 @@ class StreakNotificationManager {
             }
         }
     }
-    
+    // 既存のStreakNotificationManager.swiftに追加
+    func disableNotifications() {
+        // 全ての予定された通知をキャンセル
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["streakReminder"])
+        print("✅ ストリークリマインダー通知を無効化しました")
+    }
     // 現在時刻をベースに通知時間を設定・保存する
     func updatePreferredTime() {
         let now = Date()
