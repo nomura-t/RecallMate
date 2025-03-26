@@ -21,26 +21,26 @@ struct ReviewListItem: View {
 
     var body: some View {
         HStack {
-            // 優先度インジケーター（円）- 状態によって色を変更
-            Circle()
-                .fill(priorityColor)
-                .frame(width: 20, height: 20)
-                .shadow(radius: 2)
-                .padding(.trailing, 8)
-                .overlay(
-                    // 期限切れの場合は感嘆符を表示
-                    Group {
-                        if isOverdue {
-                            Image(systemName: "exclamationmark")
-                                .font(.system(size: 12, weight: .bold))
-                                .foregroundColor(.white)
-                        } else if isDueToday {
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 12, weight: .bold))
-                                .foregroundColor(.white)
-                        }
-                    }
-                )
+            // アイコンと丸を中央揃えするためにZStackを使用
+            ZStack {
+                // 優先度インジケーター（円）
+                Circle()
+                    .fill(priorityColor)
+                    .frame(width: 20, height: 20)
+                    .shadow(radius: 2)
+                
+                // アイコン（感嘆符またはチェックマーク）
+                if isOverdue {
+                    Image(systemName: "exclamationmark")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(.white)
+                } else if isDueToday {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(.white)
+                }
+            }
+            .padding(.trailing, 8)
 
             VStack(alignment: .leading, spacing: 4) {
                 // タイトルとページ範囲を表示
