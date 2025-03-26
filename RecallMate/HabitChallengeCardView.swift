@@ -23,8 +23,8 @@ struct HabitChallengeCardView: View {
                 }
             }
             
-            HStack(spacing: 10) {
-                // 進捗表示
+            HStack(spacing: 10) { // ここの spacing を小さくする（元の値を10に変更）
+                // 進捗表示（円形プログレス）
                 ZStack {
                     Circle()
                         .stroke(Color.gray.opacity(0.3), lineWidth: 6)
@@ -55,6 +55,7 @@ struct HabitChallengeCardView: View {
                             .foregroundColor(.secondary)
                     }
                 }
+                .padding(.leading, 0) // 左側の余白を削除する
                 
                 Spacer()
                 

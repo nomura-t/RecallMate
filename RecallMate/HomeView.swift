@@ -164,16 +164,15 @@ struct HomeView: View {
                     .padding(.bottom, 4)
                 }
                 
-                StreakCardView()
-                    .padding(.horizontal, 16)
-                    .padding(.top, 10)
-                    .padding(.bottom, 6)
-                // 習慣化チャレンジカードを追加
-                HabitChallengeCardView()
-                    .padding(.horizontal, 16)
-                    .padding(.top, 6)
-                    .padding(.bottom, 10)
-                // デバッグメッセージがあれば表示
+                HStack(spacing: 8) {
+                    StreakCardView()
+                        .frame(maxWidth: .infinity)
+                        .frame(width: 100)
+                    HabitChallengeCardView()
+                        .frame(maxWidth: .infinity)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 5)                // デバッグメッセージがあれば表示
                 if showDebugInfo && !debugMessage.isEmpty {
                     Text(debugMessage)
                         .font(.caption)

@@ -19,22 +19,22 @@ struct StreakCardView: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 4) { // spacing を小さく
             HStack {
                 Image(systemName: "flame.fill")
                     .foregroundColor(.orange)
-                    .font(.system(size: 28))
+                    .font(.system(size: 22)) // サイズを小さく
                 
                 Text("\(currentStreak) 日連続")
-                    .font(.headline)
+                    .font(.subheadline) // フォントサイズを小さく
                     .foregroundColor(.primary)
             }
             
             Text("最長記録: \(longestStreak) 日")
-                .font(.subheadline)
+                .font(.caption) // より小さいフォント
                 .foregroundColor(.gray)
         }
-        .padding()
+        .padding(12) // パディングを小さく
         .background(RoundedRectangle(cornerRadius: 10)
             .fill(Color(.systemBackground))
             .shadow(radius: 2))
