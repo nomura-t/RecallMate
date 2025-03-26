@@ -47,9 +47,10 @@ class HabitChallengeManager: ObservableObject {
         silverAchieved = defaults.bool(forKey: silverAchievedKey)
         goldAchieved = defaults.bool(forKey: goldAchievedKey)
         
-        if let dateData = defaults.object(forKey: lastActiveDateKey) as? Data,
-           let date = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSDate.self, from: dateData) as Date {
-            lastActiveDate = date
+        if let dateData = defaults.object(forKey: lastActiveDateKey) as? Data {
+            if let nsDate = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSDate.self, from: dateData) as? NSDate {
+                lastActiveDate = nsDate as Date
+            }
         }
     }
     

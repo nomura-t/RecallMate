@@ -183,11 +183,11 @@ struct HabitChallengeInfoView: View {
                         .font(.headline)
                     
                     VStack(alignment: .leading, spacing: 8) {
-                        BulletPoint(text: "毎日最低5分以上学習する")
-                        BulletPoint(text: "1日でも記録がないとカウンターはリセットされます")
-                        BulletPoint(text: "7日達成で銅メダル獲得")
-                        BulletPoint(text: "21日達成で銀メダル獲得")
-                        BulletPoint(text: "66日達成で金メダル獲得！習慣化の目標達成")
+                        HabitBulletPoint(text: "毎日最低5分以上学習する")
+                        HabitBulletPoint(text: "1日でも記録がないとカウンターはリセットされます")
+                        HabitBulletPoint(text: "7日達成で銅メダル獲得")
+                        HabitBulletPoint(text: "21日達成で銀メダル獲得")
+                        HabitBulletPoint(text: "66日達成で金メダル獲得！習慣化の目標達成")
                     }
                     .padding(.bottom, 16)
                     
@@ -222,9 +222,9 @@ struct HabitChallengeInfoView: View {
                         .font(.headline)
                     
                     VStack(alignment: .leading, spacing: 8) {
-                        BulletPoint(text: "毎日同じ時間に学習すると習慣化しやすくなります")
-                        BulletPoint(text: "小さく始めて、徐々に時間を増やしていくのが効果的です")
-                        BulletPoint(text: "「学習のきっかけ」を決めておくと継続しやすくなります（例：夕食後に5分）")
+                        HabitBulletPoint(text: "毎日同じ時間に学習すると習慣化しやすくなります")
+                        HabitBulletPoint(text: "小さく始めて、徐々に時間を増やしていくのが効果的です")
+                        HabitBulletPoint(text: "「学習のきっかけ」を決めておくと継続しやすくなります（例：夕食後に5分）")
                     }
                 }
                 .padding()
@@ -278,7 +278,7 @@ struct HabitChallengeInfoView: View {
 }
 
 // 箇条書き項目の表示用コンポーネント
-struct BulletPoint: View {
+struct HabitBulletPoint: View {
     let text: String
     
     var body: some View {
@@ -292,7 +292,6 @@ struct BulletPoint: View {
         }
     }
 }
-
 // ステージ説明用コンポーネント
 struct StageDescriptionView: View {
     let title: String

@@ -79,12 +79,12 @@ struct MainView: View {
             selectedTab = 2 // ポモドーロタブに切り替え
             // 必要に応じてPomodoroTimerを操作するコードを追加
         }
-    }
-    // アプリがフォアグラウンドに戻ってきたときに習慣化チャレンジをチェック
-    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-        // 習慣化チャレンジの進捗をチェック
-        DispatchQueue.main.async {
-            habitChallengeManager.checkDailyProgress()
+        // アプリがフォアグラウンドに戻ってきたときに習慣化チャレンジをチェック
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            // 習慣化チャレンジの進捗をチェック
+            DispatchQueue.main.async {
+                habitChallengeManager.checkDailyProgress()
+            }
         }
     }
 }
