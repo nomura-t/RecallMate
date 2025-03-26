@@ -89,19 +89,27 @@ struct NotificationPermissionView: View {
     }
     // 通知許可をリクエスト - コールバックを呼び出すように修正
     private func requestNotifications() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            DispatchQueue.main.async {
-                if granted {
-                    // 許可されたらスケジュール設定
-                    StreakNotificationManager.shared.scheduleStreakReminder()
-                    onPermissionGranted?()
-                } else {
-                    onPermissionDenied?()
-                }
+        // iOS設定アプリの通知設定画面に遷移
+        if #available(iOS 16.0, *) {
+            if let bundleId = Bundle.main.bundleIdentifier,
+               let url = URL(string: UIApplication.openNotificationSettingsURLString + "?bundleIdentifier=\(bundleId)") {
+                // モーダルを閉じてから設定画面を開く
                 isPresented = false
+                UIApplication.shared.open(url)
+            }
+        } else {
+            // iOS 16未満の場合は一般設定アプリを開く
+            if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                isPresented = false
+                UIApplication.shared.open(settingsURL)
             }
         }
-    }    // 通知ステータスの確認
+        
+        // 設定画面から戻ってきたときに自動的に状態が更新されないため、
+        // ここではキャンセル扱いとして通知する
+        onPermissionDenied?()
+    }
+    // 通知ステータスの確認
     private func checkNotificationStatus() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
