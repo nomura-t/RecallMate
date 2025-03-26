@@ -34,7 +34,7 @@ struct HomeView: View {
     @Binding var isAddingMemo: Bool
     
     // デバッグ用の状態変数
-    @State private var showDebugInfo = false
+    @State private var showDebugInfo = true
     @State private var debugMessage = ""
     
     // デバッグモードフラグ
