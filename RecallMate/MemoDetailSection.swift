@@ -161,7 +161,7 @@ struct MemoDetailSection: View {
                                 }
                             }
                         }
-                        .padding(8)
+                        .padding(16)
                         .allowsHitTesting(false) // プレースホルダーをタップしても入力を邪魔しない
                     }
                 }

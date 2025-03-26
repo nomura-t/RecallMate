@@ -21,6 +21,8 @@ struct QuestionEditorView: View {
     @State private var showQuestionEditSheet = false
     @State private var editingQuestion: ComparisonQuestion? = nil
     
+    @State private var showUsageModal = false
+
     // 初期化時に既存のキーワードをコピー
     init(memo: Memo?, keywords: Binding<[String]>, comparisonQuestions: Binding<[ComparisonQuestion]>) {
         self.memo = memo
@@ -74,7 +76,17 @@ struct QuestionEditorView: View {
                         }
                     }
                 }
-                
+                // 使い方ボタンを追加 - 位置は右上
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        showUsageModal = true
+                    }) {
+                        Image(systemName: "info.circle")
+                            .font(.headline)
+                            .foregroundColor(.blue)
+                    }
+                }
+
                 // タブに応じて右側のボタンを変更
                 ToolbarItem(placement: .navigationBarTrailing) {
                     if selectedTab == 0 {
@@ -159,6 +171,16 @@ struct QuestionEditorView: View {
                 }
             }
         }
+        // 使い方モーダルオーバーレイを追加
+        .overlay(
+            Group {
+                if showUsageModal {
+                    QuestionEditorUsageModalView(isPresented: $showUsageModal)
+                        .transition(.opacity)
+                        .animation(.easeInOut, value: showUsageModal)
+                }
+            }
+        )
     }
     
     // 問題リスト編集タブのコンテンツ
