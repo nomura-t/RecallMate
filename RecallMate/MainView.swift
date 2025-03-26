@@ -1,5 +1,6 @@
 import SwiftUI
 import CoreData
+import UserNotifications
 
 struct MainView: View {
     @State private var isAddingMemo = false
@@ -9,6 +10,9 @@ struct MainView: View {
     
     // ReviewManager追加
     @StateObject private var reviewManager = ReviewManager.shared
+    
+    // 習慣化チャレンジマネージャー
+    @StateObject private var habitChallengeManager = HabitChallengeManager.shared
     @State private var showingReviewRequest = false
 
     var body: some View {
@@ -74,6 +78,13 @@ struct MainView: View {
             // 通知からポモドーロを開始する処理
             selectedTab = 2 // ポモドーロタブに切り替え
             // 必要に応じてPomodoroTimerを操作するコードを追加
+        }
+    }
+    // アプリがフォアグラウンドに戻ってきたときに習慣化チャレンジをチェック
+    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+        // 習慣化チャレンジの進捗をチェック
+        DispatchQueue.main.async {
+            habitChallengeManager.checkDailyProgress()
         }
     }
 }

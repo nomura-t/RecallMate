@@ -165,9 +165,14 @@ struct HomeView: View {
                 }
                 
                 StreakCardView()
-                    .padding(.horizontal)
-                    .padding(.vertical, 10)
-                
+                    .padding(.horizontal, 16)
+                    .padding(.top, 10)
+                    .padding(.bottom, 6)
+                // 習慣化チャレンジカードを追加
+                HabitChallengeCardView()
+                    .padding(.horizontal, 16)
+                    .padding(.top, 6)
+                    .padding(.bottom, 10)
                 // デバッグメッセージがあれば表示
                 if showDebugInfo && !debugMessage.isEmpty {
                     Text(debugMessage)
@@ -444,6 +449,9 @@ struct HomeView: View {
     
     // データを強制的に更新するメソッド
     private func forceRefreshData() {
+        // 習慣化チャレンジの進捗をチェック
+        HabitChallengeManager.shared.checkDailyProgress()
+        
         // 進行中のタスクがあれば明示的にキャンセル
         viewContext.rollback()
         

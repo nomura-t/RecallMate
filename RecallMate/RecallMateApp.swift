@@ -25,6 +25,9 @@ struct RecallMateApp: App {
         
         // ストリーク維持のための通知をスケジュール
         StreakNotificationManager.shared.scheduleStreakReminder()
+        
+        // 習慣化チャレンジの状態をチェック
+        HabitChallengeManager.shared.checkDailyProgress()
     }
 
     var body: some Scene {
