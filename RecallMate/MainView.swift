@@ -1,3 +1,4 @@
+// MainView.swift
 import SwiftUI
 import CoreData
 import UserNotifications
@@ -14,6 +15,7 @@ struct MainView: View {
     // 習慣化チャレンジマネージャー
     @StateObject private var habitChallengeManager = HabitChallengeManager.shared
     @State private var showingReviewRequest = false
+    @State private var showNotificationPermission = false
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
@@ -63,6 +65,12 @@ struct MainView: View {
                 ReviewRequestView(isPresented: $showingReviewRequest)
                     .zIndex(2) // 他のモーダルより前面に表示
             }
+            
+            // 通知許可を促すモーダル
+            if showNotificationPermission {
+                NotificationPermissionView(isPresented: $showNotificationPermission)
+                    .zIndex(3) // 他のモーダルより最前面に表示
+            }
         }
         .onChange(of: isAddingMemo) { oldValue, newValue in
             // デバッグ用
@@ -84,6 +92,27 @@ struct MainView: View {
             // 習慣化チャレンジの進捗をチェック
             DispatchQueue.main.async {
                 habitChallengeManager.checkDailyProgress()
+            }
+        }
+        .onAppear {
+            // アプリ起動時に通知許可状態をチェック
+            checkAndShowNotificationPermission()
+        }
+    }
+    
+    // 通知許可状態をチェックして必要に応じてモーダルを表示
+    private func checkAndShowNotificationPermission() {
+        // UserDefaultsを使用して初回表示済みかをチェック
+        if !UserDefaults.standard.bool(forKey: "hasPromptedForNotifications") {
+            // 通知設定をチェック
+            UNUserNotificationCenter.current().getNotificationSettings { settings in
+                DispatchQueue.main.async {
+                    if settings.authorizationStatus == .notDetermined {
+                        // まだ通知許可を求めていない場合のみ表示
+                        self.showNotificationPermission = true
+                        UserDefaults.standard.set(true, forKey: "hasPromptedForNotifications")
+                    }
+                }
             }
         }
     }
