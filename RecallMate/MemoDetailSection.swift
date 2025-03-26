@@ -14,12 +14,22 @@ struct MemoDetailSection: View {
     
     // State変数をここで宣言（ViewModelに依存しない）
     @State private var showContentResetAlert = false
-    
+    @FocusState var titleFieldFocused: Bool
+    @Namespace var titleField
+
     var body: some View {
         Section(header: Text("メモ詳細")) {
             // タイトルとページ範囲
             TextField("タイトル", text: $viewModel.title)
                 .font(.headline)
+                .focused($titleFieldFocused) // フォーカス制御
+                .id(titleField) // スクロール用ID
+                .background(viewModel.shouldFocusTitle ? Color.red.opacity(0.1) : Color.clear) // エラー表示
+                .onChange(of: viewModel.title) { _, newValue in
+                    if !newValue.isEmpty && viewModel.shouldFocusTitle {
+                        viewModel.shouldFocusTitle = false // エラー表示を消す
+                    }
+                }
             
             TextField("ページ範囲", text: $viewModel.pageRange)
                 .font(.subheadline)
@@ -171,7 +181,12 @@ struct MemoDetailSection: View {
                 Text("メモの内容をクリアしますか？この操作は元に戻せません。")
             }
         }
-        
+        .onChange(of: viewModel.shouldFocusTitle) { _, shouldFocus in
+            if shouldFocus {
+                // タイトル欄にフォーカス
+                titleFieldFocused = true
+            }
+        }
         // テスト日設定セクション
         TestDateSection(viewModel: viewModel)
     }

@@ -394,5 +394,10 @@ struct ContentView: View {
                 }
             )
         }
+        .alert("タイトルが必要です", isPresented: $viewModel.showTitleAlert) {
+            Button("OK") { viewModel.showTitleAlert = false }
+        } message: {
+            Text("続行するにはメモのタイトルを入力してください。")
+        }
     }
 }

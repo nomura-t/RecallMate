@@ -1,3 +1,4 @@
+// ContentViewModel.swift
 import SwiftUI
 import CoreData
 
@@ -23,9 +24,9 @@ class ContentViewModel: ObservableObject {
     @Published var recordActivityOnSave = true
     @Published var savedMemo: Memo?  // var で宣言して変更可能に
     @Published var currentSessionId: UUID?
-
-
-
+    
+    @Published var showTitleAlert = false
+    @Published var shouldFocusTitle = false
     
     init(viewContext: NSManagedObjectContext, memo: Memo?) {
         self.viewContext = viewContext
@@ -164,6 +165,7 @@ class ContentViewModel: ObservableObject {
             print("❌ 記憶定着度履歴の保存に失敗しました: \(error.localizedDescription)")
         }
     }
+    
     // 記憶度に基づいて復習日を強制的に再計算するメソッド
     private func forceRecalculateReviewDate(for memo: Memo, with recallScore: Int16) {
         // テスト日に基づく計算かどうかを判断
@@ -248,8 +250,10 @@ class ContentViewModel: ObservableObject {
     // 既存の saveMemo メソッドを修正
     func saveMemo(completion: @escaping () -> Void) {
         // タイトルのみ必須にする（ページ範囲は任意）
-        guard !title.isEmpty else {
+        if title.isEmpty {
             print("⚠️ タイトルを入力してください！")
+            showTitleAlert = true
+            shouldFocusTitle = true
             return
         }
         
@@ -697,8 +701,6 @@ class ContentViewModel: ObservableObject {
 }
 
 extension ContentViewModel {
-    // セッションIDを保持するプロパティを追加
-    
     // 初期化時に呼び出して時間計測を開始する
     func startLearningSession() {
         if let existingMemo = memo {
@@ -788,6 +790,7 @@ extension ContentViewModel {
             completion()
         }
     }
+    
     func saveMemoWithNotification() {
         do {
             print("📣 完了直前の最終保存を実行")
@@ -802,5 +805,4 @@ extension ContentViewModel {
             print("❌ 最終保存エラー: \(error)")
         }
     }
-    
 }
