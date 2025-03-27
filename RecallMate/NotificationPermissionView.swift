@@ -5,6 +5,7 @@ import UserNotifications
 struct NotificationPermissionView: View {
     @Binding var isPresented: Bool
     @State private var notificationStatus: UNAuthorizationStatus = .notDetermined
+    
     // コールバック関数を追加
     var onPermissionGranted: (() -> Void)? = nil
     var onPermissionDenied: (() -> Void)? = nil
@@ -86,28 +87,43 @@ struct NotificationPermissionView: View {
         .onAppear {
             checkNotificationStatus()
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            // アプリがフォアグラウンドに戻ってきたときに状態を確認
+            checkNotificationStatus()
+        }
+
     }
     // 通知許可をリクエスト - コールバックを呼び出すように修正
     private func requestNotifications() {
-        // iOS設定アプリの通知設定画面に遷移
-        if #available(iOS 16.0, *) {
-            if let bundleId = Bundle.main.bundleIdentifier,
-               let url = URL(string: UIApplication.openNotificationSettingsURLString + "?bundleIdentifier=\(bundleId)") {
-                // モーダルを閉じてから設定画面を開く
-                isPresented = false
-                UIApplication.shared.open(url)
-            }
-        } else {
-            // iOS 16未満の場合は一般設定アプリを開く
-            if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
-                isPresented = false
-                UIApplication.shared.open(settingsURL)
+        // 通知許可をシステムに直接リクエスト
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            DispatchQueue.main.async {
+                if granted {
+                    print("✅ 通知許可が承認されました")
+                    // 許可された場合のコールバックを呼び出す
+                    self.onPermissionGranted?()
+                    // モーダルを閉じる
+                    self.isPresented = false
+                    
+                    // 通知が許可されたので、通知をスケジュール
+                    StreakNotificationManager.shared.scheduleStreakReminder()
+                } else {
+                    print("❌ 通知許可が拒否されました - 設定アプリを開きます")
+                    // 拒否された場合は設定アプリに誘導
+                    if #available(iOS 16.0, *) {
+                        if let bundleId = Bundle.main.bundleIdentifier,
+                           let url = URL(string: UIApplication.openNotificationSettingsURLString + "?bundleIdentifier=\(bundleId)") {
+                            UIApplication.shared.open(url)
+                        }
+                    } else {
+                        if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(settingsURL)
+                        }
+                    }
+                    // この時点ではモーダルは閉じない - ユーザーに「後で」ボタンを押してもらう
+                }
             }
         }
-        
-        // 設定画面から戻ってきたときに自動的に状態が更新されないため、
-        // ここではキャンセル扱いとして通知する
-        onPermissionDenied?()
     }
     // 通知ステータスの確認
     private func checkNotificationStatus() {

@@ -239,41 +239,6 @@ struct HabitChallengeInfoView: View {
                     }
                 }
             }
-            
-            #if DEBUG
-            // デバッグ用コントロール
-            VStack {
-                Divider()
-                
-                Group {
-                    Text("デバッグコントロール")
-                        .font(.headline)
-                    
-                    HStack {
-                        Button("リセット") {
-                            HabitChallengeManager.shared.resetChallenge()
-                        }
-                        .buttonStyle(.bordered)
-                        
-                        Button("6日に設定") {
-                            HabitChallengeManager.shared.setDebugStreak(6)
-                        }
-                        .buttonStyle(.bordered)
-                        
-                        Button("20日に設定") {
-                            HabitChallengeManager.shared.setDebugStreak(20)
-                        }
-                        .buttonStyle(.bordered)
-                        
-                        Button("65日に設定") {
-                            HabitChallengeManager.shared.setDebugStreak(65)
-                        }
-                        .buttonStyle(.bordered)
-                    }
-                }
-                .padding()
-            }
-            #endif
         }
     }
 }

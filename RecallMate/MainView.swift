@@ -99,7 +99,27 @@ struct MainView: View {
             checkAndShowNotificationPermission()
         }
     }
-    
+    // 通知許可状態をチェックしてモーダル表示状態を更新する関数
+    private func checkNotificationStatus() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            DispatchQueue.main.async {
+                // 通知が既に許可されているか決定済みの場合はモーダルを表示しない
+                if settings.authorizationStatus == .authorized {
+                    // 通知が許可されている場合、モーダルを非表示に
+                    showNotificationPermission = false
+                    // UserDefaultsも更新
+                    UserDefaults.standard.set(true, forKey: "notificationsEnabled")
+                    UserDefaults.standard.set(true, forKey: "hasPromptedForNotifications")
+                } else if settings.authorizationStatus == .denied {
+                    // 通知が明示的に拒否されている場合もモーダルを非表示に
+                    showNotificationPermission = false
+                    // UserDefaultsも更新
+                    UserDefaults.standard.set(false, forKey: "notificationsEnabled")
+                    UserDefaults.standard.set(true, forKey: "hasPromptedForNotifications")
+                }
+            }
+        }
+    }
     // 通知許可状態をチェックして必要に応じてモーダルを表示
     private func checkAndShowNotificationPermission() {
         // UserDefaultsを使用して初回表示済みかをチェック

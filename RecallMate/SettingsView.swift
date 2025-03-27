@@ -16,34 +16,13 @@ struct SettingsView: View {
     @State private var missingAppName = ""
     @State private var shareText = "RecallMateアプリを使って科学的に記憶力を強化しています。長期記憶の定着に最適なアプリです！ https://apps.apple.com/app/recallmate/id000000000" // 実際のApp StoreリンクIDに変更する
     @State private var showNotificationPermission = false
+    @StateObject private var notificationObserver = NotificationSettingsObserver()
+
 
     
     var body: some View {
         NavigationStack {
             Form {
-#if DEBUG
-                Section(header: Text("開発者オプション")) {
-                    Button("レビュー誘導画面をリセット") {
-                        ReviewManager.shared.resetReviewRequest()
-                    }
-                    
-                    Button("レビュー誘導画面を表示") {
-                        ReviewManager.shared.shouldShowReview = true
-                    }
-                    
-                    // UserDefaultsの値を表示
-                    let taskCount = UserDefaults.standard.integer(forKey: "task_completion_count")
-                    Text("タスク完了カウント: \(taskCount)/15")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                    
-                    // 通知関連のデバッグ情報
-                    Text("通知状態: \(UserDefaults.standard.bool(forKey: "notificationsEnabled") ? "有効" : "無効")")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                }
-#endif
-                
                 // アプリを共有セクション
                 Section {
                     HStack(alignment: .center) {
@@ -207,6 +186,15 @@ struct SettingsView: View {
                 }
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            // フォアグラウンドに戻ってきたときに通知設定を確認
+            checkNotificationSettings()
+        }
+        .onAppear {
+            // 画面表示時も通知設定を確認
+            checkNotificationSettings()
+        }
+
         // モーダル表示を追加
         .overlay(
             Group {
@@ -231,6 +219,24 @@ struct SettingsView: View {
         )
     }
     
+    // 通知設定を確認して画面を更新する関数
+    private func checkNotificationSettings() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            DispatchQueue.main.async {
+                // システムの通知許可状態をトグルに反映
+                self.notificationEnabled = settings.authorizationStatus == .authorized
+                // UserDefaultsも同期して保存
+                UserDefaults.standard.set(self.notificationEnabled, forKey: "notificationsEnabled")
+                
+                print("🔄 通知設定を更新: \(self.notificationEnabled ? "有効" : "無効")")
+                
+                // 通知が許可された場合は必要な通知をスケジュール
+                if self.notificationEnabled {
+                    StreakNotificationManager.shared.scheduleStreakReminder()
+                }
+            }
+        }
+    }
     // LINEで共有
     func shareAppViaLINE() {
         let encodedText = shareText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
@@ -310,4 +316,32 @@ struct TextShareSheet: UIViewControllerRepresentable {
     }
     
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+}
+// 通知設定監視用のクラス - アプリ全体で利用可能にする場合
+class NotificationSettingsObserver: ObservableObject {
+    @Published var isNotificationAuthorized = false
+    
+    init() {
+        checkAuthorizationStatus()
+        
+        // アプリがフォアグラウンドに戻るときに通知設定をチェック
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(checkAuthorizationStatus),
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil
+        )
+    }
+    
+    @objc func checkAuthorizationStatus() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            DispatchQueue.main.async {
+                self.isNotificationAuthorized = settings.authorizationStatus == .authorized
+            }
+        }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
 }

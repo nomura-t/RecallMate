@@ -181,31 +181,4 @@ class HabitChallengeManager: ObservableObject {
         saveState()
         print("🔄 習慣化チャレンジをリセットしました")
     }
-    
-    // デバッグ用に習慣化進捗を設定
-    func setDebugStreak(_ days: Int) {
-        currentStreak = days
-        
-        // マイルストーンも適切に設定
-        if days >= bronzeMilestone {
-            bronzeAchieved = true
-        }
-        
-        if days >= silverMilestone {
-            silverAchieved = true
-        }
-        
-        if days >= goldMilestone {
-            goldAchieved = true
-        }
-        
-        // 最高記録も更新
-        if days > highestStreak {
-            highestStreak = days
-        }
-        
-        lastActiveDate = Calendar.current.startOfDay(for: Date())
-        saveState()
-        print("🔧 習慣化チャレンジを \(days)日に設定しました")
-    }
 }
