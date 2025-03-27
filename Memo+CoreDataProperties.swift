@@ -101,7 +101,6 @@ extension Memo {
         
         // 追加後の検証
         let newCount = (self.tags as? Set<Tag> ?? Set<Tag>()).count
-        print("➕ タグを追加: \(tag.name ?? "無名") (ID: \(tag.id?.uuidString.prefix(8) ?? "不明")) - タグ数: \(oldCount) → \(newCount)")
     }
     
     // タグを削除（ログ機能を追加）
@@ -114,20 +113,6 @@ extension Memo {
         
         // 削除後の検証
         let newCount = (self.tags as? Set<Tag> ?? Set<Tag>()).count
-        print("➖ タグを削除: \(tag.name ?? "無名") (ID: \(tag.id?.uuidString.prefix(8) ?? "不明")) - タグ数: \(oldCount) → \(newCount)")
-    }
-    
-    // デバッグ用のタグ情報表示（新規追加）
-    func logTagsInfo() {
-        let tagArray = self.tagsArray
-        if tagArray.isEmpty {
-            print("📌 タグ情報: なし")
-        } else {
-            print("📌 タグ情報: \(tagArray.count)個")
-            for (index, tag) in tagArray.enumerated() {
-                print("  \(index+1). \(tag.name ?? "無名") (ID: \(tag.id?.uuidString.prefix(8) ?? "不明"))")
-            }
-        }
     }
 }
 

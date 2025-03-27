@@ -135,7 +135,6 @@ class CarouselState: ObservableObject {
         guard !questions.isEmpty else { return }
         let oldIndex = currentIndex
         currentIndex = (currentIndex + 1) % questions.count
-        print("🔄 次へ移動: \(oldIndex) -> \(currentIndex) (全\(questions.count)問)")
     }
     
     // 前の問題に移動 - デバッグログを追加
@@ -143,7 +142,6 @@ class CarouselState: ObservableObject {
         guard !questions.isEmpty else { return }
         let oldIndex = currentIndex
         currentIndex = (currentIndex - 1 + questions.count) % questions.count
-        print("🔄 前へ移動: \(oldIndex) -> \(currentIndex) (全\(questions.count)問)")
     }
     
     // まだ回答のない問題に移動

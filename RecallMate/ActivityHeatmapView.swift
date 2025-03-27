@@ -26,7 +26,6 @@ struct ActivityHeatmapView: View {
                 
                 Button(action: {
                     selectedYear -= 1
-                    print("年を減らしました: \(selectedYear)")  // デバッグ用
                 }) {
                     Image(systemName: "chevron.left")
                         .frame(width: 44, height: 22)  // タップ領域を拡大
@@ -42,7 +41,6 @@ struct ActivityHeatmapView: View {
                     // 制限を緩和（例：現在の年から10年先まで許可）
                     let maxAllowedYear = Calendar.current.component(.year, from: Date()) + 10
                     selectedYear = min(maxAllowedYear, selectedYear + 1)
-                    print("年を増やしました: \(selectedYear)")  // デバッグ用
                 }) {
                     Image(systemName: "chevron.right")
                         .frame(width: 44, height: 22)  // タップ領域を拡大
