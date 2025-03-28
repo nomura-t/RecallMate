@@ -1,63 +1,56 @@
-// SettingsView.swift の修正版
-import SwiftUI
-import Foundation
-import UserNotifications
+    import SwiftUI
+    import Foundation
+    import UserNotifications
 
-struct SettingsView: View {
-    @State private var notificationEnabled = UserDefaults.standard.bool(forKey: "notificationsEnabled")
-    @State private var currentNotificationTime = ""
-    
-    // 設定クラスをEnvironmentObjectとして追加
-    @EnvironmentObject private var appSettings: AppSettings
-    
-    // シェア関連の状態変数
-    @State private var isShareSheetPresented = false
-    @State private var showMissingAppAlert = false
-    @State private var missingAppName = ""
-    @State private var shareText = "RecallMateアプリを使って科学的に記憶力を強化しています。長期記憶の定着に最適なアプリです！ https://apps.apple.com/app/recallmate/id000000000" // 実際のApp StoreリンクIDに変更する
-    @State private var showNotificationPermission = false
-    @StateObject private var notificationObserver = NotificationSettingsObserver()
+    struct SettingsView: View {
+        @State private var notificationEnabled = UserDefaults.standard.bool(forKey: "notificationsEnabled")
+        @State private var currentNotificationTime = ""
+        
+        // 設定クラスをEnvironmentObjectとして追加
+        @EnvironmentObject private var appSettings: AppSettings
+        
+        // シェア関連の状態変数
+        @State private var isShareSheetPresented = false
+        @State private var showMissingAppAlert = false
+        @State private var missingAppName = ""
+        @State private var shareText = "RecallMateアプリを使って科学的に記憶力を強化しています。長期記憶の定着に最適なアプリです！ https://apps.apple.com/app/recallmate/id000000000" // 実際のApp StoreリンクIDに変更する
+        @State private var showNotificationPermission = false
+        @State private var showSocialShareView = false // ソーシャルシェアビュー表示用状態変数を追加
+        @StateObject private var notificationObserver = NotificationSettingsObserver()
 
-
-    
-    var body: some View {
-        NavigationStack {
-            Form {
-                // アプリを共有セクション
-                Section {
-                    HStack(alignment: .center) {
-                        // テキスト部分 - タップ不可
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("RecallMateを友達に紹介する")
-                                .font(.headline)
-                            
-                            Text("効率的な学習方法を友達にも教えてあげましょう")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                        
-                        Spacer()
-                        
-                        // LINEアイコン部分のみタップ可能
-                        Button(action: {
-                            shareAppViaLINE()
-                        }) {
-                            VStack(spacing: 2) {
-                                Image(systemName: "arrow.up.square")
-                                    .font(.system(size: 30))
-                                    .foregroundColor(.green)
-                                    .frame(width: 40, height: 40)
-                                Text("LINE")
+        var body: some View {
+            NavigationStack {
+                Form {
+                    // アプリを共有セクション
+                    Section {
+                        HStack(alignment: .center) {
+                            // テキスト部分
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("RecallMateを友達に紹介する")
+                                    .font(.headline)
+                                
+                                Text("効率的な学習方法を友達にも教えてあげましょう")
                                     .font(.caption)
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(.secondary)
                             }
+                            
+                            Spacer()
+                            
+                            // シェアボタン - 修正部分
+                            Button(action: {
+                                showSocialShareView = true
+                            }) {
+                                Image(systemName: "square.and.arrow.up")
+                                    .font(.system(size: 30))
+                                    .foregroundColor(.blue)
+                                    .frame(width: 40, height: 40)
+                            }
+                            .buttonStyle(BorderlessButtonStyle())
                         }
-                        .buttonStyle(BorderlessButtonStyle())
+                        .padding(.vertical, 8)
+                    } header: {
+                        Text("アプリを共有")
                     }
-                    .padding(.vertical, 8)
-                } header: {
-                    Text("アプリを共有")
-                }
                 
                 Section(header: Text("一般設定")) {
                     // SettingsView.swift の修正版（Toggle部分のみ）
@@ -139,17 +132,34 @@ struct SettingsView: View {
                 }
                 .disabled(!notificationEnabled)
             }
-            .navigationTitle("")
-            .sheet(isPresented: $isShareSheetPresented) {
-                TextShareSheet(text: shareText)
-            }
-            .alert(isPresented: $showMissingAppAlert) {
-                Alert(
-                    title: Text("\(missingAppName)がインストールされていません"),
-                    message: Text("共有するには\(missingAppName)アプリをインストールしてください。"),
-                    dismissButton: .default(Text("OK"))
+                .navigationTitle("")
+                .sheet(isPresented: $isShareSheetPresented) {
+                    if #available(iOS 16.0, *) {
+                        ShareSheet(text: shareText)
+                    } else {
+                        LegacyShareSheet(text: shareText)
+                    }
+                }
+                .alert(isPresented: $showMissingAppAlert) {
+                    Alert(
+                        title: Text("\(missingAppName)がインストールされていません"),
+                        message: Text("共有するには\(missingAppName)アプリをインストールしてください。"),
+                        dismissButton: .default(Text("OK"))
+                    )
+                }
+                // ソーシャルシェアビューをオーバーレイとして表示
+                .overlay(
+                    Group {
+                        if showSocialShareView {
+                            SocialShareView(
+                                isPresented: $showSocialShareView,
+                                shareText: shareText
+                            )
+                            .transition(.opacity)
+                            .animation(.easeInOut, value: showSocialShareView)
+                        }
+                    }
                 )
-            }
             .onAppear {
                 // 最初にUserDefaultsから設定を取得
                 self.notificationEnabled = UserDefaults.standard.bool(forKey: "notificationsEnabled")
