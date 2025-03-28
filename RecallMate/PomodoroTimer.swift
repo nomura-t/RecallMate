@@ -53,13 +53,10 @@ class PomodoroTimer: ObservableObject {
             DispatchQueue.main.async {
                 self.notificationsEnabled = granted
                 if let error = error {
-                    print("通知許可エラー: \(error.localizedDescription)")
                 } else if granted {
-                    print("通知が許可されました")
                     // 通知カテゴリを設定
                     self.setupNotificationCategories()
                 } else {
-                    print("通知が許可されていません")
                 }
             }
             TimerService.shared.registerTimer(self)
@@ -78,7 +75,6 @@ class PomodoroTimer: ObservableObject {
     // PomodoroTimer.swift に追加するメソッド
     public func resetSessionCount() {
         sessionCount = 0
-        print("セッションカウントをリセットしました")
     }
     // 通知カテゴリの設定
     private func setupNotificationCategories() {
@@ -147,7 +143,6 @@ class PomodoroTimer: ObservableObject {
         
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                print("バックグラウンド通知エラー: \(error.localizedDescription)")
             }
         }
     }
@@ -194,8 +189,6 @@ class PomodoroTimer: ObservableObject {
         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             self?.updateTimer()
         }
-        
-        print("⏱️ タイマースタート: \(currentSession.title), 残り時間: \(timeRemaining)秒")
     }
     // タイマーを一時停止
     func pause() {
@@ -308,8 +301,6 @@ class PomodoroTimer: ObservableObject {
         
         savedTimeRemaining = timeRemaining
         progress = 1.0
-        
-        print("⏱️ セッション設定: \(currentSession.title), 残り時間: \(timeRemaining)秒")
     }
     // 通知を送信
     private func sendNotification() {
@@ -342,7 +333,6 @@ class PomodoroTimer: ObservableObject {
         
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                print("通知送信エラー: \(error.localizedDescription)")
             }
         }
         

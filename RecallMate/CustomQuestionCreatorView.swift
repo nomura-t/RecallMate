@@ -58,20 +58,15 @@ struct CustomQuestionCreatorView: View {
     
     private func saveCustomQuestion() {
         guard !questionText.isEmpty else {
-            print("❌ 保存条件を満たしていません: 問題文が空です")
             return
         }
         
         if memo == nil {
-            print("📝 新規メモ作成中のため、カスタム問題は一時保存します")
-            
             // UserDefaultsに一時保存
             var tempCustomQuestions = UserDefaults.standard.array(forKey: "tempCustomQuestions") as? [[String]] ?? []
             let note = questionNote.isEmpty ? "" : questionNote
             tempCustomQuestions.append([questionText, note])
             UserDefaults.standard.set(tempCustomQuestions, forKey: "tempCustomQuestions")
-            
-            print("✅ 一時的なカスタム問題を保存: '\(questionText)'")
             onSave()
             return
         }
@@ -86,11 +81,8 @@ struct CustomQuestionCreatorView: View {
         
         do {
             try viewContext.save()
-            print("✅ カスタム問題を保存しました: \(questionText)")
-            print("✅ メモの内容: \(questionNote.isEmpty ? "なし" : questionNote)")
             onSave()
         } catch {
-            print("❌ カスタム問題保存エラー: \(error)")
         }
     }
 }

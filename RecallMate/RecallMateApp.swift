@@ -211,10 +211,7 @@ struct RecallMateApp: App {
             
             // サンプルメモが作成されたことをマーク
             UserDefaults.standard.set(true, forKey: "hasSampleMemo")
-            
-            print("✅ サンプルメモを作成しました")
         } catch {
-            print("❌ サンプルメモの作成に失敗しました: \(error)")
         }
     }
 }

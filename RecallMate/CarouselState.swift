@@ -101,7 +101,6 @@ class CarouselState: ObservableObject {
                         self.lastKeywords = keywords
                         self.lastQuestionIds = questionIds
                         self.isLoading = false
-                        print("📊 問題数: \(items.count)")
                     }
                 }
             }
@@ -119,7 +118,6 @@ class CarouselState: ObservableObject {
             questions: questions
         ) {
             // 必要に応じてUIの更新処理を追加
-            print("✅ 回答のインポートが完了しました")
         }
     }
     
@@ -127,7 +125,6 @@ class CarouselState: ObservableObject {
     func copyQuestionsToClipboard() {
         let clipboardText = QuestionService.shared.formatQuestionsForClipboard(questions: questions)
         UIPasteboard.general.string = clipboardText
-        print("📋 \(questions.count)個の問題をクリップボードにコピーしました")
     }
     
     // 次の問題に移動 - デバッグログを追加
@@ -233,8 +230,6 @@ class CarouselState: ObservableObject {
         }
     }
     func refreshAnswers() {
-        print("♻️ カルーセル状態を強制更新します")
-        
         // 質問アイテムの回答状態を更新
         for question in questions {
             if question.id.starts(with: "keyword_") {

@@ -35,15 +35,9 @@ struct TestDateReviewer {
         )
         
         // 結果のログ出力を追加
-        print("🗓️ テスト日計算結果:")
-        print("- テスト日: \(formatDate(targetDate)), 残り日数: \(daysUntilTest)日")
-        print("- 記憶度: \(currentRecallScore)%, 完璧回数: \(perfectRecallCount)")
-        print("- 推定必要復習回数: \(requiredReviews)回")
-        
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         for (index, date) in reviewDates.enumerated() {
-            print("- 復習スケジュール #\(index+1): \(formatter.string(from: date))")
         }
         
         return reviewDates

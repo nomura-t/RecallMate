@@ -31,7 +31,6 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
             // 次のセッションを開始する処理
             // TimerServiceなど、シングルトンを通じてPomodoroTimerのインスタンスにアクセスする
             // 例: TimerService.shared.startNextSession()
-            print("通知からポモドーロセッションを開始します")
             NotificationCenter.default.post(name: Notification.Name("StartPomodoroFromNotification"), object: nil)
         }
         

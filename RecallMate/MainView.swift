@@ -74,7 +74,6 @@ struct MainView: View {
         }
         .onChange(of: isAddingMemo) { oldValue, newValue in
             // デバッグ用
-            print("🔄 isAddingMemo: \(oldValue) → \(newValue)")
         }
         .onChange(of: reviewManager.shouldShowReview) { oldValue, newValue in
             if newValue {

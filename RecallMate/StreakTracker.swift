@@ -60,7 +60,6 @@ class StreakTracker {
                 try context.save()
             }
         } catch {
-            print("❌ ストリーク更新エラー: \(error.localizedDescription)")
         }
     }
 }

@@ -78,11 +78,8 @@ struct QuestionListView: View {
             }
         }
         .onAppear {
-            print("🔄 QuestionListView appeared with \(comparisonQuestions.count) comparison questions")
-            
             // 各問題の内容を表示
             for (index, question) in comparisonQuestions.enumerated() {
-                print("表示する問題 #\(index+1): \(question.question ?? "nil")")
             }
         }
     }
@@ -97,11 +94,9 @@ struct QuestionListView: View {
         // CoreDataを保存
         do {
             try viewContext.save()
-            print("✅ 問題を削除しました")
             // 比較問題リストを更新
             onQuestionsUpdated()
         } catch {
-            print("❌ 比較問題削除エラー: \(error.localizedDescription)")
         }
     }
 }

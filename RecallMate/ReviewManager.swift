@@ -26,9 +26,6 @@ class ReviewManager: ObservableObject {
         let currentCount = userDefaults.integer(forKey: taskCompletionCountKey)
         let newCount = currentCount + 1
         userDefaults.set(newCount, forKey: taskCompletionCountKey)
-        
-        print("📊 タスク完了カウント: \(newCount)/\(requiredTaskCount)")
-        
         checkIfShouldShowReview()
     }
     
@@ -66,6 +63,5 @@ class ReviewManager: ObservableObject {
     func resetReviewRequest() {
         userDefaults.set(false, forKey: reviewRequestedKey)
         userDefaults.set(0, forKey: taskCompletionCountKey)
-        print("🔄 レビュー表示条件をリセットしました")
     }
 }

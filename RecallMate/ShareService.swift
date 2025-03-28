@@ -120,7 +120,6 @@ class ShareService {
         // iPadでの表示位置を指定するために必要な情報をプロパティとして保持
         controller.completionWithItemsHandler = { [weak self] (activityType, completed, _, _) in
             if completed, let activityTypeString = activityType?.rawValue {
-                print("✅ システムシェア完了: \(activityTypeString)")
             }
         }
         
@@ -131,8 +130,6 @@ class ShareService {
     private func notifyMissingApp(name: String) {
         // この関数はUIからの呼び出し元に情報を返すためのコールバックとして機能
         // 実際の実装ではNotificationCenterや通知関数をコールバックとして渡すなどの方法がある
-        print("⚠️ \(name)アプリがインストールされていません")
-        
         // イベント通知
         NotificationCenter.default.post(
             name: NSNotification.Name("MissingAppNotification"),
@@ -143,7 +140,6 @@ class ShareService {
     
     // シェアのログ記録
     private func logShare(platform: SocialPlatform) {
-        print("📢 \(platform.displayName)でシェアしました")
         // ここで必要に応じて解析やログ記録を追加
     }
 }

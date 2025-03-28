@@ -40,7 +40,6 @@ extension LearningActivity {
             let totalMinutes = activities.reduce(0) { $0 + Int($1.durationMinutes) }
             return totalMinutes >= 5 // 5分以上あるかチェック
         } catch {
-            print("❌ 学習記録チェックエラー: \(error.localizedDescription)")
             return false
         }
     }

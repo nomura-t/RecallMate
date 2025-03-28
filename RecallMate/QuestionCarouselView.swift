@@ -97,7 +97,6 @@ struct QuestionCarouselView: View {
         // 以下の通知リスナーを追加
         .onReceive(QuestionItemRegistry.shared.updates) { _ in
             // レジストリが更新されたことを検知
-            print("📣 質問レジストリの更新を検知しました")
             // 回答表示状態に基づいて適切に更新
             if isShowingAnswer {
                 // すでに回答表示中ならすぐに再表示
@@ -115,7 +114,6 @@ struct QuestionCarouselView: View {
         }
         // AnswersImportedやAnswersUpdatedなどの通知も監視
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("AnswersImported"))) { _ in
-            print("📣 回答インポート通知を受信しました")
             // レジストリからの更新を確実に反映
             loadQuestions()
             
@@ -133,7 +131,6 @@ struct QuestionCarouselView: View {
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("AnswersUpdated"))) { _ in
-            print("📣 回答更新通知を受信しました")
             loadQuestions()
             
             if isShowingAnswer {

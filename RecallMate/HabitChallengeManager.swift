@@ -83,17 +83,14 @@ class HabitChallengeManager: ObservableObject {
                 if dayDifference == 1 {
                     // 連続日数を増加
                     currentStreak += 1
-                    print("✅ 習慣化チャレンジ: 連続学習 \(currentStreak)日目")
                     checkMilestones()
                 } else if dayDifference > 1 {
                     // 連続が途切れたのでリセット
-                    print("⚠️ 習慣化チャレンジ: \(dayDifference)日の空白があったためリセット (\(currentStreak)日→1日)")
                     currentStreak = 1
                 }
             } else {
                 // 初めての記録
                 currentStreak = 1
-                print("🎉 習慣化チャレンジ: 開始しました")
             }
             
             // 最高記録を更新
@@ -118,7 +115,6 @@ class HabitChallengeManager: ObservableObject {
         // 前日以降に活動がなかった場合
         if dayDifference > 1 {
             // 連続が途切れたのでリセット
-            print("⚠️ 習慣化チャレンジ: \(dayDifference)日の空白があったためリセット (\(currentStreak)日→0日)")
             currentStreak = 0
             saveState()
         }
@@ -130,21 +126,18 @@ class HabitChallengeManager: ObservableObject {
         if currentStreak >= bronzeMilestone && !bronzeAchieved {
             bronzeAchieved = true
             showBronzeModal = true
-            print("🥉 習慣化チャレンジ: 銅メダル獲得！")
         }
         
         // 銀メダル（21日）
         if currentStreak >= silverMilestone && !silverAchieved {
             silverAchieved = true
             showSilverModal = true
-            print("🥈 習慣化チャレンジ: 銀メダル獲得！")
         }
         
         // 金メダル（66日）
         if currentStreak >= goldMilestone && !goldAchieved {
             goldAchieved = true
             showGoldModal = true
-            print("🥇 習慣化チャレンジ: 金メダル獲得！習慣が定着しました！")
         }
     }
     
@@ -165,9 +158,7 @@ class HabitChallengeManager: ObservableObject {
         
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                print("⚠️ 習慣化リマインダー通知の設定に失敗: \(error.localizedDescription)")
             } else {
-                print("✅ 習慣化リマインダー通知を設定しました（毎日11:30）")
             }
         }
     }
@@ -179,6 +170,5 @@ class HabitChallengeManager: ObservableObject {
         silverAchieved = false
         goldAchieved = false
         saveState()
-        print("🔄 習慣化チャレンジをリセットしました")
     }
 }

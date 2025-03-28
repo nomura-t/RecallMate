@@ -167,7 +167,6 @@ struct StudyTimeChartView: View {
             
             return activities
         } catch {
-            print("❌ アクティビティ取得エラー: \(error.localizedDescription)")
             return []
         }
     }

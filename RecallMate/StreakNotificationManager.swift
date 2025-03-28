@@ -15,9 +15,7 @@ class StreakNotificationManager {
     private func requestNotificationPermission() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             if granted {
-                print("✅ 通知許可を取得しました")
             } else if let error = error {
-                print("❌ 通知許可エラー: \(error.localizedDescription)")
             }
         }
     }
@@ -25,7 +23,6 @@ class StreakNotificationManager {
     func disableNotifications() {
         // 全ての予定された通知をキャンセル
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["streakReminder"])
-        print("✅ ストリークリマインダー通知を無効化しました")
     }
     // 現在時刻をベースに通知時間を設定・保存する
     func updatePreferredTime() {
@@ -40,8 +37,6 @@ class StreakNotificationManager {
         
         if let timeData = try? JSONEncoder().encode(timeComponents) {
             defaults.set(timeData, forKey: preferredTimeKey)
-            print("✅ 通知時間を更新: \(hour):\(minute)")
-            
             // 既存の通知をキャンセルして再スケジュール
             rescheduleNotification()
         }
@@ -71,11 +66,9 @@ class StreakNotificationManager {
         
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                print("❌ 通知スケジュールエラー: \(error.localizedDescription)")
             } else {
                 let hourStr = String(format: "%02d", timeComponents.hour ?? 0)
                 let minuteStr = String(format: "%02d", timeComponents.minute ?? 0)
-                print("✅ 通知をスケジュール: \(hourStr):\(minuteStr)")
             }
         }
     }

@@ -84,10 +84,8 @@ class QuestionService {
                 let questions = try viewContext.fetch(fetchRequest)
                 DispatchQueue.main.async {
                     completion(questions)
-                    print("📚 比較問題を読み込みました: \(questions.count)件")
                 }
             } catch {
-                print("❌ 比較問題読み込みエラー: \(error.localizedDescription)")
                 DispatchQueue.main.async {
                     completion([])
                 }
@@ -101,11 +99,9 @@ class QuestionService {
         let key = "keyword_answer_\(keyword)"
         if let answer = answer, !answer.isEmpty {
             UserDefaults.standard.set(answer, forKey: key)
-            print("✅ キーワード「\(keyword)」の回答を保存しました")
         } else {
             // 空の回答は保存するが、削除メッセージは変更
             UserDefaults.standard.set("", forKey: key)
-            print("🔄 キーワード「\(keyword)」の回答を空にしました")
         }
         
         // レジストリに更新を通知
@@ -124,9 +120,7 @@ class QuestionService {
         do {
             try viewContext.save()
             if let answer = answer, !answer.isEmpty {
-                print("✅ 比較問題「\(question.question?.prefix(20) ?? "")...」の回答を保存しました")
             } else {
-                print("🔄 比較問題「\(question.question?.prefix(20) ?? "")...」の回答を空にしました")
             }
             
             // レジストリに更新を通知
@@ -137,7 +131,6 @@ class QuestionService {
             }
             QuestionItemRegistry.shared.notifyUpdates()
         } catch {
-            print("❌ 比較問題回答保存エラー: \(error.localizedDescription)")
         }
     }
     // MARK: - 回答のインポート
@@ -164,12 +157,9 @@ class QuestionService {
                         let answer = nsString.substring(with: answerRange).trimmingCharacters(in: .whitespacesAndNewlines)
                         
                         processedAnswers[questionNumber] = answer
-                        print("✅ 回答を検出: 問題\(questionNumber)")
                     }
                 }
             }
-            
-            print("📝 検出された回答数: \(processedAnswers.count)")
         }
         
         // 処理結果を返す
@@ -183,13 +173,10 @@ class QuestionService {
         overwriteAll: Bool = true,
         completion: @escaping () -> Void = {}
     ) {
-        print("🔄 回答を適用します: \(answers.count)件（上書き: \(overwriteAll)）")
-        
         for i in 0..<questions.count {
             let questionIndex = i + 1
             if let answer = answers[String(questionIndex)] {
                 if overwriteAll || !questions[i].hasAnswer {
-                    print("✅ 問題 \(questionIndex) に回答を適用します")
                     questions[i].answer = answer
                 }
             }

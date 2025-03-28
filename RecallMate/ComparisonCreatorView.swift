@@ -82,7 +82,6 @@ struct ComparisonCreatorView: View {
             try viewContext.save()
             onSave()
         } catch {
-            print("❌ 比較問題保存エラー: \(error.localizedDescription)")
         }
     }
 }

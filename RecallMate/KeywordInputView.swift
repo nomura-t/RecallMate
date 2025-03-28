@@ -76,9 +76,6 @@ struct KeywordInputView: View {
     private func processInputLine(_ line: String) {
         let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
-        
-        print("🔍 入力された行を処理: '\(trimmed)'")
-        
         // 半角スペースと全角スペースを正確に検出する改良版
         let halfWidthSpace = " "
         let fullWidthSpace = "\u{3000}"
@@ -99,11 +96,7 @@ struct KeywordInputView: View {
             
             // 空の要素を除去
             components = components.filter { !$0.isEmpty }
-            
-            print("🔢 スペース区切りで検出された単語数: \(components.count)")
-            
             if components.count >= 2 {
-                print("📝 比較問題用の単語: '\(components[0])' と '\(components[1])'")
                 // 最初の2つの単語で比較問題を作成
                 createComparisonQuestion(components[0], components[1])
                 return
@@ -120,7 +113,6 @@ struct KeywordInputView: View {
         
         if !keywords.contains(trimmedKeyword) {
             keywords.append(trimmedKeyword)
-            print("✅ キーワードを追加: '\(trimmedKeyword)'")
         }
     }
     
@@ -131,17 +123,14 @@ struct KeywordInputView: View {
         
         if !trimmedWord1.isEmpty && !keywords.contains(trimmedWord1) {
             keywords.append(trimmedWord1)
-            print("✅ 比較用キーワード1を追加: '\(trimmedWord1)'")
         }
         
         if !trimmedWord2.isEmpty && !keywords.contains(trimmedWord2) {
             keywords.append(trimmedWord2)
-            print("✅ 比較用キーワード2を追加: '\(trimmedWord2)'")
         }
         
         // メモがない場合（新規作成中の場合）は、一時的なメモを作成
         if memo == nil {
-            print("📝 新規メモ作成中のため、問題はキーワードリストに追加するだけにします")
             // キーワードは既に追加済み。実際の比較問題保存は、メモ保存時に行われる
             
             // 何らかの形で比較問題情報を保存する必要がある場合は、
@@ -151,9 +140,6 @@ struct KeywordInputView: View {
             var tempComparisonPairs = UserDefaults.standard.array(forKey: "tempComparisonPairs") as? [[String]] ?? []
             tempComparisonPairs.append([trimmedWord1, trimmedWord2])
             UserDefaults.standard.set(tempComparisonPairs, forKey: "tempComparisonPairs")
-            
-            print("✅ 一時的な比較ペアを保存: '\(trimmedWord1)' vs '\(trimmedWord2)'")
-            
             // UIに仮表示用の比較問題を追加（非永続的）
             let tempQuestion = ComparisonQuestion(context: viewContext)
             tempQuestion.id = UUID()
@@ -177,24 +163,18 @@ struct KeywordInputView: View {
         
         do {
             try viewContext.save()
-            print("✅ 比較問題を保存しました: '\(trimmedWord1)' vs '\(trimmedWord2)'")
-            
             // 保存後に問題リストを更新
             let fetchRequest: NSFetchRequest<ComparisonQuestion> = ComparisonQuestion.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "memo == %@", memo!)
             
             do {
                 let fetchedQuestions = try viewContext.fetch(fetchRequest)
-                print("📚 取得された問題数: \(fetchedQuestions.count)")
-                
                 // comparisonQuestionsの更新
                 comparisonQuestions = fetchedQuestions
                 
             } catch {
-                print("❌ 問題の取得エラー: \(error)")
             }
         } catch {
-            print("❌ 比較問題の保存エラー: \(error)")
         }
     }
     

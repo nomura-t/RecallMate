@@ -23,7 +23,6 @@ struct PersistenceController {
         do {
             try viewContext.save()
         } catch {
-            print("❌ プレビュー用データの保存に失敗: \(error)")
         }
 
         return controller

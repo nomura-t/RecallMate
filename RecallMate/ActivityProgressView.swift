@@ -204,15 +204,14 @@ struct ActivityProgressView: View {
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("RefreshActivityData"))) { _ in
-            print("📣 アクティビティデータ更新通知を受信しました")
+
             refreshData()
         }
     }
     
     // データをリフレッシュするメソッド - デバッグ情報付き
     private func refreshData() {
-        print("🔍 データリフレッシュ開始...")
-        
+
         // ViewContextをリフレッシュ
         viewContext.refreshAllObjects()
         
@@ -222,23 +221,22 @@ struct ActivityProgressView: View {
         
         do {
             let activities = try viewContext.fetch(fetchRequest)
-            print("📊 データベース内のアクティビティ数: \(activities.count)")
-            
+
             if activities.isEmpty {
-                print("⚠️ アクティビティが見つかりません。データが正しく保存されていない可能性があります。")
+
             } else {
                 // 最新のアクティビティを表示
                 if let latest = activities.first, let date = latest.date {
-                    print("📝 最新のアクティビティ: \(latest.type ?? "不明"), 日時: \(date)")
+
                 }
             }
         } catch {
-            print("❌ アクティビティデータの取得エラー: \(error.localizedDescription)")
+
         }
         
         // 非同期で更新を反映（SwiftUIの更新サイクルを考慮）
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            print("✅ リフレッシュ完了")
+
         }
     }
 }
@@ -281,7 +279,7 @@ struct StatisticsCardWithPeriod: View {
             
             return activities
         } catch {
-            print("❌ 統計カード: アクティビティ取得エラー: \(error.localizedDescription)")
+
             return []
         }
     }
@@ -421,7 +419,7 @@ struct ActivityListWithPeriod: View {
             
             return activities
         } catch {
-            print("❌ アクティビティリスト: 取得エラー: \(error.localizedDescription)")
+
             return []
         }
     }
@@ -504,9 +502,9 @@ struct ActivityListWithPeriod: View {
         // 変更を保存
         do {
             try viewContext.save()
-            print("✅ アクティビティを削除しました")
+
         } catch {
-            print("❌ アクティビティの削除に失敗しました: \(error.localizedDescription)")
+
         }
     }
     

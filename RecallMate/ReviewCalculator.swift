@@ -10,23 +10,16 @@ struct ReviewCalculator {
         
         // 復習係数は完璧回数に基づく
         let reviewMultiplier = max(1.0, Double(perfectRecallCount))
-        
-        print("🧮 復習間隔計算: 記憶度=\(recallScore)%, 完璧回数=\(perfectRecallCount)")
-        print("  - scoreFactor = \(scoreFactor)")
-        print("  - reviewMultiplier = \(reviewMultiplier)")
-        
         let daysUntilNextReview: Double
         
         if perfectRecallCount < baseIntervals.count {
             // 基本間隔を使用
             let baseInterval = baseIntervals[Int(perfectRecallCount)]
             daysUntilNextReview = baseInterval * scoreFactor
-            print("  - 基本間隔: \(baseInterval)日 × 記憶度係数\(scoreFactor) = \(daysUntilNextReview)日")
         } else {
             // 修正2: 完璧回数が多い場合は週単位で増加
             let baseInterval = max(30.0, Double(perfectRecallCount) * 7.0)
             daysUntilNextReview = baseInterval * scoreFactor
-            print("  - 拡張間隔: \(baseInterval)日 × 記憶度係数\(scoreFactor) = \(daysUntilNextReview)日")
         }
         
         let calendar = Calendar.current
@@ -35,8 +28,6 @@ struct ReviewCalculator {
         // 計算結果をログ出力
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
-        print("  - 次回復習日: \(formatter.string(from: nextDate)) (\(Int(daysUntilNextReview))日後)")
-        
         return nextDate
     }
 }

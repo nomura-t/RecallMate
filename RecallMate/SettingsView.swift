@@ -171,8 +171,6 @@
                         let isEnabled = settings.authorizationStatus == .authorized
                         self.notificationEnabled = isEnabled
                         UserDefaults.standard.set(isEnabled, forKey: "notificationsEnabled")
-                        
-                        print("🔔 通知設定をチェック - システム: \(isEnabled), アプリ内: \(self.notificationEnabled)")
                     }
                 }
                 
@@ -237,9 +235,6 @@
                 self.notificationEnabled = settings.authorizationStatus == .authorized
                 // UserDefaultsも同期して保存
                 UserDefaults.standard.set(self.notificationEnabled, forKey: "notificationsEnabled")
-                
-                print("🔄 通知設定を更新: \(self.notificationEnabled ? "有効" : "無効")")
-                
                 // 通知が許可された場合は必要な通知をスケジュール
                 if self.notificationEnabled {
                     StreakNotificationManager.shared.scheduleStreakReminder()
@@ -273,23 +268,19 @@
     
     // 全ての通知をキャンセル
     private func cancelAllNotifications() {
-        print("🔕 通知を無効化します")
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         UNUserNotificationCenter.current().removeAllDeliveredNotifications()
     }
     
     // 通知許可をリクエスト
     private func requestNotificationPermission() {
-        print("🔔 通知許可をリクエストします")
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             DispatchQueue.main.async {
                 // 許可されなかった場合はトグルを戻す
                 if !granted {
-                    print("❌ 通知許可が拒否されました")
                     self.notificationEnabled = false
                     UserDefaults.standard.set(false, forKey: "notificationsEnabled")
                 } else {
-                    print("✅ 通知許可が承認されました")
                     self.notificationEnabled = true
                     UserDefaults.standard.set(true, forKey: "notificationsEnabled")
                     

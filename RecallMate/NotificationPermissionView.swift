@@ -99,7 +99,6 @@ struct NotificationPermissionView: View {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             DispatchQueue.main.async {
                 if granted {
-                    print("✅ 通知許可が承認されました")
                     // 許可された場合のコールバックを呼び出す
                     self.onPermissionGranted?()
                     // モーダルを閉じる
@@ -108,7 +107,6 @@ struct NotificationPermissionView: View {
                     // 通知が許可されたので、通知をスケジュール
                     StreakNotificationManager.shared.scheduleStreakReminder()
                 } else {
-                    print("❌ 通知許可が拒否されました - 設定アプリを開きます")
                     // 拒否された場合は設定アプリに誘導
                     if #available(iOS 16.0, *) {
                         if let bundleId = Bundle.main.bundleIdentifier,

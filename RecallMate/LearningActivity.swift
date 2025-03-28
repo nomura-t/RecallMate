@@ -56,11 +56,6 @@ extension LearningActivity {
         note: String? = nil,
         in context: NSManagedObjectContext
     ) -> LearningActivity {
-        print("🧩 学習活動記録開始:")
-        print("- タイプ: \(type.rawValue)")
-        print("- 時間: \(durationMinutes)分")
-        print("- メモ: \(memo?.title ?? "なし")")
-        
         let activity = LearningActivity(context: context)
         activity.id = UUID()
         activity.date = Date()
@@ -80,10 +75,6 @@ extension LearningActivity {
             
             // アクティビティ数を記録後に確認
             let afterCount = try context.count(for: fetchRequest)
-            
-            print("✅ 学習活動を記録しました: \(type.rawValue), \(durationMinutes)分")
-            print("- アクティビティ数: \(beforeCount) → \(afterCount)")
-            
             // ストリークを更新
             StreakTracker.shared.checkAndUpdateStreak(in: context)
             
@@ -94,12 +85,10 @@ extension LearningActivity {
                     name: NSNotification.Name("RefreshActivityData"),
                     object: nil
                 )
-                print("📣 アクティビティデータ更新通知を送信しました")
             }
             
             return activity
         } catch {
-            print("❌ 学習活動の記録に失敗しました: \(error.localizedDescription)")
             context.delete(activity)
             return activity
         }
@@ -132,7 +121,6 @@ extension LearningActivity {
         do {
             return try context.fetch(request)
         } catch {
-            print("❌ 学習活動の取得に失敗しました: \(error.localizedDescription)")
             return []
         }
     }

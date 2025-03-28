@@ -18,15 +18,12 @@ class ActivityTracker {
         
         // セッションをメモリに保持（UserDefaultsを使わない）
         activeSessions[sessionId] = startTime
-        
-        print("⏱️ 学習時間計測開始: \(memo.title ?? "無題"), ID: \(sessionId.uuidString)")
         return sessionId
     }
     
     // セッション終了 - アクティビティを記録する（注釈パラメータを追加）
     func endTimingSession(sessionId: UUID, memo: Memo, note: String? = nil) {
         guard let startTime = activeSessions[sessionId] else {
-            print("⚠️ セッションIDが見つかりません: \(sessionId.uuidString)")
             return
         }
         
@@ -40,9 +37,6 @@ class ActivityTracker {
         
         // 0分の場合は最低1分として扱う、最大は120分
         let cappedDuration = min(max(durationMinutes, 1), 120)
-        
-        print("⏱️ 学習時間計測終了: \(cappedDuration)分, \(memo.title ?? "無題")")
-        
         // 内容が変更された場合のみ記録
         // この条件チェックは呼び出し側に任せる
         

@@ -77,7 +77,6 @@ class QuestionEditorViewModel: ObservableObject {
         } catch {
             // エラーメッセージを直接保存
             self.error = "データ保存に失敗しました: \(error.localizedDescription)"
-            print("❌ 選択アイテム削除エラー: \(error.localizedDescription)")
         }
     }
     
@@ -114,7 +113,6 @@ class QuestionEditorViewModel: ObservableObject {
         } catch {
             // エラーメッセージを直接保存
             self.error = "データ保存に失敗しました: \(error.localizedDescription)"
-            print("❌ 比較問題削除エラー: \(error.localizedDescription)")
         }
     }
     
@@ -129,11 +127,9 @@ class QuestionEditorViewModel: ObservableObject {
             
             do {
                 try viewContext.save()
-                print("✅ キーワード保存完了: \(editingKeywords.count)個")
             } catch {
                 // エラーメッセージを直接保存
                 self.error = "データ保存に失敗しました: \(error.localizedDescription)"
-                print("❌ キーワード保存エラー: \(error.localizedDescription)")
             }
         }
         
@@ -194,7 +190,6 @@ class QuestionEditorViewModel: ObservableObject {
             }
             // 追加: 明示的に通知を送信
             DispatchQueue.main.async {
-                print("📣 回答インポート完了通知を送信します")
                 NotificationCenter.default.post(name: NSNotification.Name("AnswersImported"), object: nil)
                 
                 // 1秒後に再度通知を送信（UI更新のタイミング問題に対処）

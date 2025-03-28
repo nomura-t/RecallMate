@@ -42,7 +42,6 @@ class TagService {
             try context.save()
             return newTag
         } catch {
-            print("タグ作成エラー: \(error.localizedDescription)")
             return nil
         }
     }
@@ -56,7 +55,6 @@ class TagService {
             let results = try context.fetch(request)
             return results.first
         } catch {
-            print("タグ検索エラー: \(error.localizedDescription)")
             return nil
         }
     }
@@ -69,7 +67,6 @@ class TagService {
         do {
             return try context.fetch(request)
         } catch {
-            print("タグ取得エラー: \(error.localizedDescription)")
             return []
         }
     }
@@ -82,7 +79,6 @@ class TagService {
             try context.save()
             return true
         } catch {
-            print("タグ削除エラー: \(error.localizedDescription)")
             return false
         }
     }
@@ -95,10 +91,6 @@ class TagService {
         in context: NSManagedObjectContext
     ) -> Bool {
         var modified = false
-        
-        print("タグ編集開始 - ID: \(tag.id?.uuidString ?? "不明"), 現在の名前: \(tag.name ?? "無名"), 現在の色: \(tag.color ?? "未設定")")
-        print("変更内容 - 新しい名前: \(newName ?? "変更なし"), 新しい色: \(newColor ?? "変更なし")")
-        
         do {
             // 名前の変更がある場合
             if let newName = newName, !newName.isEmpty {
@@ -112,7 +104,6 @@ class TagService {
                     let existingTags = try context.fetch(fetchRequest)
                     guard existingTags.isEmpty else {
                         // 同じ名前のタグが既に存在する
-                        print("❌ 同じ名前のタグが既に存在します: \(trimmedName)")
                         return false
                     }
                 }
@@ -121,7 +112,6 @@ class TagService {
                 if tag.name != trimmedName {
                     tag.name = trimmedName
                     modified = true
-                    print("✅ タグ名を更新: \(trimmedName)")
                 }
             }
             
@@ -137,12 +127,10 @@ class TagService {
                     if availableColors.contains(where: { $0.lowercased() == normalizedNewColor }) {
                         tag.color = normalizedNewColor
                         modified = true
-                        print("✅ タグ色を更新: \(normalizedNewColor)")
                     } else {
                         // 無効な色の場合はデフォルト色を使用
                         tag.color = "blue"
                         modified = true
-                        print("⚠️ 無効な色名: \(newColor) - デフォルト色(blue)を使用します")
                     }
                 }
             }
@@ -150,14 +138,11 @@ class TagService {
             // 変更があった場合のみ保存
             if modified {
                 try context.save()
-                print("✅ タグの変更を保存しました")
             } else {
-                print("ℹ️ 変更なし - 保存をスキップします")
             }
             
             return true
         } catch {
-            print("❌ タグ更新エラー: \(error.localizedDescription)")
             context.rollback()
             return false
         }
@@ -200,7 +185,6 @@ class TagService {
         
         // デフォルト
         default:
-            print("⚠️ 未定義の色名: \(colorName) - デフォルト色(blue)を使用します")
             return .blue
         }
     }

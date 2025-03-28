@@ -254,7 +254,6 @@ struct TagSelectionView: View {
         
         // CoreDataから削除
         if tagService.deleteTag(tag, in: viewContext) {
-            print("✅ タグを削除しました: \(tag.name ?? "")")
             onTagsChanged?()
         } else {
             errorMessage = "タグの削除に失敗しました"
@@ -317,8 +316,6 @@ struct TagEditView: View {
         self._editedColor = State(initialValue: initialColor)
         self.onSave = onSave
         self.onCancel = onCancel
-        
-        print("初期化 - タグ: \(tag.name ?? "無名"), 色: \(initialColor)")
     }
     
     var body: some View {
@@ -347,7 +344,6 @@ struct TagEditView: View {
                         HStack(spacing: 15) {
                             ForEach(tagService.availableColors, id: \.self) { colorName in
                                 Button(action: {
-                                    print("色を選択: \(colorName)")
                                     editedColor = colorName
                                 }) {
                                     VStack {
@@ -385,16 +381,12 @@ struct TagEditView: View {
                 Text(errorMessage)
             }
             .onAppear {
-                print("現在のタグ - 名前: \(tag.name ?? "無名"), 色: \(tag.color ?? "未設定")")
-                print("編集値 - 名前: \(editedName), 色: \(editedColor)")
             }
         }
     }
     
     // 保存アクションを強化
     private func saveTag() {
-        print("保存処理 - 名前: \(editedName), 色: \(editedColor)")
-        
         // 名前が空かどうかチェック
         let trimmedName = editedName.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmedName.isEmpty {

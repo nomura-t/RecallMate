@@ -123,7 +123,6 @@ struct QuestionEditorView: View {
                 )
             }
             .sheet(isPresented: $showAnswerImport, onDismiss: {
-                print("📣 インポートシート閉じた時の通知を送信")
                 NotificationCenter.default.post(name: NSNotification.Name("AnswersImported"), object: nil)
                 
                 // 明示的に回答更新通知も送信
@@ -145,7 +144,6 @@ struct QuestionEditorView: View {
                         
                         // インポート完了時に即座に通知を送信
                         DispatchQueue.main.async {
-                            print("📣 onComplete内での通知を送信")
                             NotificationCenter.default.post(name: NSNotification.Name("AnswersImported"), object: nil)
                         }
                     }
@@ -464,7 +462,6 @@ struct QuestionEditorView: View {
         
         if let oldAnswer = UserDefaults.standard.string(forKey: oldAnswerKey) {
             UserDefaults.standard.set(oldAnswer, forKey: newAnswerKey)
-            print("✅ キーワード回答を移行: \(oldKeyword) → \(newKeyword)")
         }
     }
     
@@ -475,14 +472,12 @@ struct QuestionEditorView: View {
         
         do {
             try viewContext.save()
-            print("✅ 比較問題を更新しました")
             // 必要に応じてviewModelの状態を更新
             if let memo = memo {
                 viewModel.loadComparisonQuestions(for: memo)
             }
         } catch {
             viewModel.error = "比較問題の更新に失敗しました: \(error.localizedDescription)"
-            print("❌ 比較問題更新エラー: \(error.localizedDescription)")
         }
     }
 }

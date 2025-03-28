@@ -174,7 +174,6 @@ struct MemoDetailSection: View {
                     DispatchQueue.main.async {
                         viewModel.content = ""
                         viewModel.contentChanged = true
-                        print("📝 内容をリセットしました") // デバッグログ
                     }
                 }
             } message: {

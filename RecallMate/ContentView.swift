@@ -264,7 +264,6 @@ struct ContentView: View {
                     
                     // 保存ボタン
                     Button(action: {
-                        print("Recalledボタンがタップされました")
                         // 明示的にviewModelのメソッドを呼び出す
                         viewModel.saveMemoWithTracking {
                             dismiss()
@@ -287,7 +286,6 @@ struct ContentView: View {
                     .highPriorityGesture(
                         TapGesture()
                             .onEnded { _ in
-                                print("高優先度ジェスチャーが検出されました")
                                 viewModel.saveMemoWithTracking {
                                     dismiss()
                                 }
@@ -328,10 +326,7 @@ struct ContentView: View {
                             note: noteText,
                             in: context
                         )
-                        
-                        print("✅ 内容変更ありのため、学習セッションを記録しました: \(memo.title ?? "無題")")
                     } else {
-                        print("ℹ️ 内容変更なしのため、セッションを記録せずに終了します: \(memo.title ?? "無題")")
                     }
                 }
             }
