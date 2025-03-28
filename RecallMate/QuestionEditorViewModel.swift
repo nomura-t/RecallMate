@@ -200,6 +200,9 @@ class QuestionEditorViewModel: ObservableObject {
                 // 1秒後に再度通知を送信（UI更新のタイミング問題に対処）
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                     NotificationCenter.default.post(name: NSNotification.Name("AnswersImported"), object: nil)
+                    
+                    // 追加: 具体的な回答更新通知も送信
+                    NotificationCenter.default.post(name: NSNotification.Name("AnswersUpdated"), object: nil)
                 }
             }
         }

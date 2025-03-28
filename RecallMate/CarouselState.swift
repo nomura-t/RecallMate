@@ -174,25 +174,6 @@ class CarouselState: ObservableObject {
         cleanup()
     }
     
-    // CarouselState.swift に追加するメソッド
-    func refreshAnswers() {
-        print("♻️ カルーセル状態を強制更新します")
-        DispatchQueue.main.async {
-            // 現在の質問を一時保存
-            let currentQuestions = self.questions
-            let currentIdx = self.currentIndex
-            
-            // 一時的に空にして
-            self.questions = []
-            
-            // すぐに元に戻すことでSwiftUIに再描画を強制
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                self.questions = currentQuestions
-                self.currentIndex = min(currentIdx, max(0, currentQuestions.count - 1))
-                print("✅ カルーセルの質問を再読み込みしました: \(self.questions.count)件")
-            }
-        }
-    }
     func loadQuestionsFromRegistry(
         keywords: [String],
         comparisonQuestions: [ComparisonQuestion]
@@ -208,27 +189,40 @@ class CarouselState: ObservableObject {
         // キーワードの問題を追加
         for keyword in keywords {
             let id = "keyword_\(keyword)"
-            if let item = registry.getOrCreateQuestionItem(
+            let answerKey = "keyword_answer_\(keyword)"
+            let savedAnswer = UserDefaults.standard.string(forKey: answerKey)
+            
+            let item = registry.getOrCreateQuestionItem(
                 id: id,
                 questionText: "「\(keyword)」について説明してください。",
                 subText: "この概念、特徴、重要性について詳しく述べてください。",
                 isExplanation: true
-            ) {
-                items.append(item)
+            )
+            
+            // 保存されている回答と異なる場合は更新
+            if item.answer != savedAnswer {
+                item.answer = savedAnswer
             }
+            
+            items.append(item)
         }
         
         // 比較問題を追加
         for question in comparisonQuestions {
             if let id = question.id?.uuidString {
-                if let item = registry.getOrCreateQuestionItem(
+                let item = registry.getOrCreateQuestionItem(
                     id: id,
                     questionText: question.question ?? "",
                     subText: question.note ?? "",
                     isExplanation: false
-                ) {
-                    items.append(item)
+                )
+                
+                // 保存されている回答と異なる場合は更新
+                if item.answer != question.answer {
+                    item.answer = question.answer
                 }
+                
+                items.append(item)
             }
         }
         
@@ -236,6 +230,28 @@ class CarouselState: ObservableObject {
         DispatchQueue.main.async {
             self.questions = items
             self.isLoading = false
+        }
+    }
+    func refreshAnswers() {
+        print("♻️ カルーセル状態を強制更新します")
+        
+        // 質問アイテムの回答状態を更新
+        for question in questions {
+            if question.id.starts(with: "keyword_") {
+                let keyword = question.id.replacingOccurrences(of: "keyword_", with: "")
+                let answerKey = "keyword_answer_\(keyword)"
+                let savedAnswer = UserDefaults.standard.string(forKey: answerKey)
+                
+                // 更新が必要な場合のみ
+                if question.answer != savedAnswer {
+                    question.answer = savedAnswer
+                }
+            }
+        }
+        
+        // 更新通知を発行
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: NSNotification.Name("AnswersUpdated"), object: nil)
         }
     }
 }

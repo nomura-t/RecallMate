@@ -126,9 +126,13 @@ struct QuestionEditorView: View {
                 print("📣 インポートシート閉じた時の通知を送信")
                 NotificationCenter.default.post(name: NSNotification.Name("AnswersImported"), object: nil)
                 
+                // 明示的に回答更新通知も送信
+                NotificationCenter.default.post(name: NSNotification.Name("AnswersUpdated"), object: nil)
+                
                 // 遅延して再度通知を送信（より確実にするため）
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     NotificationCenter.default.post(name: NSNotification.Name("AnswersImported"), object: nil)
+                    NotificationCenter.default.post(name: NSNotification.Name("AnswersUpdated"), object: nil)
                 }
             }) {
                 AnswerImportView(
@@ -210,7 +214,7 @@ struct QuestionEditorView: View {
     
     // キーワードセクション
     private var keywordSection: some View {
-        Section(header: Text("説明問題キーワード")) {
+        Section(header: Text("重要単語")) {
             ForEach(viewModel.editingKeywords.indices, id: \.self) { index in
                 let keyword = viewModel.editingKeywords[index]
                 HStack {

@@ -98,13 +98,53 @@ struct QuestionCarouselView: View {
         .onReceive(QuestionItemRegistry.shared.updates) { _ in
             // レジストリが更新されたことを検知
             print("📣 質問レジストリの更新を検知しました")
-            // 明示的な再描画は必要ないかもしれないが、念のため
-            DispatchQueue.main.async {
-                if isShowingAnswer {
-                    // 回答表示中なら変更を即座に反映
+            // 回答表示状態に基づいて適切に更新
+            if isShowingAnswer {
+                // すでに回答表示中ならすぐに再表示
+                withAnimation(.spring()) {
                     isShowingAnswer = false
+                    
+                    // 少し遅らせて再表示
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        isShowingAnswer = true
+                        withAnimation(.spring()) {
+                            isShowingAnswer = true
+                        }
+                    }
+                }
+            }
+        }
+        // AnswersImportedやAnswersUpdatedなどの通知も監視
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("AnswersImported"))) { _ in
+            print("📣 回答インポート通知を受信しました")
+            // レジストリからの更新を確実に反映
+            loadQuestions()
+            
+            if isShowingAnswer {
+                // 回答表示中なら切り替えてから再表示
+                withAnimation(.spring()) {
+                    isShowingAnswer = false
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        withAnimation(.spring()) {
+                            isShowingAnswer = true
+                        }
+                    }
+                }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("AnswersUpdated"))) { _ in
+            print("📣 回答更新通知を受信しました")
+            loadQuestions()
+            
+            if isShowingAnswer {
+                // 回答表示状態を更新
+                withAnimation(.spring()) {
+                    isShowingAnswer = false
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        withAnimation(.spring()) {
+                            isShowingAnswer = true
+                        }
                     }
                 }
             }

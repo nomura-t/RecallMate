@@ -140,7 +140,6 @@ class QuestionService {
             print("❌ 比較問題回答保存エラー: \(error.localizedDescription)")
         }
     }
-    
     // MARK: - 回答のインポート
     
     /// テキストから回答を抽出して処理する

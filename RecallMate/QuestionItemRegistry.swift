@@ -1,3 +1,4 @@
+// RecallMate/QuestionItemRegistry.swift
 import Foundation
 import Combine
 
@@ -32,6 +33,11 @@ class QuestionItemRegistry {
         
         questionItems[id] = newItem
         return newItem
+    }
+    
+    // 欠けていたgetItemByIdメソッドを追加
+    func getItemById(_ id: String) -> QuestionItem? {
+        return questionItems[id]
     }
     
     // レジストリをクリア（必要に応じて）
