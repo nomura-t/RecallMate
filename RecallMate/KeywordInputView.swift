@@ -46,11 +46,6 @@ struct KeywordInputView: View {
                     )
                 
                 HStack {
-                    // カスタム問題作成ボタン
-                    Button(action: { showCustomQuestionCreator = true }) {
-                        Label("カスタム問題", systemImage: "plus.square.on.square")
-                    }
-                    
                     Spacer()
                     
                     Button(action: {

@@ -208,7 +208,7 @@ struct QuestionEditorView: View {
             keywordSection
             
             // 比較問題セクション
-            comparisonQuestionSection
+//            comparisonQuestionSection
         }
     }
     
@@ -266,60 +266,54 @@ struct QuestionEditorView: View {
     }
     
     // 比較問題セクション
-    private var comparisonQuestionSection: some View {
-        Section(header: Text("比較・カスタム問題")) {
-            ForEach(viewModel.comparisonQuestions.wrappedValue) { question in
-                HStack {
-                    if viewModel.isEditMode {
-                        Image(systemName: viewModel.selectedQuestions.contains(question.id?.uuidString ?? "") ? "checkmark.circle.fill" : "circle")
-                            .foregroundColor(.blue)
-                            .onTapGesture {
-                                viewModel.toggleQuestionSelection(question)
-                            }
-                    }
-                    
-                    VStack(alignment: .leading) {
-                        Text(question.question ?? "")
-                            .font(.subheadline)
-                            .lineLimit(2)
-                        
-                        if let note = question.note, !note.isEmpty {
-                            Text(note)
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                        }
-                    }
-                    
-                    Spacer()
-                    
-                    // 編集モードでない場合に編集ボタンを表示
-                    if !viewModel.isEditMode {
-                        Button(action: {
-                            editingQuestion = question
-                            showQuestionEditSheet = true
-                        }) {
-                            Image(systemName: "pencil")
-                                .foregroundColor(.blue)
-                        }
-                        .buttonStyle(BorderlessButtonStyle())
-                    }
-                }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    if viewModel.isEditMode {
-                        viewModel.toggleQuestionSelection(question)
-                    }
-                }
-            }
-            .onDelete(perform: viewModel.isEditMode ? nil : viewModel.deleteComparisonQuestion)
-            
-            if !viewModel.isEditMode {
-                Button(action: { showNewQuestionSheet = true }) {
-                    Label("カスタム問題を追加", systemImage: "plus")
-                }
-            }
-        }
-    }
+//    private var comparisonQuestionSection: some View {
+//        Section(header: Text("比較・カスタム問題")) {
+//            ForEach(viewModel.comparisonQuestions.wrappedValue) { question in
+//                HStack {
+//                    if viewModel.isEditMode {
+//                        Image(systemName: viewModel.selectedQuestions.contains(question.id?.uuidString ?? "") ? "checkmark.circle.fill" : "circle")
+//                            .foregroundColor(.blue)
+//                            .onTapGesture {
+//                                viewModel.toggleQuestionSelection(question)
+//                            }
+//                    }
+//                    
+//                    VStack(alignment: .leading) {
+//                        Text(question.question ?? "")
+//                            .font(.subheadline)
+//                            .lineLimit(2)
+//                        
+//                        if let note = question.note, !note.isEmpty {
+//                            Text(note)
+//                                .font(.caption)
+//                                .foregroundColor(.gray)
+//                        }
+//                    }
+//                    
+//                    Spacer()
+//                    
+//                    // 編集モードでない場合に編集ボタンを表示
+//                    if !viewModel.isEditMode {
+//                        Button(action: {
+//                            editingQuestion = question
+//                            showQuestionEditSheet = true
+//                        }) {
+//                            Image(systemName: "pencil")
+//                                .foregroundColor(.blue)
+//                        }
+//                        .buttonStyle(BorderlessButtonStyle())
+//                    }
+//                }
+//                .contentShape(Rectangle())
+//                .onTapGesture {
+//                    if viewModel.isEditMode {
+//                        viewModel.toggleQuestionSelection(question)
+//                    }
+//                }
+//            }
+//            .onDelete(perform: viewModel.isEditMode ? nil : viewModel.deleteComparisonQuestion)
+//        }
+//    }
     
     // 回答編集タブのコンテンツ
     private var answerEditTab: some View {

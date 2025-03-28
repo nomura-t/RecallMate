@@ -517,31 +517,6 @@ class ContentViewModel: ObservableObject {
                 try viewContext.save()
             }
             
-            // 一時保存されたカスタム問題があれば、それらを作成
-            if let tempCustomQuestions = UserDefaults.standard.array(forKey: "tempCustomQuestions") as? [[String]] {
-                for questionData in tempCustomQuestions {
-                    if questionData.count >= 1 {
-                        let questionText = questionData[0]
-                        let note = questionData.count > 1 ? questionData[1] : ""
-                        
-                        // カスタム問題を作成
-                        let newQuestion = ComparisonQuestion(context: viewContext)
-                        newQuestion.id = UUID()
-                        newQuestion.question = questionText
-                        newQuestion.note = note.isEmpty ? nil : note
-                        newQuestion.createdAt = Date()
-                        newQuestion.memo = memoToSave
-                        
-                        print("✅ 一時保存されたカスタム問題を作成: '\(questionText)'")
-                    }
-                }
-                
-                // 一時データをクリア
-                UserDefaults.standard.removeObject(forKey: "tempCustomQuestions")
-                
-                try viewContext.save()
-            }
-            
             // ストリークを更新
             StreakTracker.shared.checkAndUpdateStreak(in: viewContext)
             
