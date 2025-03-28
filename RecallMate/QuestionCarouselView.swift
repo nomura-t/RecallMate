@@ -94,6 +94,21 @@ struct QuestionCarouselView: View {
             // カード切り替え時には解答表示をリセット
             isShowingAnswer = false
         }
+        // 以下の通知リスナーを追加
+        .onReceive(QuestionItemRegistry.shared.updates) { _ in
+            // レジストリが更新されたことを検知
+            print("📣 質問レジストリの更新を検知しました")
+            // 明示的な再描画は必要ないかもしれないが、念のため
+            DispatchQueue.main.async {
+                if isShowingAnswer {
+                    // 回答表示中なら変更を即座に反映
+                    isShowingAnswer = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        isShowingAnswer = true
+                    }
+                }
+            }
+        }
     }
     
 // プレースホルダーカード - 修正バージョン
@@ -282,10 +297,9 @@ struct QuestionCarouselView: View {
     
     // 質問データの読み込み
     private func loadQuestions() {
-        state.loadQuestions(
+        state.loadQuestionsFromRegistry(
             keywords: keywords,
-            comparisonQuestions: comparisonQuestions,
-            viewContext: viewContext
+            comparisonQuestions: comparisonQuestions
         )
     }
 }

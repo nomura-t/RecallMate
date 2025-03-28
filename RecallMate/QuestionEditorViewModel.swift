@@ -192,12 +192,22 @@ class QuestionEditorViewModel: ObservableObject {
                     )
                 }
             }
+            // 追加: 明示的に通知を送信
+            DispatchQueue.main.async {
+                print("📣 回答インポート完了通知を送信します")
+                NotificationCenter.default.post(name: NSNotification.Name("AnswersImported"), object: nil)
+                
+                // 1秒後に再度通知を送信（UI更新のタイミング問題に対処）
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    NotificationCenter.default.post(name: NSNotification.Name("AnswersImported"), object: nil)
+                }
+            }
         }
     }
     
-    // QuestionItemリストを生成
     func generateQuestionItems() -> [QuestionItem] {
         var items: [QuestionItem] = []
+        let registry = QuestionItemRegistry.shared
         
         // キーワードから問題アイテムを生成
         for keyword in keywords.wrappedValue {
@@ -205,34 +215,40 @@ class QuestionEditorViewModel: ObservableObject {
             let answerKey = "keyword_answer_\(keyword)"
             let answer = UserDefaults.standard.string(forKey: answerKey)
             
-            items.append(QuestionItem(
+            // 既存のアイテムを取得または新規作成
+            let item = registry.getOrCreateQuestionItem(
                 id: "keyword_\(keyword)",
                 questionText: "「\(keyword)」について説明してください。",
                 subText: "この概念、特徴、重要性について詳しく述べてください。",
-                isExplanation: true,
-                answer: answer,
-                onAnswerChanged: { newAnswer in
-                    QuestionService.shared.saveKeywordAnswer(keyword: keyword, answer: newAnswer)
-                }
-            ))
+                isExplanation: true
+            )
+            
+            // 回答を設定（もし異なる場合）
+            if item.answer != answer {
+                item.answer = answer
+            }
+            
+            items.append(item)
         }
         
         // 比較問題から問題アイテムを生成
         for question in comparisonQuestions.wrappedValue {
-            items.append(QuestionItem(
-                id: question.id?.uuidString ?? UUID().uuidString,
+            let questionId = question.id?.uuidString ?? UUID().uuidString
+            
+            // 既存のアイテムを取得または新規作成
+            let item = registry.getOrCreateQuestionItem(
+                id: questionId,
                 questionText: question.question ?? "",
                 subText: question.note ?? "",
-                isExplanation: false,
-                answer: question.answer,
-                onAnswerChanged: { newAnswer in
-                    QuestionService.shared.saveComparisonQuestionAnswer(
-                        question: question,
-                        answer: newAnswer,
-                        viewContext: self.viewContext
-                    )
-                }
-            ))
+                isExplanation: false
+            )
+            
+            // 回答を設定（もし異なる場合）
+            if item.answer != question.answer {
+                item.answer = question.answer
+            }
+            
+            items.append(item)
         }
         
         return items

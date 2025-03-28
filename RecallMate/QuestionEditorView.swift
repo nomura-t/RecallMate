@@ -122,7 +122,15 @@ struct QuestionEditorView: View {
                     onCancel: { showNewQuestionSheet = false }
                 )
             }
-            .sheet(isPresented: $showAnswerImport) {
+            .sheet(isPresented: $showAnswerImport, onDismiss: {
+                print("📣 インポートシート閉じた時の通知を送信")
+                NotificationCenter.default.post(name: NSNotification.Name("AnswersImported"), object: nil)
+                
+                // 遅延して再度通知を送信（より確実にするため）
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    NotificationCenter.default.post(name: NSNotification.Name("AnswersImported"), object: nil)
+                }
+            }) {
                 AnswerImportView(
                     allQuestions: Binding<[QuestionItem]>(
                         get: { viewModel.generateQuestionItems() },
@@ -130,6 +138,12 @@ struct QuestionEditorView: View {
                     ),
                     onComplete: { answers in
                         viewModel.applyImportedAnswers(answers)
+                        
+                        // インポート完了時に即座に通知を送信
+                        DispatchQueue.main.async {
+                            print("📣 onComplete内での通知を送信")
+                            NotificationCenter.default.post(name: NSNotification.Name("AnswersImported"), object: nil)
+                        }
                     }
                 )
             }

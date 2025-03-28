@@ -173,4 +173,69 @@ class CarouselState: ObservableObject {
     deinit {
         cleanup()
     }
+    
+    // CarouselState.swift に追加するメソッド
+    func refreshAnswers() {
+        print("♻️ カルーセル状態を強制更新します")
+        DispatchQueue.main.async {
+            // 現在の質問を一時保存
+            let currentQuestions = self.questions
+            let currentIdx = self.currentIndex
+            
+            // 一時的に空にして
+            self.questions = []
+            
+            // すぐに元に戻すことでSwiftUIに再描画を強制
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.questions = currentQuestions
+                self.currentIndex = min(currentIdx, max(0, currentQuestions.count - 1))
+                print("✅ カルーセルの質問を再読み込みしました: \(self.questions.count)件")
+            }
+        }
+    }
+    func loadQuestionsFromRegistry(
+        keywords: [String],
+        comparisonQuestions: [ComparisonQuestion]
+    ) {
+        // 以前のデータを保存
+        lastKeywords = keywords
+        lastQuestionIds = comparisonQuestions.compactMap { $0.id?.uuidString }
+        
+        // レジストリから問題を生成
+        var items: [QuestionItem] = []
+        let registry = QuestionItemRegistry.shared
+        
+        // キーワードの問題を追加
+        for keyword in keywords {
+            let id = "keyword_\(keyword)"
+            if let item = registry.getOrCreateQuestionItem(
+                id: id,
+                questionText: "「\(keyword)」について説明してください。",
+                subText: "この概念、特徴、重要性について詳しく述べてください。",
+                isExplanation: true
+            ) {
+                items.append(item)
+            }
+        }
+        
+        // 比較問題を追加
+        for question in comparisonQuestions {
+            if let id = question.id?.uuidString {
+                if let item = registry.getOrCreateQuestionItem(
+                    id: id,
+                    questionText: question.question ?? "",
+                    subText: question.note ?? "",
+                    isExplanation: false
+                ) {
+                    items.append(item)
+                }
+            }
+        }
+        
+        // 質問リストを更新
+        DispatchQueue.main.async {
+            self.questions = items
+            self.isLoading = false
+        }
+    }
 }

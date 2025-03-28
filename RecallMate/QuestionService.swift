@@ -97,7 +97,6 @@ class QuestionService {
     
     // MARK: - 回答の保存
     
-    /// キーワード問題の回答を保存
     func saveKeywordAnswer(keyword: String, answer: String?) {
         let key = "keyword_answer_\(keyword)"
         if let answer = answer, !answer.isEmpty {
@@ -108,14 +107,17 @@ class QuestionService {
             UserDefaults.standard.set("", forKey: key)
             print("🔄 キーワード「\(keyword)」の回答を空にしました")
         }
+        
+        // レジストリに更新を通知
+        let id = "keyword_\(keyword)"
+        if let item = QuestionItemRegistry.shared.getItemById(id) {
+            item.answer = answer
+        }
+        QuestionItemRegistry.shared.notifyUpdates()
     }
     
     /// 比較問題の回答を保存
-    func saveComparisonQuestionAnswer(
-        question: ComparisonQuestion,
-        answer: String?,
-        viewContext: NSManagedObjectContext
-    ) {
+    func saveComparisonQuestionAnswer(question: ComparisonQuestion, answer: String?, viewContext: NSManagedObjectContext) {
         // 空の回答でも保存する
         question.answer = answer
         
@@ -126,6 +128,14 @@ class QuestionService {
             } else {
                 print("🔄 比較問題「\(question.question?.prefix(20) ?? "")...」の回答を空にしました")
             }
+            
+            // レジストリに更新を通知
+            if let id = question.id?.uuidString {
+                if let item = QuestionItemRegistry.shared.getItemById(id) {
+                    item.answer = answer
+                }
+            }
+            QuestionItemRegistry.shared.notifyUpdates()
         } catch {
             print("❌ 比較問題回答保存エラー: \(error.localizedDescription)")
         }
