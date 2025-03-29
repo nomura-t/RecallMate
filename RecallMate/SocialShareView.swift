@@ -155,18 +155,6 @@ struct PlatformShareButton: View {
 
 // iOSバージョンに応じたシェアシート
 
-// iOS 16未満用の互換性シェアシート
-struct LegacyShareSheet: UIViewControllerRepresentable {
-    let text: String
-    
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        let activityItems: [Any] = [text]
-        let controller = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
-        return controller
-    }
-    
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
-}
 
 // iOS 16以降用
 @available(iOS 16.0, *)
