@@ -45,12 +45,13 @@ class ContentViewModel: ObservableObject {
     }
     
     
+    // loadMemoData関数内で次回復習日を確実に設定
     func loadMemoData(memo: Memo) {
         title = memo.title ?? ""
         pageRange = memo.pageRange ?? ""
         content = memo.content ?? ""
         recallScore = memo.recallScore
-        reviewDate = memo.nextReviewDate
+        reviewDate = memo.nextReviewDate // この行を確実に設定
         
         // テスト日の読み込み
         testDate = memo.testDate
@@ -65,6 +66,29 @@ class ContentViewModel: ObservableObject {
         loadComparisonQuestions(for: memo)
         // タグを読み込む
         selectedTags = memo.tagsArray
+    }
+    // 次回復習日を更新するメソッド
+    func updateNextReviewDate() {
+        if shouldUseTestDate, let testDate = testDate {
+            let reviewDates = calculateReviewScheduleBasedOnTestDate()
+            if let firstReviewDate = reviewDates.first {
+                reviewDate = firstReviewDate
+            } else {
+                // テスト日ベースの計算ができない場合は通常計算
+                reviewDate = ReviewCalculator.calculateNextReviewDate(
+                    recallScore: recallScore,
+                    lastReviewedDate: Date(),
+                    perfectRecallCount: memo?.perfectRecallCount ?? 0
+                )
+            }
+        } else {
+            // 通常の復習日計算
+            reviewDate = ReviewCalculator.calculateNextReviewDate(
+                recallScore: recallScore,
+                lastReviewedDate: Date(),
+                perfectRecallCount: memo?.perfectRecallCount ?? 0
+            )
+        }
     }
     
     func loadComparisonQuestions(for memo: Memo) {
