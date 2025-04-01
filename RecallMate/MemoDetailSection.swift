@@ -59,10 +59,12 @@ struct MemoDetailSection: View {
                     }) {
                         Image(systemName: "trash")
                             .foregroundColor(.red)
-                            .font(.system(size: 14))
+                            .font(.system(size: 16)) // サイズ調整
+                            .frame(width: 44, height: 44) // タップ領域を確保
+                            .background(Color.clear) // 視覚的には影響なし
+                            .contentShape(Rectangle()) // タップ範囲を確保
                     }
-                    .buttonStyle(BorderlessButtonStyle())
-                    .padding(.horizontal, 8)
+                    .buttonStyle(PlainButtonStyle()) // 不要なスタイルを適用しない
                     
                     // iPad向け手書き入力ボタン
                     if UIDevice.current.userInterfaceIdiom == .pad {
