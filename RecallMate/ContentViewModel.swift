@@ -524,7 +524,7 @@ extension ContentViewModel {
                         let noteText = "新規メモ作成: \(memo.title ?? "無題")"
                         
                         // 新規メモ作成アクティビティを記録
-                        LearningActivity.recordActivity(
+                        LearningActivity.recordActivityWithHabitChallenge(
                             type: .exercise, // 新規メモ作成は exercise タイプ
                             durationMinutes: 5, // 最小時間（適宜調整）
                             memo: memo,
