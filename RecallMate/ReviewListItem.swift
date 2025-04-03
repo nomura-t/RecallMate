@@ -60,7 +60,7 @@ struct ReviewListItem: View {
                     // 復習日ラベル - 状態によって表示を変更
                     Text(reviewDateText)
                         .font(.subheadline)
-                        .foregroundColor(isOverdue ? .red : (isDueToday ? .blue : .gray))
+                        .foregroundColor(isOverdue ? .blue : (isDueToday ? .blue : .gray))
                     
                     // 遅延日数を表示（遅延の場合のみ）
                     if isOverdue && daysOverdue > 0 {
@@ -88,7 +88,7 @@ struct ReviewListItem: View {
     // 状態に応じた背景色
     private var backgroundColorForState: Color {
         if isOverdue {
-            return Color.red.opacity(0.1)
+            return Color.blue.opacity(0.1)
         } else if isDueToday {
             return Color.blue.opacity(0.1)
         } else {
@@ -99,7 +99,7 @@ struct ReviewListItem: View {
     // 状態に応じた優先度表示の色
     private var priorityColor: Color {
         if isOverdue {
-            return .red
+            return .blue
         } else if isDueToday {
             return .blue
         } else {
@@ -110,7 +110,7 @@ struct ReviewListItem: View {
     // 復習日の表示テキスト
     private var reviewDateText: String {
         if isOverdue {
-            return "期限切れ: \(formattedDate(memo.nextReviewDate))"
+            return "復習予定日: \(formattedDate(memo.nextReviewDate))"
         } else if isDueToday {
             return "今日が復習日"
         } else {
