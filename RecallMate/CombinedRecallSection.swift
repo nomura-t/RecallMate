@@ -5,7 +5,7 @@ struct CombinedRecallSection: View {
     @ObservedObject var viewModel: ContentViewModel
     
     var body: some View {
-        Section(header: Text("記憶定着度")) {
+        Section(header: Text("記憶定着度振り返り")) {
             // シンプルなプログレスバー
             HStack {
                 Text("\(Int(viewModel.recallScore))%")
