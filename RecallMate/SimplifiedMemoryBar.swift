@@ -21,6 +21,7 @@ struct SimplifiedMemoryBar: View {
                     .font(.headline)
                     .foregroundColor(retentionColor)
                     .fontWeight(.bold)
+                    .frame(width: 60, alignment: .trailing) // 幅を固定し、右寄せにする
             }
             
             // プログレスバー
@@ -45,6 +46,7 @@ struct SimplifiedMemoryBar: View {
                 Image(systemName: statusIcon)
                     .foregroundColor(retentionColor)
                     .font(.system(size: 18))
+                    .frame(width: 24) // アイコンの幅を固定
                 
                 // 短い説明テキスト
                 Text(retentionDescription)
@@ -157,6 +159,7 @@ struct SimplifiedMemoryBar_Previews: PreviewProvider {
             SimplifiedMemoryBar(retentionPercentage: 40)
             SimplifiedMemoryBar(retentionPercentage: 70)
             SimplifiedMemoryBar(retentionPercentage: 90)
+            SimplifiedMemoryBar(retentionPercentage: 100) // 100%のケースを追加して確認
         }
         .padding()
     }
