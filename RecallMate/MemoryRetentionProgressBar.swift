@@ -40,6 +40,7 @@ struct MemoryRetentionProgressBar: View {
                         .font(.caption)
                         .fontWeight(.semibold)
                         .foregroundColor(retentionColor)
+                        .frame(width: 50, alignment: .trailing) // 幅を固定し、右寄せにする
                 }
             }
         }

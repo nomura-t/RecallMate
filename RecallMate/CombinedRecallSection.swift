@@ -8,10 +8,11 @@ struct CombinedRecallSection: View {
         Section(header: Text("記憶定着度振り返り")) {
             // シンプルなプログレスバー
             HStack {
+                // 固定幅を確保し、右寄せにしてテキストが常に同じ位置に表示されるようにする
                 Text("\(Int(viewModel.recallScore))%")
                     .font(.headline)
                     .foregroundColor(retentionColor(for: viewModel.recallScore))
-                    .frame(width: 45, alignment: .trailing)
+                    .frame(width: 60, alignment: .trailing) // 幅を60に設定し、100%でも崩れないようにする
                 
                 // プログレスバー
                 GeometryReader { geometry in
@@ -50,6 +51,7 @@ struct CombinedRecallSection: View {
                 HStack(spacing: 8) {
                     Image(systemName: statusIcon(for: viewModel.recallScore))
                         .foregroundColor(retentionColor(for: viewModel.recallScore))
+                        .frame(width: 24) // アイコンの幅を固定
                     
                     Text(retentionDescription(for: viewModel.recallScore))
                         .font(.subheadline)
@@ -67,6 +69,7 @@ struct CombinedRecallSection: View {
                     HStack {
                         Image(systemName: "calendar.badge.clock")
                             .foregroundColor(.blue)
+                            .frame(width: 24) // アイコンの幅を固定
                         
                         Text("次回の推奨復習日: \(viewModel.formattedDate(nextReviewDate))")
                             .font(.caption)

@@ -20,6 +20,7 @@ struct RetentionStatusCard: View {
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(retentionColor)
+                    .frame(width: 70, alignment: .trailing) // 幅を固定し、右寄せにする
             }
             
             // プログレスバー
@@ -29,6 +30,7 @@ struct RetentionStatusCard: View {
             HStack(alignment: .top) {
                 Image(systemName: statusIcon)
                     .foregroundColor(retentionColor)
+                    .frame(width: 24) // アイコンの幅を固定
                 
                 Text(retentionDescription)
                     .font(.subheadline)
@@ -140,6 +142,7 @@ struct RetentionStatusCard_Previews: PreviewProvider {
                 RetentionStatusCard(retentionPercentage: 25)
                 RetentionStatusCard(retentionPercentage: 10)
                 RetentionStatusCard(retentionPercentage: 0)
+                RetentionStatusCard(retentionPercentage: 100) // 100%のケースを追加して確認
             }
             .padding()
         }
