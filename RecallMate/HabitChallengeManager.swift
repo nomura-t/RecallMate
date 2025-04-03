@@ -171,4 +171,21 @@ class HabitChallengeManager: ObservableObject {
         goldAchieved = false
         saveState()
     }
+    // デバッグビルドでのテスト用コード
+    // 連続日数をシミュレートするためのヘルパー関数を追加
+    func simulateStreakDays(days: Int) {
+        currentStreak = days
+        // 最終活動日を設定（昨日の日付）
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+        lastActiveDate = Calendar.current.startOfDay(for: yesterday)
+        saveState()
+    }
+
+    // マイルストーン通知のリセット
+    func resetMilestoneNotifications() {
+        showBronzeModal = false
+        showSilverModal = false
+        showGoldModal = false
+        saveState()
+    }
 }

@@ -320,7 +320,7 @@ struct ContentView: View {
                         
                         // 復習アクティビティを直接記録
                         let context = PersistenceController.shared.container.viewContext
-                        LearningActivity.recordActivity(
+                        LearningActivity.recordActivityWithHabitChallenge(
                             type: .review,  // 復習は review タイプ
                             durationMinutes: ActivityTracker.shared.getCurrentSessionDuration(sessionId: sessionId),
                             memo: memo,
