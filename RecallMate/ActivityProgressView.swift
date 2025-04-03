@@ -81,9 +81,9 @@ struct ActivityProgressView: View {
         case 1: // 週間
             return "\(dateFormatter.string(from: start)) - \(dateFormatter.string(from: end))"
         case 2: // 月間
-            return "過去30日間"
+            return "過去30日"
         case 3: // 年間
-            return "過去365日間"
+            return "過去365日"
         default:
             return ""
         }
@@ -141,10 +141,10 @@ struct ActivityProgressView: View {
                 
                 // 期間セレクター
                 Picker("表示期間", selection: $selectedTab) {
-                    Text("日間").tag(0)
-                    Text("週間").tag(1)
-                    Text("月間").tag(2)
-                    Text("年間").tag(3)
+                    Text("日").tag(0)
+                    Text("週").tag(1)
+                    Text("月").tag(2)
+                    Text("年").tag(3)
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .padding()
