@@ -10,7 +10,7 @@ struct CombinedRecallSection: View {
             HStack {
                 // 固定幅を確保し、右寄せにしてテキストが常に同じ位置に表示されるようにする
                 Text("\(Int(viewModel.recallScore))%")
-                    .font(.headline)
+                    .font(.subheadline)
                     .foregroundColor(retentionColor(for: viewModel.recallScore))
                     .frame(width: 60, alignment: .trailing) // 幅を60に設定し、100%でも崩れないようにする
                 

@@ -411,7 +411,7 @@ struct RetentionView: View {
                 HStack {
                     // タイトルとページ範囲を表示
                     Text(memo.title ?? "無題")
-                        .font(.headline)
+                        .font(.subheadline)
                     
                     // ページ範囲を表示（存在する場合のみ）
                     if let pageRange = memo.pageRange, !pageRange.isEmpty {
