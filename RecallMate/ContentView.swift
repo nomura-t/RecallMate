@@ -262,7 +262,7 @@ struct ContentView: View {
                             viewModel.recordActivityOnSave = true
                         }
                     // テスト日設定セクション
-                    TestDateSection(viewModel: viewModel)
+//                    TestDateSection(viewModel: viewModel)
                     // 保存ボタン
                     Button(action: {
                         // 明示的にviewModelのメソッドを呼び出す
