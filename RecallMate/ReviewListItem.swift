@@ -27,7 +27,8 @@ struct ReviewListItem: View {
                     Text(memo.title ?? "無題")
                         .font(.subheadline)
                         .foregroundColor(.primary)
-                    
+                }
+                HStack {
                     if let pageRange = memo.pageRange, !pageRange.isEmpty {
                         Text("(\(pageRange))")
                             .font(.subheadline)
