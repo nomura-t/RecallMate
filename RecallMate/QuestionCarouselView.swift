@@ -208,6 +208,10 @@ struct QuestionCarouselView: View {
         if !state.questions.isEmpty {
             let currentQuestion = state.questions[state.currentIndex]
             VStack(alignment: .leading, spacing: 8) {
+                Text("Question")
+                    .font(.headline)
+                    .foregroundColor(.blue)
+                    .padding(.top, 2)
                 Text(currentQuestion.questionText)
                     .font(.subheadline)
                     .foregroundColor(.primary)
@@ -290,7 +294,7 @@ struct QuestionCarouselView: View {
             let currentQuestion = state.questions[state.currentIndex]
             
             VStack(alignment: .leading, spacing: 8) {
-                Text("答え")
+                Text("Answer")
                     .font(.headline)
                     .foregroundColor(.blue)
                     .padding(.top, 2)
@@ -300,7 +304,7 @@ struct QuestionCarouselView: View {
                     // 回答がある場合
                     ScrollView {
                         Text(answer)
-                            .font(.body)
+                            .font(.subheadline)
                             .foregroundColor(.primary)
                             .padding(.top, 2)
                             .frame(maxWidth: .infinity, alignment: .leading) // 左揃えに
