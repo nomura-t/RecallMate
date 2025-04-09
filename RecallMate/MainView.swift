@@ -10,8 +10,9 @@ struct MainView: View {
     @EnvironmentObject var appSettings: AppSettings
 
     // 追加: 初回ガイド表示用の状態変数
-//    @State private var showFloatingGuide = !UserDefaults.standard.bool(forKey: "hasSeenFloatingGuide")
-    @State private var showFloatingGuide = true
+    @State private var showFloatingGuide = !UserDefaults.standard.bool(forKey: "hasSeenFloatingGuide")
+    
+
 
     
     // ReviewManager追加
@@ -64,34 +65,43 @@ struct MainView: View {
             .fullScreenCover(isPresented: $isAddingMemo) {
                 ContentView(memo: nil)
             }
-            // 脳アイコンボタンにエフェクトを追加（初回のみ光らせる）
-            if showFloatingGuide {
-                Circle()
-                    .fill(Color.blue.opacity(0.3))
-                    .frame(width: 100, height: 100)
-                    .scaleEffect(1.2)
-                    .position(x: UIScreen.main.bounds.width - 58, y: UIScreen.main.bounds.height - 210)
-            }
-            // オーバーレイガイド
-            if showFloatingGuide {
-                FloatingGuideView(isPresented: $showFloatingGuide)
-                    .zIndex(10) // 最前面に表示
-                    .onAppear {
-                        // 5秒後に自動的に閉じる（オプション）
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 500) {
-                            withAnimation {
-                                showFloatingGuide = false
-                                UserDefaults.standard.set(true, forKey: "hasSeenFloatingGuide")
+            GeometryReader { geometry in
+                let isPad = UIDevice.current.userInterfaceIdiom == .pad
+                let effectYPosition: CGFloat = isPad ? geometry.size.height - 1260 : geometry.size.height - 670
+
+                ZStack {
+                    // 脳アイコンエフェクト
+                    if showFloatingGuide {
+                        Circle()
+                            .fill(Color.blue.opacity(0.3))
+                            .frame(width: 100, height: 100)
+                            .scaleEffect(1.2)
+                            .position(x: geometry.size.width - 60,
+                                      y: geometry.size.height - effectYPosition)
+                    }
+
+                    // ガイド表示
+                    if showFloatingGuide {
+                        FloatingGuideView(isPresented: $showFloatingGuide)
+                            .zIndex(10)
+                            .onAppear {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                                    withAnimation {
+                                        showFloatingGuide = false
+                                        UserDefaults.standard.set(true, forKey: "hasSeenFloatingGuide")
+                                    }
+                                }
                             }
-                        }
+                            .onTapGesture {
+                                withAnimation {
+                                    showFloatingGuide = false
+                                    UserDefaults.standard.set(true, forKey: "hasSeenFloatingGuide")
+                                }
+                            }
                     }
-                    .onTapGesture {
-                        withAnimation {
-                            showFloatingGuide = false
-                            UserDefaults.standard.set(true, forKey: "hasSeenFloatingGuide")
-                        }
-                    }
+                }
             }
+
 
             // レビュー誘導モーダル
             if showingReviewRequest {
