@@ -8,6 +8,11 @@ struct MainView: View {
     @State private var isRecordingActivity = false
     @State private var selectedTab = 0  // 現在選択中のタブを追跡
     @EnvironmentObject var appSettings: AppSettings
+
+    // 追加: 初回ガイド表示用の状態変数
+//    @State private var showFloatingGuide = !UserDefaults.standard.bool(forKey: "hasSeenFloatingGuide")
+    @State private var showFloatingGuide = true
+
     
     // ReviewManager追加
     @StateObject private var reviewManager = ReviewManager.shared
@@ -59,7 +64,35 @@ struct MainView: View {
             .fullScreenCover(isPresented: $isAddingMemo) {
                 ContentView(memo: nil)
             }
-            
+            // 脳アイコンボタンにエフェクトを追加（初回のみ光らせる）
+            if showFloatingGuide {
+                Circle()
+                    .fill(Color.blue.opacity(0.3))
+                    .frame(width: 100, height: 100)
+                    .scaleEffect(1.2)
+                    .position(x: UIScreen.main.bounds.width - 58, y: UIScreen.main.bounds.height - 210)
+            }
+            // オーバーレイガイド
+            if showFloatingGuide {
+                FloatingGuideView(isPresented: $showFloatingGuide)
+                    .zIndex(10) // 最前面に表示
+                    .onAppear {
+                        // 5秒後に自動的に閉じる（オプション）
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 500) {
+                            withAnimation {
+                                showFloatingGuide = false
+                                UserDefaults.standard.set(true, forKey: "hasSeenFloatingGuide")
+                            }
+                        }
+                    }
+                    .onTapGesture {
+                        withAnimation {
+                            showFloatingGuide = false
+                            UserDefaults.standard.set(true, forKey: "hasSeenFloatingGuide")
+                        }
+                    }
+            }
+
             // レビュー誘導モーダル
             if showingReviewRequest {
                 ReviewRequestView(isPresented: $showingReviewRequest)

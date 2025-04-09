@@ -31,6 +31,12 @@ struct OnboardingView: View {
             image: "timer",
             title: "ポモドーロタイマー",
             description: "集中力を最大化するポモドーロテクニックを活用しましょう。"
+        ),
+        // 最後に脳アイコン誘導を追加
+        (
+            image: "brain.head.profile",
+            title: "メモを作成してみましょう",
+            description: "ホーム画面に戻ったら、右下の脳アイコンをタップして最初のメモを作成してみましょう！"
         )
     ]
     
