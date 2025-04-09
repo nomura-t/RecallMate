@@ -101,25 +101,6 @@ struct RecallMateApp: App {
         // キーワードを追加
         sampleMemo.keywords = "アクティブリコール,分散学習,長期記憶,復習間隔"
         
-        // サンプルメモ用のタグを作成
-        let studyTag = Tag(context: context)
-        studyTag.id = UUID()
-        studyTag.name = "学習法"
-        studyTag.color = "blue"
-        studyTag.createdAt = Date()
-        
-        let memoryTag = Tag(context: context)
-        memoryTag.id = UUID()
-        memoryTag.name = "記憶術"
-        memoryTag.color = "purple"
-        memoryTag.createdAt = Date()
-        
-        // メモにタグを追加
-        if let tags = sampleMemo.tags as? NSMutableSet {
-            tags.add(studyTag)
-            tags.add(memoryTag)
-        }
-        
         // 説明問題の回答をUserDefaultsに保存
         UserDefaults.standard.set("""
         アクティブリコールとは、学習した内容を単に読み返すのではなく、能動的に思い出そうとする学習法です。

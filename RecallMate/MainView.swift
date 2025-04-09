@@ -23,14 +23,14 @@ struct MainView: View {
                 /// ホーム（復習リスト）
                 HomeView(isAddingMemo: $isAddingMemo)
                     .tabItem {
-                        Label("ホーム", systemImage: "house.fill")
+                        Label("記憶する", systemImage: "house.fill")
                     }
                     .tag(0)
                 
                 /// 学習進捗
                 ActivityProgressView()
                     .tabItem {
-                        Label("学習進捗", systemImage: "list.bullet.rectangle")
+                        Label("振り返り", systemImage: "list.bullet.rectangle")
                     }
                     .tag(1)
                 
@@ -43,7 +43,7 @@ struct MainView: View {
                 /// ポモドーロタイマー（新規追加）
                 PomodoroView()
                     .tabItem {
-                        Label("ポモドーロ", systemImage: "timer")
+                        Label("集中タイマー", systemImage: "timer")
                     }
                     .tag(2)
                 
