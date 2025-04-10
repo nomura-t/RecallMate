@@ -427,6 +427,17 @@ struct ContentView: View {
                         .transition(.opacity)
                         .animation(.easeInOut, value: viewModel.showQuestionCardGuide)
                     }
+                    // メモ内容ガイド - 新しく追加
+                    if viewModel.showMemoContentGuide {
+                        MemoContentGuideView(
+                            isPresented: $viewModel.showMemoContentGuide,
+                            onDismiss: {
+                                viewModel.dismissMemoContentGuide()
+                            }
+                        )
+                        .transition(.opacity)
+                        .animation(.easeInOut, value: viewModel.showMemoContentGuide)
+                    }
                 }
             )
             .alert("タイトルが必要です", isPresented: $viewModel.showTitleAlert) {
