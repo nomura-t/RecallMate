@@ -27,7 +27,9 @@ class ContentViewModel: ObservableObject {
     
     @Published var showTitleAlert = false
     @Published var shouldFocusTitle = false
-    
+    @Published var showTitleInputGuide: Bool = false
+
+    // 初期化メソッドでの設定
     init(viewContext: NSManagedObjectContext, memo: Memo?) {
         self.viewContext = viewContext
         self.memo = memo
@@ -35,15 +37,33 @@ class ContentViewModel: ObservableObject {
         
         if let memo = memo {
             loadMemoData(memo: memo)
-            contentChanged = false // 初期状態はfalse
-            recordActivityOnSave = false // 既存メモの場合、デフォルトでは記録しない
+            contentChanged = false
+            recordActivityOnSave = false
+            showTitleInputGuide = false
         } else {
+            // 新規メモの場合
             resetForm()
-            contentChanged = false // 初期状態はfalse
-            recordActivityOnSave = true // 新規メモの場合は記録する
+            contentChanged = false
+            recordActivityOnSave = true
+            
+            // 初回メモ作成時のみガイドを表示
+            let hasCreatedFirstMemo = UserDefaults.standard.bool(forKey: "hasCreatedFirstMemo")
+            showTitleInputGuide = !hasCreatedFirstMemo
+        }
+        // 初回メモ作成時のみガイドを表示
+        if memo == nil {
+            let hasCreatedFirstMemo = UserDefaults.standard.bool(forKey: "hasCreatedFirstMemo")
+            showTitleInputGuide = !hasCreatedFirstMemo
+        } else {
+            showTitleInputGuide = false
         }
     }
-    
+
+    // ガイドを閉じる関数を追加
+    func dismissTitleInputGuide() {
+        showTitleInputGuide = false
+        UserDefaults.standard.set(true, forKey: "hasCreatedFirstMemo")
+    }
     
     // loadMemoData関数内で次回復習日を確実に設定
     func loadMemoData(memo: Memo) {
