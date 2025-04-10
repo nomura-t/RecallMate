@@ -66,7 +66,7 @@ struct RecallMateApp: App {
         // サンプルメモを作成
         let sampleMemo = Memo(context: context)
         sampleMemo.id = UUID()
-        sampleMemo.title = "効果的な学習法：アクティブリコールと分散学習"
+        sampleMemo.title = "(sample)効果的な学習法：アクティブリコールと分散学習"
         sampleMemo.content = """
         アクティブリコールとは？
         アクティブリコールは、情報を単に読み返すのではなく、自分の力で思い出そうとする学習法です。教科書を閉じて、学んだ内容を自分の言葉で書き出すことで、記憶の定着度が大幅に向上します。
