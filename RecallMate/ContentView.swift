@@ -270,7 +270,7 @@ struct ContentView: View {
                             dismiss()
                         }
                     }) {
-                        Text("Recalled")
+                        Text("記憶した！")
                             .font(.headline)
                             .foregroundColor(.white)
                             .padding(.vertical, 12)

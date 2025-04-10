@@ -1,56 +1,57 @@
-    import SwiftUI
-    import Foundation
-    import UserNotifications
+// SettingsView.swift
+import SwiftUI
+import Foundation
+import UserNotifications
 
-    struct SettingsView: View {
-        @State private var notificationEnabled = UserDefaults.standard.bool(forKey: "notificationsEnabled")
-        @State private var currentNotificationTime = ""
-        
-        // 設定クラスをEnvironmentObjectとして追加
-        @EnvironmentObject private var appSettings: AppSettings
-        
-        // シェア関連の状態変数
-        @State private var isShareSheetPresented = false
-        @State private var showMissingAppAlert = false
-        @State private var missingAppName = ""
-        @State private var shareText = "RecallMateアプリを使って科学的に記憶力を強化しています。長期記憶の定着に最適なアプリです！ https://apps.apple.com/app/recallmate/id000000000" // 実際のApp StoreリンクIDに変更する
-        @State private var showNotificationPermission = false
-        @State private var showSocialShareView = false // ソーシャルシェアビュー表示用状態変数を追加
-        @StateObject private var notificationObserver = NotificationSettingsObserver()
+struct SettingsView: View {
+    @State private var notificationEnabled = UserDefaults.standard.bool(forKey: "notificationsEnabled")
+    @State private var currentNotificationTime = ""
+    
+    // 設定クラスをEnvironmentObjectとして追加
+    @EnvironmentObject private var appSettings: AppSettings
+    
+    // シェア関連の状態変数
+    @State private var isShareSheetPresented = false
+    @State private var showMissingAppAlert = false
+    @State private var missingAppName = ""
+    @State private var shareText = "RecallMateアプリを使って科学的に記憶力を強化しています。長期記憶の定着に最適なアプリです！ https://apps.apple.com/app/recallmate/id000000000" // 実際のApp StoreリンクIDに変更する
+    @State private var showNotificationPermission = false
+    @State private var showSocialShareView = false // ソーシャルシェアビュー表示用状態変数を追加
+    @StateObject private var notificationObserver = NotificationSettingsObserver()
 
-        var body: some View {
-            NavigationStack {
-                Form {
-                    // アプリを共有セクション
-                    Section {
-                        HStack(alignment: .center) {
-                            // テキスト部分
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("RecallMateを友達に紹介する")
-                                    .font(.headline)
-                                
-                                Text("効率的な学習方法を友達にも教えてあげましょう")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
+    var body: some View {
+        NavigationStack {
+            Form {
+                // アプリを共有セクション
+                Section {
+                    HStack(alignment: .center) {
+                        // テキスト部分
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("RecallMateを友達に紹介する")
+                                .font(.headline)
                             
-                            Spacer()
-                            
-                            // シェアボタン - 修正部分
-                            Button(action: {
-                                showSocialShareView = true
-                            }) {
-                                Image(systemName: "square.and.arrow.up")
-                                    .font(.system(size: 30))
-                                    .foregroundColor(.blue)
-                                    .frame(width: 40, height: 40)
-                            }
-                            .buttonStyle(BorderlessButtonStyle())
+                            Text("効率的な学習方法を友達にも教えてあげましょう")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                         }
-                        .padding(.vertical, 8)
-                    } header: {
-                        Text("アプリを共有")
+                        
+                        Spacer()
+                        
+                        // シェアボタン - 修正部分
+                        Button(action: {
+                            showSocialShareView = true
+                        }) {
+                            Image(systemName: "square.and.arrow.up")
+                                .font(.system(size: 30))
+                                .foregroundColor(.blue)
+                                .frame(width: 40, height: 40)
+                        }
+                        .buttonStyle(BorderlessButtonStyle())
                     }
+                    .padding(.vertical, 8)
+                } header: {
+                    Text("アプリを共有")
+                }
                 
                 Section(header: Text("一般設定")) {
                     // SettingsView.swift の修正版（Toggle部分のみ）
@@ -77,45 +78,6 @@
                     ))
                 }
                 
-                // テキストフォントサイズ設定セクション
-                Section(header: Text("テキスト設定")) {
-                    VStack(alignment: .leading, spacing: 16) {
-                        // 回答テキストのフォントサイズの選択
-                        VStack(alignment: .leading, spacing: 4) {
-                            Picker("回答フォントサイズ", selection: $appSettings.answerFontSize) {
-                                ForEach(appSettings.availableFontSizes, id: \.self) { size in
-                                    Text("\(Int(size))pt").tag(size)
-                                }
-                            }
-                            .pickerStyle(MenuPickerStyle())
-                            
-                            // 回答テキストのプレビュー
-                            Text("回答テキストのプレビュー")
-                                .font(.system(size: CGFloat(appSettings.answerFontSize)))
-                                .padding(.vertical, 4)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        
-                        Divider()
-                        
-                        // メモ入力欄のフォントサイズの選択
-                        VStack(alignment: .leading, spacing: 4) {
-                            Picker("メモフォントサイズ", selection: $appSettings.memoFontSize) {
-                                ForEach(appSettings.availableFontSizes, id: \.self) { size in
-                                    Text("\(Int(size))pt").tag(size)
-                                }
-                            }
-                            .pickerStyle(MenuPickerStyle())
-                            
-                            // メモテキストのプレビュー
-                            Text("メモテキストのプレビュー")
-                                .font(.system(size: CGFloat(appSettings.memoFontSize)))
-                                .padding(.vertical, 4)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                    }
-                }
-                
                 Section(header: Text("通知設定")) {
                     HStack {
                         Text("現在の通知時間:")
@@ -132,34 +94,34 @@
                 }
                 .disabled(!notificationEnabled)
             }
-                .navigationTitle("")
-                .sheet(isPresented: $isShareSheetPresented) {
-                    if #available(iOS 16.0, *) {
-                        ShareSheet(text: shareText)
-                    } else {
-                        LegacyShareSheet(text: shareText)
-                    }
+            .navigationTitle("")
+            .sheet(isPresented: $isShareSheetPresented) {
+                if #available(iOS 16.0, *) {
+                    ShareSheet(text: shareText)
+                } else {
+                    LegacyShareSheet(text: shareText)
                 }
-                .alert(isPresented: $showMissingAppAlert) {
-                    Alert(
-                        title: Text("\(missingAppName)がインストールされていません"),
-                        message: Text("共有するには\(missingAppName)アプリをインストールしてください。"),
-                        dismissButton: .default(Text("OK"))
-                    )
-                }
-                // ソーシャルシェアビューをオーバーレイとして表示
-                .overlay(
-                    Group {
-                        if showSocialShareView {
-                            SocialShareView(
-                                isPresented: $showSocialShareView,
-                                shareText: shareText
-                            )
-                            .transition(.opacity)
-                            .animation(.easeInOut, value: showSocialShareView)
-                        }
-                    }
+            }
+            .alert(isPresented: $showMissingAppAlert) {
+                Alert(
+                    title: Text("\(missingAppName)がインストールされていません"),
+                    message: Text("共有するには\(missingAppName)アプリをインストールしてください。"),
+                    dismissButton: .default(Text("OK"))
                 )
+            }
+            // ソーシャルシェアビューをオーバーレイとして表示
+            .overlay(
+                Group {
+                    if showSocialShareView {
+                        SocialShareView(
+                            isPresented: $showSocialShareView,
+                            shareText: shareText
+                        )
+                        .transition(.opacity)
+                        .animation(.easeInOut, value: showSocialShareView)
+                    }
+                }
+            )
             .onAppear {
                 // 最初にUserDefaultsから設定を取得
                 self.notificationEnabled = UserDefaults.standard.bool(forKey: "notificationsEnabled")
@@ -176,22 +138,6 @@
                 
                 // ビューが表示されるたびに現在の通知時間を更新
                 currentNotificationTime = StreakNotificationManager.shared.getPreferredTimeString()
-                
-                // 現在のフォントサイズが選択肢になければ、近い値に調整
-                if !appSettings.availableFontSizes.contains(appSettings.answerFontSize) {
-                    let closest = appSettings.availableFontSizes.min(by: {
-                        abs($0 - appSettings.answerFontSize) < abs($1 - appSettings.answerFontSize)
-                    }) ?? 16
-                    appSettings.answerFontSize = closest
-                }
-                
-                // メモフォントサイズも同様に調整
-                if !appSettings.availableFontSizes.contains(appSettings.memoFontSize) {
-                    let closest = appSettings.availableFontSizes.min(by: {
-                        abs($0 - appSettings.memoFontSize) < abs($1 - appSettings.memoFontSize)
-                    }) ?? 16
-                    appSettings.memoFontSize = closest
-                }
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in

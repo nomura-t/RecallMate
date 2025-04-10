@@ -1,4 +1,4 @@
-// MainView.swift
+// MainView.swift（修正版）
 import SwiftUI
 import CoreData
 import UserNotifications
@@ -6,133 +6,173 @@ import UserNotifications
 struct MainView: View {
     @State private var isAddingMemo = false
     @State private var isRecordingActivity = false
-    @State private var selectedTab = 0  // 現在選択中のタブを追跡
+    @State private var selectedTab = 0
     @EnvironmentObject var appSettings: AppSettings
+
+    // StateObjectに変更して永続化（再初期化防止）
+    @StateObject private var viewState = MainViewState()
     
-    // ReviewManager追加
+    // ReviewManagerなど
     @StateObject private var reviewManager = ReviewManager.shared
-    
-    // 習慣化チャレンジマネージャー
     @StateObject private var habitChallengeManager = HabitChallengeManager.shared
     @State private var showingReviewRequest = false
-    @State private var showNotificationPermission = false
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             TabView(selection: $selectedTab) {
-                /// ホーム（復習リスト）
+                // 各タブの定義（変更なし）
                 HomeView(isAddingMemo: $isAddingMemo)
-                    .tabItem {
-                        Label("ホーム", systemImage: "house.fill")
-                    }
+                    .tabItem { Label("記憶する", systemImage: "house.fill") }
                     .tag(0)
-                
-                /// 学習進捗
                 ActivityProgressView()
-                    .tabItem {
-                        Label("学習進捗", systemImage: "list.bullet.rectangle")
-                    }
+                    .tabItem { Label("振り返り", systemImage: "list.bullet.rectangle") }
                     .tag(1)
-                
-                /// 記憶定着度
                 RetentionView()
-                    .tabItem {
-                        Label("記憶定着度", systemImage: "chart.line.uptrend.xyaxis")
-                    }
+                    .tabItem { Label("記憶定着度", systemImage: "chart.line.uptrend.xyaxis") }
                     .tag(3)
-                /// ポモドーロタイマー（新規追加）
                 PomodoroView()
-                    .tabItem {
-                        Label("ポモドーロ", systemImage: "timer")
-                    }
+                    .tabItem { Label("集中タイマー", systemImage: "timer") }
                     .tag(2)
-                
-                /// 設定
                 SettingsView()
                     .environmentObject(appSettings)
-                    .tabItem {
-                        Label("設定", systemImage: "gearshape.fill")
-                    }
+                    .tabItem { Label("設定", systemImage: "gearshape.fill") }
                     .tag(4)
             }
-            // フルスクリーンカバーを明示的に追加
             .fullScreenCover(isPresented: $isAddingMemo) {
                 ContentView(memo: nil)
             }
             
-            // レビュー誘導モーダル
-            if showingReviewRequest {
-                ReviewRequestView(isPresented: $showingReviewRequest)
-                    .zIndex(2) // 他のモーダルより前面に表示
+            // 脳アイコンエフェクト
+            GeometryReader { geometry in
+                let isPad = UIDevice.current.userInterfaceIdiom == .pad
+                let effectYPosition: CGFloat = isPad ? geometry.size.height - 1260 : geometry.size.height - 670
+
+                if viewState.showFloatingGuide {
+                    Circle()
+                        .fill(Color.blue.opacity(0.3))
+                        .frame(width: 100, height: 100)
+                        .scaleEffect(1.2)
+                        .position(x: geometry.size.width - 60,
+                                  y: geometry.size.height - effectYPosition)
+                }
+            }
+
+            // 各オーバーレイの表示
+            // オンボーディング
+            if viewState.isShowingOnboarding {
+                OnboardingView(isShowingOnboarding: $viewState.isShowingOnboarding)
+                    .background(Color(.systemBackground))
+                    .edgesIgnoringSafeArea(.all)
+                    .transition(.opacity)
+                    .zIndex(1)
+                    .onDisappear {
+                        print("🔍 オンボーディング非表示")
+                        // オンボーディング非表示時に通知チェック
+                        if !viewState.hasCheckedNotifications {
+                            viewState.hasCheckedNotifications = true
+                            viewState.checkNotificationPermission()
+                        }
+                    }
             }
             
-            // 通知許可を促すモーダル
-            if showNotificationPermission {
-                NotificationPermissionView(isPresented: $showNotificationPermission)
-                    .zIndex(3) // 他のモーダルより最前面に表示
+            // ガイド
+            if viewState.showFloatingGuide {
+                FloatingGuideView(isPresented: $viewState.showFloatingGuide)
+                    .zIndex(10)
+                    .onAppear {
+                        print("🔍 ガイド表示")
+                        // 10秒後に非表示
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+                            withAnimation {
+                                viewState.showFloatingGuide = false
+                                UserDefaults.standard.set(true, forKey: "hasSeenFloatingGuide")
+                            }
+                        }
+                    }
             }
-        }
-        .onChange(of: isAddingMemo) { oldValue, newValue in
-            // デバッグ用
-        }
-        .onChange(of: reviewManager.shouldShowReview) { oldValue, newValue in
-            if newValue {
-                showingReviewRequest = true
-                reviewManager.shouldShowReview = false // リセット
+
+            // レビューモーダル
+            if showingReviewRequest {
+                ReviewRequestView(isPresented: $showingReviewRequest)
+                    .zIndex(2)
             }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("StartPomodoroFromNotification"))) { _ in
-            // 通知からポモドーロを開始する処理
-            selectedTab = 2 // ポモドーロタブに切り替え
-            // 必要に応じてPomodoroTimerを操作するコードを追加
-        }
-        // アプリがフォアグラウンドに戻ってきたときに習慣化チャレンジをチェック
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-            // 習慣化チャレンジの進捗をチェック
-            DispatchQueue.main.async {
-                habitChallengeManager.checkDailyProgress()
+            
+            // 通知許可モーダル
+            if viewState.showNotificationPermission {
+                NotificationPermissionView(isPresented: $viewState.showNotificationPermission)
+                    .zIndex(3)
+                    .onDisappear {
+                        print("🔍 通知許可モーダル非表示")
+                        // 通知後にガイド表示
+                        viewState.showGuideAfterNotification()
+                    }
             }
         }
         .onAppear {
-            // アプリ起動時に通知許可状態をチェック
-            checkAndShowNotificationPermission()
-        }
-    }
-    // 通知許可状態をチェックしてモーダル表示状態を更新する関数
-    private func checkNotificationStatus() {
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
-            DispatchQueue.main.async {
-                // 通知が既に許可されているか決定済みの場合はモーダルを表示しない
-                if settings.authorizationStatus == .authorized {
-                    // 通知が許可されている場合、モーダルを非表示に
-                    showNotificationPermission = false
-                    // UserDefaultsも更新
-                    UserDefaults.standard.set(true, forKey: "notificationsEnabled")
-                    UserDefaults.standard.set(true, forKey: "hasPromptedForNotifications")
-                } else if settings.authorizationStatus == .denied {
-                    // 通知が明示的に拒否されている場合もモーダルを非表示に
-                    showNotificationPermission = false
-                    // UserDefaultsも更新
-                    UserDefaults.standard.set(false, forKey: "notificationsEnabled")
-                    UserDefaults.standard.set(true, forKey: "hasPromptedForNotifications")
-                }
+            print("🔍 MainView表示")
+            if !viewState.isShowingOnboarding && !viewState.hasCheckedNotifications {
+                viewState.hasCheckedNotifications = true
+                viewState.checkNotificationPermission()
             }
         }
+        .animation(Animation.easeInOut(duration: 0.3), value: viewState.isShowingOnboarding)
+        .animation(Animation.easeInOut(duration: 0.3), value: viewState.showFloatingGuide)
     }
-    // 通知許可状態をチェックして必要に応じてモーダルを表示
-    private func checkAndShowNotificationPermission() {
-        // UserDefaultsを使用して初回表示済みかをチェック
+}
+
+// 状態管理クラスを分離（UIの再構築でも状態を維持）
+class MainViewState: ObservableObject {
+    // 状態変数
+    @Published var isShowingOnboarding: Bool
+    @Published var showFloatingGuide = false
+    @Published var showNotificationPermission = false
+    @Published var hasCheckedNotifications = false
+    
+    init() {
+        // 初期化時に1回だけUserDefaultsを読み込む
+        let hasSeenOnboarding = UserDefaults.standard.bool(forKey: "hasSeenOnboarding")
+        print("🔍 ViewState初期化 - hasSeenOnboarding: \(hasSeenOnboarding)")
+        isShowingOnboarding = !hasSeenOnboarding
+    }
+    
+    // 通知許可をチェック
+    func checkNotificationPermission() {
+        print("🔍 通知許可チェック実行")
+        
+        // 通知が表示済みかチェック
         if !UserDefaults.standard.bool(forKey: "hasPromptedForNotifications") {
-            // 通知設定をチェック
             UNUserNotificationCenter.current().getNotificationSettings { settings in
                 DispatchQueue.main.async {
+                    print("🔍 通知設定: \(settings.authorizationStatus.rawValue)")
+                    
                     if settings.authorizationStatus == .notDetermined {
-                        // まだ通知許可を求めていない場合のみ表示
+                        print("🔍 通知未決定 -> 通知許可ダイアログを表示")
                         self.showNotificationPermission = true
                         UserDefaults.standard.set(true, forKey: "hasPromptedForNotifications")
+                    } else {
+                        print("🔍 通知既決定 -> ガイドへ")
+                        self.showGuideAfterNotification()
                     }
                 }
             }
+        } else {
+            print("🔍 通知プロンプト表示済み -> ガイドへ")
+            self.showGuideAfterNotification()
+        }
+    }
+    
+    // 通知許可後にガイドを表示
+    func showGuideAfterNotification() {
+        if !UserDefaults.standard.bool(forKey: "hasSeenFloatingGuide") {
+            print("🔍 ガイド表示条件OK")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                withAnimation {
+                    print("🔍 ガイド表示実行")
+                    self.showFloatingGuide = true
+                }
+            }
+        } else {
+            print("🔍 ガイド表示済み")
         }
     }
 }

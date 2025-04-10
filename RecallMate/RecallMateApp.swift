@@ -42,17 +42,7 @@ struct RecallMateApp: App {
                         // 通知からポモドーロを開始する処理をここに書くこともできます
                         // 例: ポモドーロタブに移動する、など
                     }
-                
-                // オンボーディング画面をフルスクリーンで表示
-                if isShowingOnboarding {
-                    OnboardingView(isShowingOnboarding: $isShowingOnboarding)
-                        .background(Color(.systemBackground)) // 背景色を追加
-                        .edgesIgnoringSafeArea(.all) // 画面全体に広げる
-                        .transition(.opacity)
-                        .zIndex(1) // 最前面に表示
-                }
             }
-            .animation(Animation.easeInOut(duration: 0.3), value: isShowingOnboarding)
         }
     }
     
@@ -66,7 +56,7 @@ struct RecallMateApp: App {
         // サンプルメモを作成
         let sampleMemo = Memo(context: context)
         sampleMemo.id = UUID()
-        sampleMemo.title = "効果的な学習法：アクティブリコールと分散学習"
+        sampleMemo.title = "(sample)効果的な学習法：アクティブリコールと分散学習"
         sampleMemo.content = """
         アクティブリコールとは？
         アクティブリコールは、情報を単に読み返すのではなく、自分の力で思い出そうとする学習法です。教科書を閉じて、学んだ内容を自分の言葉で書き出すことで、記憶の定着度が大幅に向上します。
@@ -100,25 +90,6 @@ struct RecallMateApp: App {
         
         // キーワードを追加
         sampleMemo.keywords = "アクティブリコール,分散学習,長期記憶,復習間隔"
-        
-        // サンプルメモ用のタグを作成
-        let studyTag = Tag(context: context)
-        studyTag.id = UUID()
-        studyTag.name = "学習法"
-        studyTag.color = "blue"
-        studyTag.createdAt = Date()
-        
-        let memoryTag = Tag(context: context)
-        memoryTag.id = UUID()
-        memoryTag.name = "記憶術"
-        memoryTag.color = "purple"
-        memoryTag.createdAt = Date()
-        
-        // メモにタグを追加
-        if let tags = sampleMemo.tags as? NSMutableSet {
-            tags.add(studyTag)
-            tags.add(memoryTag)
-        }
         
         // 説明問題の回答をUserDefaultsに保存
         UserDefaults.standard.set("""
