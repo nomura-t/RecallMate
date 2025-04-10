@@ -28,6 +28,12 @@ class ContentViewModel: ObservableObject {
     @Published var showTitleAlert = false
     @Published var shouldFocusTitle = false
     @Published var showTitleInputGuide: Bool = false
+    
+    @Published var showQuestionCardGuide: Bool = false
+
+    @Published var titleFieldFocused: Bool = false
+    @Published var previouslyFocused: Bool = false
+    @Published var hasTitleInput: Bool = false
 
     // 初期化メソッドでの設定
     init(viewContext: NSManagedObjectContext, memo: Memo?) {
@@ -58,11 +64,41 @@ class ContentViewModel: ObservableObject {
             showTitleInputGuide = false
         }
     }
+    // タイトルフィールドのフォーカス状態変更を監視するメソッド
+    func onTitleFocusChanged(isFocused: Bool) {
+        // フォーカスが外れた時の処理
+        if previouslyFocused && !isFocused {
+            // タイトルが入力されている場合
+            if !title.isEmpty && !hasTitleInput {
+                hasTitleInput = true
+                
+                // タイトル入力ガイドが表示されていなければ問題カードガイドを表示
+                if !showTitleInputGuide {
+                    let hasSeenQuestionCardGuide = UserDefaults.standard.bool(forKey: "hasSeenQuestionCardGuide")
+                    if !hasSeenQuestionCardGuide {
+                        // 少し遅延させてから表示（自然な流れにするため）
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            self.showQuestionCardGuide = true
+                        }
+                    }
+                }
+            }
+        }
+        
+        // 現在の状態を保存
+        previouslyFocused = isFocused
+        titleFieldFocused = isFocused
+    }
 
     // ガイドを閉じる関数を追加
     func dismissTitleInputGuide() {
         showTitleInputGuide = false
         UserDefaults.standard.set(true, forKey: "hasCreatedFirstMemo")
+    }
+    
+    func dismissQuestionCardGuide() {
+        showQuestionCardGuide = false
+        UserDefaults.standard.set(true, forKey: "hasSeenQuestionCardGuide")
     }
     
     // loadMemoData関数内で次回復習日を確実に設定
@@ -558,6 +594,7 @@ extension ContentViewModel {
             // 状態をリセット
             self.contentChanged = false
             ReviewManager.shared.incrementTaskCompletionCount()
+            
             completion()
         }
     }
