@@ -23,6 +23,9 @@ struct ContentView: View {
     @State private var showTagSelection = false
     @State private var sessionId: UUID? = nil
     
+    // Add focus state to ContentView
+    @FocusState private var titleFieldFocused: Bool
+    
     // 「使い方」ボタンと状態変数を追加
     @State private var showUsageModal = false
     
@@ -68,7 +71,7 @@ struct ContentView: View {
                 }
                 
                 Form {
-                    // メモの詳細セクション
+                    // メモの詳細セクション - focus state を渡す
                     MemoDetailSection(
                         viewModel: viewModel,
                         memo: memo,
@@ -76,7 +79,13 @@ struct ContentView: View {
                         showQuestionEditor: $showQuestionEditor,
                         isDrawing: $isDrawing,
                         canvasView: $canvasView,
-                        toolPicker: $toolPicker
+                        toolPicker: $toolPicker,
+                        onShouldFocusTitle: {
+                            // フォーカスが必要な場合は後でフォーカスを設定
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                titleFieldFocused = true
+                            }
+                        }
                     )
                     .onChange(of: viewModel.title) { _, _ in
                         viewModel.contentChanged = true
@@ -182,9 +191,9 @@ struct ContentView: View {
                                             )
                                             .cornerRadius(16)
                                         }
-                                        .buttonStyle(BorderlessButtonStyle()) // ここに移動
-                                        .contentShape(Rectangle()) // ここに移動
-                                        .highPriorityGesture( // ここに移動
+                                        .buttonStyle(BorderlessButtonStyle())
+                                        .contentShape(Rectangle())
+                                        .highPriorityGesture(
                                             TapGesture()
                                                 .onEnded { _ in
                                                     // 選択/解除のトグル
@@ -209,7 +218,8 @@ struct ContentView: View {
                                                         }
                                                     }
                                                 }
-                                        )                                    }
+                                        )
+                                    }
                                     
                                     // 新規タグ作成ボタン
                                     Button(action: {
@@ -228,9 +238,9 @@ struct ContentView: View {
                                         .foregroundColor(.blue)
                                         .cornerRadius(16)
                                     }
-                                    .buttonStyle(BorderlessButtonStyle()) // 明示的にボタンスタイルを設定
-                                    .contentShape(Rectangle()) // タップ領域を明確に定義
-                                    .highPriorityGesture( // 高優先度のジェスチャーとして設定
+                                    .buttonStyle(BorderlessButtonStyle())
+                                    .contentShape(Rectangle())
+                                    .highPriorityGesture(
                                         TapGesture()
                                             .onEnded { _ in
                                                 showTagSelection = true
@@ -261,8 +271,7 @@ struct ContentView: View {
                             viewModel.contentChanged = true
                             viewModel.recordActivityOnSave = true
                         }
-                    // テスト日設定セクション
-//                    TestDateSection(viewModel: viewModel)
+                    
                     // 保存ボタン
                     Button(action: {
                         // 明示的にviewModelのメソッドを呼び出す
@@ -279,11 +288,11 @@ struct ContentView: View {
                             .cornerRadius(10)
                             .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
                     }
-                    .buttonStyle(PlainButtonStyle()) // 明示的にPlainButtonStyleを指定
-                    .frame(maxWidth: .infinity, alignment: .center) // ボタン自体は中央に配置
-                    .padding(.horizontal, 20) // フォーム内での余白
+                    .buttonStyle(PlainButtonStyle())
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.horizontal, 20)
                     .padding(.vertical, 8)
-                    .contentShape(Rectangle()) // タップ領域を矩形に設定
+                    .contentShape(Rectangle())
                     .highPriorityGesture(
                         TapGesture()
                             .onEnded { _ in
@@ -304,7 +313,14 @@ struct ContentView: View {
                 // 学習セッションの開始
                 if let memo = memo {
                     // 既存メモの場合、時間計測を開始
-                    viewModel.startLearningSession() // 追加: ContentViewModelのメソッドを呼び出す
+                    viewModel.startLearningSession()
+                }
+                
+                // 初回メモ作成時はタイトルフィールドにフォーカス
+                if viewModel.showTitleInputGuide {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        titleFieldFocused = true
+                    }
                 }
             }
             .onDisappear {
@@ -321,13 +337,12 @@ struct ContentView: View {
                         // 復習アクティビティを直接記録
                         let context = PersistenceController.shared.container.viewContext
                         LearningActivity.recordActivityWithHabitChallenge(
-                            type: .review,  // 復習は review タイプ
+                            type: .review,
                             durationMinutes: ActivityTracker.shared.getCurrentSessionDuration(sessionId: sessionId),
                             memo: memo,
                             note: noteText,
                             in: context
                         )
-                    } else {
                     }
                 }
             }
@@ -387,13 +402,27 @@ struct ContentView: View {
                             .transition(.opacity)
                             .animation(.easeInOut, value: showUsageModal)
                     }
+                    
+                    // タイトル入力ガイド - 脳アイコンガイドと同じスタイル
+                    if viewModel.showTitleInputGuide {
+                        TitleInputGuideView(
+                            isPresented: $viewModel.showTitleInputGuide,
+                            onDismiss: {
+                                viewModel.dismissTitleInputGuide()
+                                // タイトルフィールドにフォーカス
+                                titleFieldFocused = true
+                            }
+                        )
+                        .transition(.opacity)
+                        .animation(.easeInOut, value: viewModel.showTitleInputGuide)
+                    }
                 }
             )
-        }
-        .alert("タイトルが必要です", isPresented: $viewModel.showTitleAlert) {
-            Button("OK") { viewModel.showTitleAlert = false }
-        } message: {
-            Text("続行するにはメモのタイトルを入力してください。")
+            .alert("タイトルが必要です", isPresented: $viewModel.showTitleAlert) {
+                Button("OK") { viewModel.showTitleAlert = false }
+            } message: {
+                Text("続行するにはメモのタイトルを入力してください。")
+            }
         }
     }
 }

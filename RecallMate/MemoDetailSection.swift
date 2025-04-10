@@ -12,9 +12,13 @@ struct MemoDetailSection: View {
     @Binding var toolPicker: PKToolPicker
     @EnvironmentObject var appSettings: AppSettings
     
+    // FocusState は内部で定義し、親からは使用しない
+    @FocusState private var titleFieldFocused: Bool
+    // 代わりにフォーカス変更時のコールバックを追加
+    var onShouldFocusTitle: (() -> Void)?
+    
     // State変数をここで宣言（ViewModelに依存しない）
     @State private var showContentResetAlert = false
-    @FocusState var titleFieldFocused: Bool
     @Namespace var titleField
 
     var body: some View {
@@ -22,12 +26,15 @@ struct MemoDetailSection: View {
             // タイトルとページ範囲
             TextField("タイトル", text: $viewModel.title)
                 .font(.headline)
-                .focused($titleFieldFocused) // フォーカス制御
+                .focused($titleFieldFocused) // ローカルのフォーカス状態を使用
                 .id(titleField) // スクロール用ID
                 .background(viewModel.shouldFocusTitle ? Color.red.opacity(0.1) : Color.clear) // エラー表示
                 .onChange(of: viewModel.title) { _, newValue in
                     if !newValue.isEmpty && viewModel.shouldFocusTitle {
                         viewModel.shouldFocusTitle = false // エラー表示を消す
+                    }
+                    if viewModel.showTitleInputGuide { // showTitleGuideではなくshowTitleInputGuideを使用
+                        viewModel.showTitleInputGuide = false // ガイド表示を消す
                     }
                 }
             
@@ -186,6 +193,20 @@ struct MemoDetailSection: View {
             if shouldFocus {
                 // タイトル欄にフォーカス
                 titleFieldFocused = true
+            }
+        }
+        // 必要なくなった変更監視を削除
+        // .onChange(of: titleFieldFocused) { _, newValue in
+        //     localTitleFieldFocused = newValue
+        // }
+        // .onChange(of: localTitleFieldFocused) { _, newValue in
+        //     titleFieldFocused = newValue
+        // }
+        .onAppear {
+            // 親ビューからフォーカスを要求された場合
+            if let onShouldFocusTitle = onShouldFocusTitle {
+                // フォーカスを当てるようにコールバック
+                onShouldFocusTitle()
             }
         }
     }
