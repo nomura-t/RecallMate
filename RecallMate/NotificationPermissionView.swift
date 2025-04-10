@@ -6,7 +6,6 @@ struct NotificationPermissionView: View {
     @Binding var isPresented: Bool
     @State private var notificationStatus: UNAuthorizationStatus = .notDetermined
     
-    // コールバック関数を追加
     var onPermissionGranted: (() -> Void)? = nil
     var onPermissionDenied: (() -> Void)? = nil
 
@@ -93,50 +92,47 @@ struct NotificationPermissionView: View {
         }
 
     }
-    // 通知許可をリクエスト - コールバックを呼び出すように修正
+    // 通知許可をリクエスト
     private func requestNotifications() {
-        // 通知許可をシステムに直接リクエスト
+        print("🔍 通知許可リクエスト開始")
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             DispatchQueue.main.async {
+                print("🔍 通知許可リクエスト結果: granted=\(granted)")
+                if let error = error {
+                    print("🔍 通知許可エラー: \(error.localizedDescription)")
+                }
+                
                 if granted {
-                    // 許可された場合のコールバックを呼び出す
+                    print("🔍 通知許可OK → コールバック実行")
                     self.onPermissionGranted?()
-                    // モーダルを閉じる
                     self.isPresented = false
                     
-                    // 通知が許可されたので、通知をスケジュール
+                    print("🔍 通知スケジュール実行")
                     StreakNotificationManager.shared.scheduleStreakReminder()
                 } else {
-                    // 拒否された場合は設定アプリに誘導
-                    if #available(iOS 16.0, *) {
-                        if let bundleId = Bundle.main.bundleIdentifier,
-                           let url = URL(string: UIApplication.openNotificationSettingsURLString + "?bundleIdentifier=\(bundleId)") {
-                            UIApplication.shared.open(url)
-                        }
-                    } else {
-                        if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
-                            UIApplication.shared.open(settingsURL)
-                        }
-                    }
-                    // この時点ではモーダルは閉じない - ユーザーに「後で」ボタンを押してもらう
+                    print("🔍 通知許可拒否 → コールバック実行")
+                    self.onPermissionDenied?()
+                    self.isPresented = false
                 }
             }
         }
     }
+    
     // 通知ステータスの確認
     private func checkNotificationStatus() {
+        print("🔍 通知ステータス確認")
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
+                print("🔍 現在の通知ステータス: \(settings.authorizationStatus.rawValue)")
                 notificationStatus = settings.authorizationStatus
                 
-                // すでに許可されている場合はモーダルを閉じる
-                if notificationStatus == .authorized {
+                if settings.authorizationStatus == .authorized {
+                    print("🔍 通知が既に許可されているためモーダルを閉じる")
                     isPresented = false
                 }
             }
         }
-    }
-}
+    }}
 
 // 通知の利点を表す行コンポーネント
 struct PermissionBenefitRow: View {

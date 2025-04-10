@@ -42,17 +42,7 @@ struct RecallMateApp: App {
                         // 通知からポモドーロを開始する処理をここに書くこともできます
                         // 例: ポモドーロタブに移動する、など
                     }
-                
-                // オンボーディング画面をフルスクリーンで表示
-                if isShowingOnboarding {
-                    OnboardingView(isShowingOnboarding: $isShowingOnboarding)
-                        .background(Color(.systemBackground)) // 背景色を追加
-                        .edgesIgnoringSafeArea(.all) // 画面全体に広げる
-                        .transition(.opacity)
-                        .zIndex(1) // 最前面に表示
-                }
             }
-            .animation(Animation.easeInOut(duration: 0.3), value: isShowingOnboarding)
         }
     }
     
