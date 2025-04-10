@@ -36,6 +36,12 @@ struct MemoDetailSection: View {
                     if viewModel.showTitleInputGuide { // showTitleGuideではなくshowTitleInputGuideを使用
                         viewModel.showTitleInputGuide = false // ガイド表示を消す
                     }
+                    // タイトルが変更されたことを記録
+                    viewModel.contentChanged = true
+                }
+                .onChange(of: titleFieldFocused) { _, newValue in
+                    // フォーカス状態が変わったらViewModelに通知
+                    viewModel.onTitleFocusChanged(isFocused: newValue)
                 }
             
             TextField("ページ範囲", text: $viewModel.pageRange)
