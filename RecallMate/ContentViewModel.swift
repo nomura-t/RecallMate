@@ -34,6 +34,9 @@ class ContentViewModel: ObservableObject {
     @Published var titleFieldFocused: Bool = false
     @Published var previouslyFocused: Bool = false
     @Published var hasTitleInput: Bool = false
+    
+    @Published var showMemoContentGuide: Bool = false
+
 
     // 初期化メソッドでの設定
     init(viewContext: NSManagedObjectContext, memo: Memo?) {
@@ -99,8 +102,21 @@ class ContentViewModel: ObservableObject {
     func dismissQuestionCardGuide() {
         showQuestionCardGuide = false
         UserDefaults.standard.set(true, forKey: "hasSeenQuestionCardGuide")
+        
+        // 問題カードガイド後に内容ガイドを表示（初回のみ）
+        let hasSeenMemoContentGuide = UserDefaults.standard.bool(forKey: "hasSeenMemoContentGuide")
+        if !hasSeenMemoContentGuide {
+            // 少し遅延させて表示（自然な遷移のため）
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.showMemoContentGuide = true
+            }
+        }
     }
-    
+    // 内容ガイドを閉じるメソッド
+    func dismissMemoContentGuide() {
+        showMemoContentGuide = false
+        UserDefaults.standard.set(true, forKey: "hasSeenMemoContentGuide")
+    }
     // loadMemoData関数内で次回復習日を確実に設定
     func loadMemoData(memo: Memo) {
         title = memo.title ?? ""
