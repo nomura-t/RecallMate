@@ -1,3 +1,4 @@
+// ContentView.swift - 修正版
 import SwiftUI
 import CoreData
 import PencilKit
@@ -22,6 +23,9 @@ struct ContentView: View {
     @State private var toolPicker = PKToolPicker()
     @State private var showTagSelection = false
     @State private var sessionId: UUID? = nil
+    
+    // UIKitスクロール用のトリガー
+    @State private var triggerScroll = false
     
     // フォーカス状態
     @FocusState private var titleFieldFocused: Bool
@@ -77,10 +81,14 @@ struct ContentView: View {
                     }
                 }
                 
+                // UIKitスクロールコントローラー（非表示）
+                ScrollControllerView(shouldScroll: $triggerScroll)
+                    .frame(width: 0, height: 0)
+                
                 // ここでScrollViewReaderを配置して全体を包む
                 ScrollViewReader { proxy in
                     Form {
-                        // メモの詳細セクション - ここでMemoDetailSectionの内容を直接統合
+                        // メモの詳細セクション
                         Section(header: Text("メモ詳細")) {
                             // タイトルとページ範囲
                             TextField("タイトル", text: $viewModel.title)
@@ -162,7 +170,7 @@ struct ContentView: View {
                                     }
                                 }
                                 
-                                // ★★★ここが重要: TextEditorをcontentFieldで直接参照★★★
+                                // TextEditor
                                 ZStack(alignment: .topLeading) {
                                     TextEditor(text: $viewModel.content)
                                         .font(.system(size: CGFloat(appSettings.memoFontSize)))
@@ -170,7 +178,7 @@ struct ContentView: View {
                                         .padding(4)
                                         .background(Color(.systemGray6))
                                         .cornerRadius(8)
-                                        .id(contentField) // コンテンツフィールドのID
+                                        .id(contentField)
                                         .onChange(of: viewModel.content) { _, _ in
                                             viewModel.contentChanged = true
                                             viewModel.recordActivityOnSave = true
@@ -347,33 +355,6 @@ struct ContentView: View {
                                                 .cornerRadius(16)
                                             }
                                             .buttonStyle(BorderlessButtonStyle())
-                                            .contentShape(Rectangle())
-                                            .highPriorityGesture(
-                                                TapGesture()
-                                                    .onEnded { _ in
-                                                        // 選択/解除のトグル
-                                                        if viewModel.selectedTags.contains(where: { $0.id == tag.id }) {
-                                                            // 解除
-                                                            if let index = viewModel.selectedTags.firstIndex(where: { $0.id == tag.id }) {
-                                                                viewModel.selectedTags.remove(at: index)
-                                                            }
-                                                        } else {
-                                                            // 選択
-                                                            viewModel.selectedTags.append(tag)
-                                                        }
-                                                        
-                                                        // 変更フラグをセット
-                                                        viewModel.contentChanged = true
-                                                        viewModel.recordActivityOnSave = true
-                                                        
-                                                        // タグ変更時に即時保存（追加）
-                                                        if memo != nil {
-                                                            DispatchQueue.main.async {
-                                                                viewModel.updateAndSaveTags()
-                                                            }
-                                                        }
-                                                    }
-                                            )
                                         }
                                         
                                         // 新規タグ作成ボタン
@@ -394,13 +375,6 @@ struct ContentView: View {
                                             .cornerRadius(16)
                                         }
                                         .buttonStyle(BorderlessButtonStyle())
-                                        .contentShape(Rectangle())
-                                        .highPriorityGesture(
-                                            TapGesture()
-                                                .onEnded { _ in
-                                                    showTagSelection = true
-                                                }
-                                        )
                                     }
                                     .padding(.bottom, 4)
                                 }
@@ -446,38 +420,11 @@ struct ContentView: View {
                         .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 8)
-                        .contentShape(Rectangle())
-                        .highPriorityGesture(
-                            TapGesture()
-                                .onEnded { _ in
-                                    viewModel.saveMemoWithTracking {
-                                        dismiss()
-                                    }
-                                }
-                        )
                     }
                     .listStyle(InsetGroupedListStyle())
                     .onTapGesture {
                         // キーボードを閉じる
                         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                    }
-                    
-                    // メモ内容ガイドの表示状態の変更を監視
-                    .onChange(of: viewModel.showMemoContentGuide) { oldValue, newValue in
-                        if newValue {
-                            // メモ内容ガイドが表示されたらスクロールを実行
-                            scrollToContentField(proxy: proxy)
-                        }
-                    }
-                    
-                    // アプリ起動時にメモ内容ガイドが表示される場合は自動スクロール
-                    .onAppear {
-                        if viewModel.showMemoContentGuide {
-                            // 少し遅延させてからスクロール
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-                                scrollToContentField(proxy: proxy)
-                            }
-                        }
                     }
                 }
                 .navigationBarHidden(true)
@@ -608,6 +555,12 @@ struct ContentView: View {
                             )
                             .transition(.opacity)
                             .animation(.easeInOut, value: viewModel.showMemoContentGuide)
+                            .onAppear {
+                                // メモ内容ガイドが表示されたら少し遅延してスクロール
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    triggerScroll = true
+                                }
+                            }
                         }
                     }
                 )
@@ -628,35 +581,6 @@ struct ContentView: View {
                 } message: {
                     Text("メモの内容をクリアしますか？この操作は元に戻せません。")
                 }
-            }
-        }
-    }
-    
-    // スクロールを実行する関数 - 複数回の試行で確実性を高める
-    private func scrollToContentField(proxy: ScrollViewProxy) {
-        // 即時スクロール
-        withAnimation(.easeInOut(duration: 0.5)) {
-            proxy.scrollTo(contentField, anchor: .center)
-        }
-        
-        // 短い遅延後（UIの更新が完了した後）
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            withAnimation(.easeInOut(duration: 0.5)) {
-                proxy.scrollTo(contentField, anchor: .center)
-            }
-        }
-        
-        // さらに遅延後（確実に実行するため）
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-            withAnimation(.easeInOut(duration: 0.5)) {
-                proxy.scrollTo(contentField, anchor: .center)
-            }
-        }
-        
-        // 最終バックアップ（何らかの理由で上記が失敗した場合）
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            withAnimation(.easeInOut(duration: 0.5)) {
-                proxy.scrollTo(contentField, anchor: .top)
             }
         }
     }
