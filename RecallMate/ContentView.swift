@@ -301,6 +301,7 @@ struct ContentView: View {
                                                 }
                                             }
                                         }
+                                        .simultaneousGesture(DragGesture().onChanged { _ in }, including: .subviews)
                                     }
                                     .padding(.bottom, 4)
                                 }
@@ -378,11 +379,21 @@ struct ContentView: View {
                                             .background(Color.blue.opacity(0.15))
                                             .foregroundColor(.blue)
                                             .cornerRadius(16)
+                                            .frame(height: 44) // タップ領域を垂直方向に拡大
                                         }
                                         .buttonStyle(BorderlessButtonStyle())
+                                        .contentShape(Rectangle()) // タップ領域を明示的に矩形に設定
+                                        .highPriorityGesture(
+                                            TapGesture()
+                                                .onEnded { _ in
+                                                    showTagSelection = true
+                                                }
+                                        )
                                     }
                                     .padding(.bottom, 4)
                                 }
+                                .simultaneousGesture(DragGesture().onChanged { _ in }, including: .all)
+                                .allowsHitTesting(true) // 明示的にヒットテストを許可
                                 .frame(height: 40)
                             }
                             .padding(.vertical, 4)
