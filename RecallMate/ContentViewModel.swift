@@ -30,12 +30,14 @@ class ContentViewModel: ObservableObject {
     @Published var showTitleInputGuide: Bool = false
     
     @Published var showQuestionCardGuide: Bool = false
+    @Published var showTagGuide: Bool = false
 
     @Published var titleFieldFocused: Bool = false
     @Published var previouslyFocused: Bool = false
     @Published var hasTitleInput: Bool = false
     
     @Published var showMemoContentGuide: Bool = false
+    @Published var contentFieldFocused: Bool = false
 
 
     // 初期化メソッドでの設定
@@ -93,6 +95,27 @@ class ContentViewModel: ObservableObject {
         titleFieldFocused = isFocused
     }
 
+    // 内容フィールドのフォーカス状態変更を監視するメソッド
+    func onContentFocusChanged(isFocused: Bool) {
+        // フォーカスが外れた時の処理
+        if contentFieldFocused && !isFocused {
+            // 内容が入力されている場合
+            if !content.isEmpty && hasTitleInput {
+                // 内容入力後にタグガイドを表示（初回のみ）
+                let hasSeenTagGuide = UserDefaults.standard.bool(forKey: "hasSeenTagGuide")
+                if !hasSeenTagGuide && !showMemoContentGuide {
+                    // 少し遅延させてから表示（自然な流れにするため）
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        self.showTagGuide = true
+                    }
+                }
+            }
+        }
+        
+        // 現在の状態を保存
+        contentFieldFocused = isFocused
+    }
+
     // ガイドを閉じる関数を追加
     func dismissTitleInputGuide() {
         showTitleInputGuide = false
@@ -117,6 +140,13 @@ class ContentViewModel: ObservableObject {
         showMemoContentGuide = false
         UserDefaults.standard.set(true, forKey: "hasSeenMemoContentGuide")
     }
+    
+    // タグガイドを閉じるメソッド
+    func dismissTagGuide() {
+        showTagGuide = false
+        UserDefaults.standard.set(true, forKey: "hasSeenTagGuide")
+    }
+    
     // loadMemoData関数内で次回復習日を確実に設定
     func loadMemoData(memo: Memo) {
         title = memo.title ?? ""
