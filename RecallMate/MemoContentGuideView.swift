@@ -1,3 +1,4 @@
+// MemoContentGuideView.swift - 修正版
 import SwiftUI
 
 struct MemoContentGuideView: View {
@@ -20,24 +21,17 @@ struct MemoContentGuideView: View {
             GeometryReader { geometry in
                 VStack {
                     // メモ内容フィールドに合わせた位置調整
-                    Spacer().frame(height: geometry.size.height * 0.5)
+                    Spacer().frame(height: geometry.size.height * 0.07)
                     
                     // ガイドコンテンツを中央に配置
                     VStack(spacing: 16) {
-                        // 上向き矢印
-                        Image(systemName: "arrow.up")
-                            .font(.system(size: 28, weight: .bold))
-                            .foregroundColor(.white)
-                            .shadow(color: .black, radius: 2)
-                            .padding(.bottom, 8)
-                        
-                        // 内容入力エリアを囲む半透明の背景
+                        // 内容入力エリアを囲む半透明の背景 - サイズを拡大して上方向にかぶるように
                         RoundedRectangle(cornerRadius: 12)
                             .fill(Color.white.opacity(0.2))
-                            .frame(width: geometry.size.width * 0.85, height: 180)
+                            .frame(width: geometry.size.width * 0.9, height: 350)
                         
                         // ガイドテキスト
-                        Text("アクティブリコールを実践しましょう！\n教科書を見ないで覚えている内容を書き出してみてください")
+                        Text("このステップが一番重要！！\n教科書を見ないで覚えている内容を\n書き出したり、口に出したり、思い出してみて！\n今回はここに思い出して入力してみてね!\n二回目以降に学習するときは\nここを空欄にしてからもう一度やってみてね！")
                             .font(.headline)
                             .foregroundColor(.white)
                             .shadow(color: .black, radius: 2)

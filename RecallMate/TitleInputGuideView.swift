@@ -17,34 +17,31 @@ struct TitleInputGuideView: View {
                 }
             
             // タイトル入力欄周辺のレイアウト
-            VStack(spacing: 0) {
-                // タイトル入力欄を囲む半透明の背景
-                ZStack {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.white.opacity(0.2))
-                        .frame(width: 350, height: 110)
+            GeometryReader { geometry in
+                VStack(spacing: 0) {
+                    // タイトル入力欄に合わせたスペーシング
+                    Spacer().frame(height: geometry.size.height * 0.05)
+                    
+                    // タイトル入力欄を囲む半透明の背景 - 位置を調整
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color.white.opacity(0.2))
+                            .frame(width: geometry.size.width * 0.9, height: 110)
+                    }
+                    
+                    // ガイドテキスト - 矢印を削除
+                    Text("学習した内容がわかるように\nタイトルを入力しよう！\nページ範囲は空欄でも大丈夫だよ！\n")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .shadow(color: .black, radius: 2)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                        .padding(.top, 16)
+                    
+                    Spacer()
                 }
-                .padding(.top, 90) // ここを小さくして上にずらす（120→60）
-                
-                // 上向き矢印
-                Image(systemName: "arrow.up")
-                    .font(.system(size: 28, weight: .bold))
-                    .foregroundColor(.white)
-                    .shadow(color: .black, radius: 2)
-                    .padding(.top, 12)
-                
-                // ガイドテキスト
-                Text("学習した内容がわかるように\nタイトル(必須)とページ範囲(空欄可)\nを入力しましょう！")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .shadow(color: .black, radius: 2)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-                    .padding(.top, 8)
-                
-                Spacer()
+                .frame(width: geometry.size.width)
             }
-            .frame(maxWidth: .infinity)
         }
         .transition(.opacity)
     }

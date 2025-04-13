@@ -36,7 +36,7 @@ struct QuestionCardGuideView: View {
                     .padding(.bottom, 12)
                 
                 // ガイドテキスト
-                Text("ここに分からない単語があれば\n入力して問題を作成してみましょう！\n(空欄可)")
+                Text("サポート機能\nここに分からない単語があれば\n入力して問題を作成してみよう！\n")
                     .font(.headline)
                     .foregroundColor(.white)
                     .shadow(color: .black, radius: 2)
