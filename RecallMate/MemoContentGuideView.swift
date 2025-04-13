@@ -17,37 +17,38 @@ struct MemoContentGuideView: View {
                 }
             
             // メモ内容エリア周辺のレイアウト
-            VStack {
-                Spacer()
-                
-                // メモ内容エリアの強調表示
-                VStack(spacing: 16) {
-                    // メモ内容フィールドに向かって矢印
-                    Image(systemName: "arrow.down")
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(.white)
-                        .shadow(color: .black, radius: 2)
-                        .padding(.bottom, 8)
+            GeometryReader { geometry in
+                VStack {
+                    // メモ内容フィールドに合わせた位置調整
+                    Spacer().frame(height: geometry.size.height * 0.5)
                     
-                    // 内容入力エリアを囲む半透明の背景
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.white.opacity(0.2))
-                        .frame(width: 340, height: 190)
-                        .padding(.bottom, 16)
+                    // ガイドコンテンツを中央に配置
+                    VStack(spacing: 16) {
+                        // 上向き矢印
+                        Image(systemName: "arrow.up")
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundColor(.white)
+                            .shadow(color: .black, radius: 2)
+                            .padding(.bottom, 8)
+                        
+                        // 内容入力エリアを囲む半透明の背景
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color.white.opacity(0.2))
+                            .frame(width: geometry.size.width * 0.85, height: 180)
+                        
+                        // ガイドテキスト
+                        Text("アクティブリコールを実践しましょう！\n教科書を見ないで覚えている内容を書き出してみてください")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .shadow(color: .black, radius: 2)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                    }
                     
-                    // ガイドテキスト
-                    Text("アクティブリコールを実践しましょう！\n教科書を見ないで覚えている内容を書き出してみてください")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .shadow(color: .black, radius: 2)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal)
+                    Spacer()
                 }
-                .padding(.top, 350) // 内容フィールドの位置に合わせて調整
-                
-                Spacer()
+                .frame(width: geometry.size.width)
             }
-            .frame(maxWidth: .infinity)
         }
         .transition(.opacity)
     }
