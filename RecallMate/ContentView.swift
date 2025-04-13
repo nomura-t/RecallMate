@@ -29,6 +29,7 @@ struct ContentView: View {
     
     // フォーカス状態
     @FocusState private var titleFieldFocused: Bool
+    @FocusState private var contentFieldFocused: Bool
     
     // 「使い方」ボタンと状態変数を追加
     @State private var showUsageModal = false
@@ -179,9 +180,13 @@ struct ContentView: View {
                                         .background(Color(.systemGray6))
                                         .cornerRadius(8)
                                         .id(contentField)
+                                        .focused($contentFieldFocused)
                                         .onChange(of: viewModel.content) { _, _ in
                                             viewModel.contentChanged = true
                                             viewModel.recordActivityOnSave = true
+                                        }
+                                        .onChange(of: contentFieldFocused) { _, newValue in
+                                            viewModel.onContentFocusChanged(isFocused: newValue)
                                         }
                                     
                                     // プレースホルダー
@@ -296,6 +301,7 @@ struct ContentView: View {
                                                 }
                                             }
                                         }
+                                        .simultaneousGesture(DragGesture().onChanged { _ in }, including: .subviews)
                                     }
                                     .padding(.bottom, 4)
                                 }
@@ -373,11 +379,21 @@ struct ContentView: View {
                                             .background(Color.blue.opacity(0.15))
                                             .foregroundColor(.blue)
                                             .cornerRadius(16)
+                                            .frame(height: 44) // タップ領域を垂直方向に拡大
                                         }
                                         .buttonStyle(BorderlessButtonStyle())
+                                        .contentShape(Rectangle()) // タップ領域を明示的に矩形に設定
+                                        .highPriorityGesture(
+                                            TapGesture()
+                                                .onEnded { _ in
+                                                    showTagSelection = true
+                                                }
+                                        )
                                     }
                                     .padding(.bottom, 4)
                                 }
+                                .simultaneousGesture(DragGesture().onChanged { _ in }, including: .all)
+                                .allowsHitTesting(true) // 明示的にヒットテストを許可
                                 .frame(height: 40)
                             }
                             .padding(.vertical, 4)
@@ -561,6 +577,17 @@ struct ContentView: View {
                                     triggerScroll = true
                                 }
                             }
+                        }
+                        // タグガイド
+                        if viewModel.showTagGuide {
+                            TagGuideView(
+                                isPresented: $viewModel.showTagGuide,
+                                onDismiss: {
+                                    viewModel.dismissTagGuide()
+                                }
+                            )
+                            .transition(.opacity)
+                            .animation(.easeInOut, value: viewModel.showTagGuide)
                         }
                     }
                 )
