@@ -11,6 +11,7 @@ struct MemoDetailSection: View {
     @Binding var canvasView: PKCanvasView
     @Binding var toolPicker: PKToolPicker
     @EnvironmentObject var appSettings: AppSettings
+    var contentFieldId: Namespace.ID // コンテンツフィールドのID
     
     // FocusState は内部で定義し、親からは使用しない
     @FocusState private var titleFieldFocused: Bool
@@ -109,6 +110,7 @@ struct MemoDetailSection: View {
                         .padding(4)
                         .background(Color(.systemGray6))
                         .cornerRadius(8)
+                        .id(contentFieldId) // コンテンツフィールドのID
                     
                     // プレースホルダー：viewModel.contentが空の場合にのみ表示
                     if viewModel.content.isEmpty {
@@ -201,13 +203,6 @@ struct MemoDetailSection: View {
                 titleFieldFocused = true
             }
         }
-        // 必要なくなった変更監視を削除
-        // .onChange(of: titleFieldFocused) { _, newValue in
-        //     localTitleFieldFocused = newValue
-        // }
-        // .onChange(of: localTitleFieldFocused) { _, newValue in
-        //     titleFieldFocused = newValue
-        // }
         .onAppear {
             // 親ビューからフォーカスを要求された場合
             if let onShouldFocusTitle = onShouldFocusTitle {
