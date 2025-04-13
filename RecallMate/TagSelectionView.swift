@@ -270,6 +270,8 @@ struct TagSelectionView: View {
             if !selectedTags.contains(where: { $0.id == newTag.id }) {
                 selectedTags.append(newTag)
                 onTagsChanged?() // タグが変更されたことを通知
+                // 通知センターを介して新規タグ作成を通知
+                NotificationCenter.default.post(name: NSNotification.Name("NewTagCreated"), object: nil)
             }
             newTagName = ""
             showColorPicker = false // 色選択パネルを閉じる

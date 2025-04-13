@@ -31,6 +31,7 @@ class ContentViewModel: ObservableObject {
     
     @Published var showQuestionCardGuide: Bool = false
     @Published var showTagGuide: Bool = false
+    @Published var showRecallSliderGuide: Bool = false
 
     @Published var titleFieldFocused: Bool = false
     @Published var previouslyFocused: Bool = false
@@ -145,6 +146,26 @@ class ContentViewModel: ObservableObject {
     func dismissTagGuide() {
         showTagGuide = false
         UserDefaults.standard.set(true, forKey: "hasSeenTagGuide")
+        
+        // タグガイド後のフラグを設定（新規タグ追加後に表示するため）
+        UserDefaults.standard.set(false, forKey: "hasSeenRecallSliderGuide")
+    }
+    
+    // 記憶定着度ガイドを閉じるメソッド
+    func dismissRecallSliderGuide() {
+        showRecallSliderGuide = false
+        UserDefaults.standard.set(true, forKey: "hasSeenRecallSliderGuide")
+    }
+    
+    // 新規タグ追加後に記憶定着度ガイドを表示する関数
+    func showRecallGuideAfterTagAdded() {
+        let hasSeenRecallSliderGuide = UserDefaults.standard.bool(forKey: "hasSeenRecallSliderGuide")
+        if !hasSeenRecallSliderGuide {
+            // 少し遅延させて表示
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.showRecallSliderGuide = true
+            }
+        }
     }
     
     // loadMemoData関数内で次回復習日を確実に設定
@@ -403,258 +424,258 @@ class ContentViewModel: ObservableObject {
             // 記憶履歴を記録
             recordReviewHistory()
             
-            // 履歴記録後
-            viewContext.refresh(memoToSave, mergeChanges: true)
-            
-            // 💫 追加：履歴記録（perfectRecallCount更新）後に復習日を再計算
-            let updatedPerfectRecallCount = memoToSave.perfectRecallCount
-            if updatedPerfectRecallCount != currentPerfectRecallCount {
-                // テスト日に基づくか通常の計算かを判断
-                if shouldUseTestDate, let testDate = testDate {
-                    let reviewDates = calculateReviewScheduleBasedOnTestDate()
-                    if let firstReviewDate = reviewDates.first {
+        // 履歴記録後
+                viewContext.refresh(memoToSave, mergeChanges: true)
+                
+                // 💫 追加：履歴記録（perfectRecallCount更新）後に復習日を再計算
+                let updatedPerfectRecallCount = memoToSave.perfectRecallCount
+                if updatedPerfectRecallCount != currentPerfectRecallCount {
+                    // テスト日に基づくか通常の計算かを判断
+                    if shouldUseTestDate, let testDate = testDate {
+                        let reviewDates = calculateReviewScheduleBasedOnTestDate()
+                        if let firstReviewDate = reviewDates.first {
+                            let oldDate = memoToSave.nextReviewDate
+                            memoToSave.nextReviewDate = firstReviewDate
+                        }
+                    } else {
+                        // 通常の復習日再計算
                         let oldDate = memoToSave.nextReviewDate
-                        memoToSave.nextReviewDate = firstReviewDate
+                        let newReviewDate = ReviewCalculator.calculateNextReviewDate(
+                            recallScore: recallScore,
+                            lastReviewedDate: Date(),
+                            perfectRecallCount: updatedPerfectRecallCount  // 更新された完璧回数を使用
+                        )
+                        memoToSave.nextReviewDate = newReviewDate
                     }
-                } else {
-                    // 通常の復習日再計算
-                    let oldDate = memoToSave.nextReviewDate
-                    let newReviewDate = ReviewCalculator.calculateNextReviewDate(
-                        recallScore: recallScore,
-                        lastReviewedDate: Date(),
-                        perfectRecallCount: updatedPerfectRecallCount  // 更新された完璧回数を使用
+                    
+                    // 再計算後に保存
+                    try viewContext.save()
+                }
+                
+                // 一時保存された比較ペアがあれば、それらの比較問題を作成
+                if let tempPairs = UserDefaults.standard.array(forKey: "tempComparisonPairs") as? [[String]] {
+                    for pair in tempPairs {
+                        if pair.count == 2 {
+                            let word1 = pair[0]
+                            let word2 = pair[1]
+                            
+                            // 比較問題を作成
+                            let newQuestion = ComparisonQuestion(context: viewContext)
+                            newQuestion.id = UUID()
+                            newQuestion.question = "「\(word1)」と「\(word2)」の違いを比較して説明してください。それぞれの特徴、共通点、相違点について詳細に述べてください。"
+                            newQuestion.createdAt = Date()
+                            newQuestion.memo = memoToSave
+                        }
+                    }
+                    
+                    // 一時データをクリア
+                    UserDefaults.standard.removeObject(forKey: "tempComparisonPairs")
+                    
+                    try viewContext.save()
+                }
+                
+                // ストリークを更新
+                StreakTracker.shared.checkAndUpdateStreak(in: viewContext)
+                
+                // 変更を確実に保存（最終）
+                try viewContext.save()
+                
+                // メインスレッドで通知を送信
+                DispatchQueue.main.async {
+                    // 全アプリに通知を送信して強制的にデータをリロード
+                    NotificationCenter.default.post(
+                        name: NSNotification.Name("ForceRefreshMemoData"),
+                        object: nil,
+                        userInfo: ["memoID": memoToSave.objectID]
                     )
-                    memoToSave.nextReviewDate = newReviewDate
-                }
-                
-                // 再計算後に保存
-                try viewContext.save()
-            }
-            
-            // 一時保存された比較ペアがあれば、それらの比較問題を作成
-            if let tempPairs = UserDefaults.standard.array(forKey: "tempComparisonPairs") as? [[String]] {
-                for pair in tempPairs {
-                    if pair.count == 2 {
-                        let word1 = pair[0]
-                        let word2 = pair[1]
-                        
-                        // 比較問題を作成
-                        let newQuestion = ComparisonQuestion(context: viewContext)
-                        newQuestion.id = UUID()
-                        newQuestion.question = "「\(word1)」と「\(word2)」の違いを比較して説明してください。それぞれの特徴、共通点、相違点について詳細に述べてください。"
-                        newQuestion.createdAt = Date()
-                        newQuestion.memo = memoToSave
+                    
+                    // 少し遅延させて2回目の通知も送信
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        NotificationCenter.default.post(
+                            name: NSNotification.Name("ForceRefreshMemoData"),
+                            object: nil
+                        )
                     }
                 }
                 
-                // 一時データをクリア
-                UserDefaults.standard.removeObject(forKey: "tempComparisonPairs")
+                // memo ではなく savedMemo に保存
+                self.savedMemo = memoToSave
+                resetForm(preserveTags: memo != nil)
+                completion()
+            } catch {
+                completion()
+            }
+        }
+            
+            func cleanupOrphanedQuestions() {
+                // memo == nil の問題を検索して削除（孤立した問題）
+                let fetchRequest: NSFetchRequest<ComparisonQuestion> = ComparisonQuestion.fetchRequest()
+                fetchRequest.predicate = NSPredicate(format: "memo == nil")
                 
-                try viewContext.save()
+                do {
+                    let orphanedQuestions = try viewContext.fetch(fetchRequest)
+                    if !orphanedQuestions.isEmpty {
+                        for question in orphanedQuestions {
+                            viewContext.delete(question)
+                        }
+                        try viewContext.save()
+                    }
+                } catch {
+                }
             }
             
-            // ストリークを更新
-            StreakTracker.shared.checkAndUpdateStreak(in: viewContext)
-            
-            // 変更を確実に保存（最終）
-            try viewContext.save()
-            
-            // メインスレッドで通知を送信
-            DispatchQueue.main.async {
-                // 全アプリに通知を送信して強制的にデータをリロード
-                NotificationCenter.default.post(
-                    name: NSNotification.Name("ForceRefreshMemoData"),
-                    object: nil,
-                    userInfo: ["memoID": memoToSave.objectID]
-                )
+            func resetForm(preserveTags: Bool = false) {
+                title = ""
+                pageRange = ""
+                content = ""
+                recallScore = 50
+                reviewDate = nil
+                keywords = []
+                comparisonQuestions = []
                 
-                // 少し遅延させて2回目の通知も送信
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                // テスト日関連のリセット
+                testDate = nil
+                shouldUseTestDate = false
+                showTestDatePicker = false
+                
+                // タグのリセットは条件付きに
+                if !preserveTags {
+                    selectedTags = []
+                }
+            }
+            
+            func formattedDate(_ date: Date?) -> String {
+                let formatter = DateFormatter()
+                formatter.dateStyle = .medium
+                return date != nil ? formatter.string(from: date!) : "未設定"
+            }
+            
+            // タグを即時更新し保存するメソッド
+            func updateAndSaveTags() {
+                guard let memoToUpdate = memo else {
+                    return
+                }
+                
+                // 待機中の他の変更を先に保存
+                if viewContext.hasChanges {
+                    do {
+                        try viewContext.save()
+                    } catch {
+                    }
+                }
+                
+                // 現在のタグを一旦全て削除
+                let currentTags = memoToUpdate.tags as? Set<Tag> ?? []
+                for tag in currentTags {
+                    memoToUpdate.removeTag(tag)
+                }
+                
+                // 選択されたタグを追加
+                for tag in selectedTags {
+                    memoToUpdate.addTag(tag)
+                }
+                
+                // 変更を保存
+                do {
+                    try viewContext.save()
+                    viewContext.refresh(memoToUpdate, mergeChanges: true)
+                    
+                    // 強制的に通知を送信して更新を促す
+                    NotificationCenter.default.post(
+                        name: NSNotification.Name("ForceRefreshMemoData"),
+                        object: nil,
+                        userInfo: ["memoID": memoToUpdate.objectID]
+                    )
+                } catch {
+                }
+            }
+
+            // タグデータをリフレッシュするための新メソッド
+            func refreshTags() {
+                guard let memoToRefresh = memo else { return }
+                
+                // メモを再読み込みしてタグを更新
+                viewContext.refresh(memoToRefresh, mergeChanges: true)
+                
+                // 選択されたタグを更新
+                let refreshedTags = memoToRefresh.tagsArray
+                selectedTags = refreshedTags
+            }
+        }
+
+        extension ContentViewModel {
+            // 初期化時に呼び出して時間計測を開始する
+            func startLearningSession() {
+                if let existingMemo = memo {
+                    // 既存メモの場合のみセッション開始
+                    currentSessionId = ActivityTracker.shared.startTimingSession(for: existingMemo)
+                    
+                    // 内容変更フラグを初期化
+                    contentChanged = false
+                }
+            }
+            
+            // メモの保存時に自動記録を行う - 実時間測定版
+            func saveMemoWithTracking(completion: @escaping () -> Void) {
+                let isNewMemo = memo == nil
+                
+                // 新規メモの場合は強制的に記録フラグをON
+                if isNewMemo {
+                    contentChanged = true
+                    recordActivityOnSave = true
+                }
+                
+                // 内容が変更されたか、新規メモの場合のみアクティビティ記録対象
+                let shouldRecordActivity = contentChanged || isNewMemo
+                
+                saveMemo { [weak self] in
+                    guard let self = self else {
+                        completion()
+                        return
+                    }
+                    
+                    // savedMemo が保存されたか確認
+                    if let memo = self.savedMemo {
+                        // 内容が変更された場合のみ記録
+                        if shouldRecordActivity && self.recordActivityOnSave {
+                            // アクティビティタイプの決定
+                            let activityType: ActivityType = isNewMemo ? .exercise : .review
+                            let context = PersistenceController.shared.container.viewContext
+                            
+                            if isNewMemo {
+                                // 新規作成用の明示的な注釈
+                                let noteText = "新規メモ作成: \(memo.title ?? "無題")"
+                                
+                                // 新規メモ作成アクティビティを記録
+                                LearningActivity.recordActivityWithHabitChallenge(
+                                    type: .exercise, // 新規メモ作成は exercise タイプ
+                                    durationMinutes: 5, // 最小時間（適宜調整）
+                                    memo: memo,
+                                    note: noteText,
+                                    in: context
+                                )
+                            }
+                        }
+                    }
+                    
+                    // 状態をリセット
+                    self.contentChanged = false
+                    ReviewManager.shared.incrementTaskCompletionCount()
+                    
+                    completion()
+                }
+            }
+            
+            func saveMemoWithNotification() {
+                do {
+                    try viewContext.save()
+                    
+                    // 全アプリに通知を送信して強制的にデータをリロード
                     NotificationCenter.default.post(
                         name: NSNotification.Name("ForceRefreshMemoData"),
                         object: nil
                     )
+                } catch {
                 }
             }
-            
-            // memo ではなく savedMemo に保存
-            self.savedMemo = memoToSave
-            resetForm(preserveTags: memo != nil)
-            completion()
-        } catch {
-            completion()
         }
-    }
-    
-    func cleanupOrphanedQuestions() {
-        // memo == nil の問題を検索して削除（孤立した問題）
-        let fetchRequest: NSFetchRequest<ComparisonQuestion> = ComparisonQuestion.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "memo == nil")
-        
-        do {
-            let orphanedQuestions = try viewContext.fetch(fetchRequest)
-            if !orphanedQuestions.isEmpty {
-                for question in orphanedQuestions {
-                    viewContext.delete(question)
-                }
-                try viewContext.save()
-            }
-        } catch {
-        }
-    }
-    
-    func resetForm(preserveTags: Bool = false) {
-        title = ""
-        pageRange = ""
-        content = ""
-        recallScore = 50
-        reviewDate = nil
-        keywords = []
-        comparisonQuestions = []
-        
-        // テスト日関連のリセット
-        testDate = nil
-        shouldUseTestDate = false
-        showTestDatePicker = false
-        
-        // タグのリセットは条件付きに
-        if !preserveTags {
-            selectedTags = []
-        }
-    }
-    
-    func formattedDate(_ date: Date?) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        return date != nil ? formatter.string(from: date!) : "未設定"
-    }
-    
-    // タグを即時更新し保存するメソッド
-    func updateAndSaveTags() {
-        guard let memoToUpdate = memo else {
-            return
-        }
-        
-        // 待機中の他の変更を先に保存
-        if viewContext.hasChanges {
-            do {
-                try viewContext.save()
-            } catch {
-            }
-        }
-        
-        // 現在のタグを一旦全て削除
-        let currentTags = memoToUpdate.tags as? Set<Tag> ?? []
-        for tag in currentTags {
-            memoToUpdate.removeTag(tag)
-        }
-        
-        // 選択されたタグを追加
-        for tag in selectedTags {
-            memoToUpdate.addTag(tag)
-        }
-        
-        // 変更を保存
-        do {
-            try viewContext.save()
-            viewContext.refresh(memoToUpdate, mergeChanges: true)
-            
-            // 強制的に通知を送信して更新を促す
-            NotificationCenter.default.post(
-                name: NSNotification.Name("ForceRefreshMemoData"),
-                object: nil,
-                userInfo: ["memoID": memoToUpdate.objectID]
-            )
-        } catch {
-        }
-    }
-
-    // タグデータをリフレッシュするための新メソッド
-    func refreshTags() {
-        guard let memoToRefresh = memo else { return }
-        
-        // メモを再読み込みしてタグを更新
-        viewContext.refresh(memoToRefresh, mergeChanges: true)
-        
-        // 選択されたタグを更新
-        let refreshedTags = memoToRefresh.tagsArray
-        selectedTags = refreshedTags
-    }
-}
-
-extension ContentViewModel {
-    // 初期化時に呼び出して時間計測を開始する
-    func startLearningSession() {
-        if let existingMemo = memo {
-            // 既存メモの場合のみセッション開始
-            currentSessionId = ActivityTracker.shared.startTimingSession(for: existingMemo)
-            
-            // 内容変更フラグを初期化
-            contentChanged = false
-        }
-    }
-    
-    // メモの保存時に自動記録を行う - 実時間測定版
-    func saveMemoWithTracking(completion: @escaping () -> Void) {
-        let isNewMemo = memo == nil
-        
-        // 新規メモの場合は強制的に記録フラグをON
-        if isNewMemo {
-            contentChanged = true
-            recordActivityOnSave = true
-        }
-        
-        // 内容が変更されたか、新規メモの場合のみアクティビティ記録対象
-        let shouldRecordActivity = contentChanged || isNewMemo
-        
-        saveMemo { [weak self] in
-            guard let self = self else {
-                completion()
-                return
-            }
-            
-            // savedMemo が保存されたか確認
-            if let memo = self.savedMemo {
-                // 内容が変更された場合のみ記録
-                if shouldRecordActivity && self.recordActivityOnSave {
-                    // アクティビティタイプの決定
-                    let activityType: ActivityType = isNewMemo ? .exercise : .review
-                    let context = PersistenceController.shared.container.viewContext
-                    
-                    if isNewMemo {
-                        // 新規作成用の明示的な注釈
-                        let noteText = "新規メモ作成: \(memo.title ?? "無題")"
-                        
-                        // 新規メモ作成アクティビティを記録
-                        LearningActivity.recordActivityWithHabitChallenge(
-                            type: .exercise, // 新規メモ作成は exercise タイプ
-                            durationMinutes: 5, // 最小時間（適宜調整）
-                            memo: memo,
-                            note: noteText,
-                            in: context
-                        )
-                    }
-                }
-            }
-            
-            // 状態をリセット
-            self.contentChanged = false
-            ReviewManager.shared.incrementTaskCompletionCount()
-            
-            completion()
-        }
-    }
-    
-    func saveMemoWithNotification() {
-        do {
-            try viewContext.save()
-            
-            // 全アプリに通知を送信して強制的にデータをリロード
-            NotificationCenter.default.post(
-                name: NSNotification.Name("ForceRefreshMemoData"),
-                object: nil
-            )
-        } catch {
-        }
-    }
-}

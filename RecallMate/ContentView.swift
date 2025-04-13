@@ -483,132 +483,153 @@ struct ContentView: View {
                 }
                 // iPad 手書きモード
                 .fullScreenCover(isPresented: $isDrawing) {
-                    FullScreenCanvasView(isDrawing: $isDrawing, canvas: $canvasView, toolPicker: $toolPicker)
-                        .onDisappear {
-                            // 手書き入力後は内容が変更されたとみなす
-                            viewModel.contentChanged = true
-                            viewModel.recordActivityOnSave = true
-                        }
-                }
-                // タグ選択画面
-                .sheet(isPresented: $showTagSelection, onDismiss: {
-                    if memo != nil {
-                        viewModel.updateAndSaveTags()
-                        viewModel.contentChanged = true
-                    }
-                }) {
-                    NavigationView {
-                        TagSelectionView(
-                            selectedTags: $viewModel.selectedTags,
-                            onTagsChanged: memo != nil ? {
-                                viewModel.contentChanged = true
-                                viewModel.recordActivityOnSave = true
-                            } : nil
-                        )
-                        .environment(\.managedObjectContext, viewContext)
-                        .navigationTitle("")
-                        .toolbar {
-                            ToolbarItem(placement: .navigationBarTrailing) {
-                                Button("完了") { showTagSelection = false }
+                                    FullScreenCanvasView(isDrawing: $isDrawing, canvas: $canvasView, toolPicker: $toolPicker)
+                                        .onDisappear {
+                                            // 手書き入力後は内容が変更されたとみなす
+                                            viewModel.contentChanged = true
+                                            viewModel.recordActivityOnSave = true
+                                        }
+                                }
+                                // タグ選択画面
+                                .sheet(isPresented: $showTagSelection, onDismiss: {
+                                    if memo != nil {
+                                        viewModel.updateAndSaveTags()
+                                        viewModel.contentChanged = true
+                                    }
+                                    // タグが追加されたら記憶定着度ガイドを表示
+                                    viewModel.showRecallGuideAfterTagAdded()
+                                }) {
+                                    NavigationView {
+                                        TagSelectionView(
+                                            selectedTags: $viewModel.selectedTags,
+                                            onTagsChanged: memo != nil ? {
+                                                viewModel.contentChanged = true
+                                                viewModel.recordActivityOnSave = true
+                                            } : nil
+                                        )
+                                        .environment(\.managedObjectContext, viewContext)
+                                        .navigationTitle("")
+                                        .toolbar {
+                                            ToolbarItem(placement: .navigationBarTrailing) {
+                                                Button("完了") { showTagSelection = false }
+                                            }
+                                        }
+                                    }
+                                }
+                                // 問題エディタへのシート遷移
+                                .sheet(isPresented: $showQuestionEditor, onDismiss: {
+                                    if let memo = memo {
+                                        viewModel.loadComparisonQuestions(for: memo)
+                                        viewModel.contentChanged = true
+                                        viewModel.recordActivityOnSave = true
+                                    }
+                                }) {
+                                    QuestionEditorView(
+                                        memo: memo,
+                                        keywords: $viewModel.keywords,
+                                        comparisonQuestions: $viewModel.comparisonQuestions
+                                    )
+                                }
+                                .environmentObject(ViewSettings())
+                                .overlay(
+                                    Group {
+                                        if showUsageModal {
+                                            UsageModalView(isPresented: $showUsageModal)
+                                                .transition(.opacity)
+                                                .animation(.easeInOut, value: showUsageModal)
+                                        }
+                                        
+                                        // タイトル入力ガイド
+                                        if viewModel.showTitleInputGuide {
+                                            TitleInputGuideView(
+                                                isPresented: $viewModel.showTitleInputGuide,
+                                                onDismiss: {
+                                                    viewModel.dismissTitleInputGuide()
+                                                    // タイトルフィールドにフォーカス
+                                                    titleFieldFocused = true
+                                                }
+                                            )
+                                            .transition(.opacity)
+                                            .animation(.easeInOut, value: viewModel.showTitleInputGuide)
+                                        }
+                                        // 問題カードガイド
+                                        if viewModel.showQuestionCardGuide {
+                                            QuestionCardGuideView(
+                                                isPresented: $viewModel.showQuestionCardGuide,
+                                                onDismiss: {
+                                                    viewModel.dismissQuestionCardGuide()
+                                                }
+                                            )
+                                            .transition(.opacity)
+                                            .animation(.easeInOut, value: viewModel.showQuestionCardGuide)
+                                        }
+                                        // メモ内容ガイド
+                                        if viewModel.showMemoContentGuide {
+                                            MemoContentGuideView(
+                                                isPresented: $viewModel.showMemoContentGuide,
+                                                onDismiss: {
+                                                    viewModel.dismissMemoContentGuide()
+                                                }
+                                            )
+                                            .transition(.opacity)
+                                            .animation(.easeInOut, value: viewModel.showMemoContentGuide)
+                                            .onAppear {
+                                                // メモ内容ガイドが表示されたら少し遅延してスクロール
+                                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                                    triggerScroll = true
+                                                }
+                                            }
+                                        }
+                                        // タグガイド
+                                        if viewModel.showTagGuide {
+                                            TagGuideView(
+                                                isPresented: $viewModel.showTagGuide,
+                                                onDismiss: {
+                                                    viewModel.dismissTagGuide()
+                                                }
+                                            )
+                                            .transition(.opacity)
+                                            .animation(.easeInOut, value: viewModel.showTagGuide)
+                                        }
+                                        // 記憶定着度スライダーガイド（新規追加）
+                                        if viewModel.showRecallSliderGuide {
+                                            RecallSliderGuideView(
+                                                isPresented: $viewModel.showRecallSliderGuide,
+                                                onDismiss: {
+                                                    viewModel.dismissRecallSliderGuide()
+                                                }
+                                            )
+                                            .transition(.opacity)
+                                            .animation(.easeInOut, value: viewModel.showRecallSliderGuide)
+                                        }
+                                    }
+                                )
+                                // 新規タグ作成の通知を受け取る
+                                .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("NewTagCreated"))) { _ in
+                                    // タグの選択シートが閉じた後に呼ばれるよう、少し遅延させる
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                        viewModel.showRecallGuideAfterTagAdded()
+                                    }
+                                }
+                                .alert("タイトルが必要です", isPresented: $viewModel.showTitleAlert) {
+                                    Button("OK") { viewModel.showTitleAlert = false }
+                                } message: {
+                                    Text("続行するにはメモのタイトルを入力してください。")
+                                }
+                                .alert("内容をリセット", isPresented: $showContentResetAlert) {
+                                    Button("キャンセル", role: .cancel) {}
+                                    Button("リセット", role: .destructive) {
+                                        // ここでテキストをクリア - メインスレッドで明示的に実行
+                                        DispatchQueue.main.async {
+                                            viewModel.content = ""
+                                            viewModel.contentChanged = true
+                                        }
+                                    }
+                                } message: {
+                                    Text("メモの内容をクリアしますか？この操作は元に戻せません。")
+                                }
                             }
                         }
                     }
                 }
-                // 問題エディタへのシート遷移
-                .sheet(isPresented: $showQuestionEditor, onDismiss: {
-                    if let memo = memo {
-                        viewModel.loadComparisonQuestions(for: memo)
-                        viewModel.contentChanged = true
-                        viewModel.recordActivityOnSave = true
-                    }
-                }) {
-                    QuestionEditorView(
-                        memo: memo,
-                        keywords: $viewModel.keywords,
-                        comparisonQuestions: $viewModel.comparisonQuestions
-                    )
-                }
-                .environmentObject(ViewSettings())
-                .overlay(
-                    Group {
-                        if showUsageModal {
-                            UsageModalView(isPresented: $showUsageModal)
-                                .transition(.opacity)
-                                .animation(.easeInOut, value: showUsageModal)
-                        }
-                        
-                        // タイトル入力ガイド
-                        if viewModel.showTitleInputGuide {
-                            TitleInputGuideView(
-                                isPresented: $viewModel.showTitleInputGuide,
-                                onDismiss: {
-                                    viewModel.dismissTitleInputGuide()
-                                    // タイトルフィールドにフォーカス
-                                    titleFieldFocused = true
-                                }
-                            )
-                            .transition(.opacity)
-                            .animation(.easeInOut, value: viewModel.showTitleInputGuide)
-                        }
-                        // 問題カードガイド
-                        if viewModel.showQuestionCardGuide {
-                            QuestionCardGuideView(
-                                isPresented: $viewModel.showQuestionCardGuide,
-                                onDismiss: {
-                                    viewModel.dismissQuestionCardGuide()
-                                }
-                            )
-                            .transition(.opacity)
-                            .animation(.easeInOut, value: viewModel.showQuestionCardGuide)
-                        }
-                        // メモ内容ガイド
-                        if viewModel.showMemoContentGuide {
-                            MemoContentGuideView(
-                                isPresented: $viewModel.showMemoContentGuide,
-                                onDismiss: {
-                                    viewModel.dismissMemoContentGuide()
-                                }
-                            )
-                            .transition(.opacity)
-                            .animation(.easeInOut, value: viewModel.showMemoContentGuide)
-                            .onAppear {
-                                // メモ内容ガイドが表示されたら少し遅延してスクロール
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                    triggerScroll = true
-                                }
-                            }
-                        }
-                        // タグガイド
-                        if viewModel.showTagGuide {
-                            TagGuideView(
-                                isPresented: $viewModel.showTagGuide,
-                                onDismiss: {
-                                    viewModel.dismissTagGuide()
-                                }
-                            )
-                            .transition(.opacity)
-                            .animation(.easeInOut, value: viewModel.showTagGuide)
-                        }
-                    }
-                )
-                .alert("タイトルが必要です", isPresented: $viewModel.showTitleAlert) {
-                    Button("OK") { viewModel.showTitleAlert = false }
-                } message: {
-                    Text("続行するにはメモのタイトルを入力してください。")
-                }
-                .alert("内容をリセット", isPresented: $showContentResetAlert) {
-                    Button("キャンセル", role: .cancel) {}
-                    Button("リセット", role: .destructive) {
-                        // ここでテキストをクリア - メインスレッドで明示的に実行
-                        DispatchQueue.main.async {
-                            viewModel.content = ""
-                            viewModel.contentChanged = true
-                        }
-                    }
-                } message: {
-                    Text("メモの内容をクリアしますか？この操作は元に戻せません。")
-                }
-            }
-        }
-    }
-}
+                    
