@@ -37,7 +37,36 @@ struct SettingsView: View {
                         }
                         .padding(.vertical, 8)
                     }
+                    
+                    // 開発者のTwitterリンクを追加
+                    Button(action: {
+                        openTwitterProfile()
+                    }) {
+                        HStack {
+                            Image(systemName: "person.crop.circle")
+                                .foregroundColor(.blue)
+                                .font(.system(size: 22))
+                                .frame(width: 30)
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("開発者をフォロー")
+                                    .font(.headline)
+                                
+                                Text("@ttttttt12345654")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                            }
+                            
+                            Spacer()
+                            
+                            Image(systemName: "arrow.up.right.square")
+                                .foregroundColor(.blue)
+                                .font(.system(size: 16))
+                        }
+                        .padding(.vertical, 8)
+                    }
                 }
+                
                 // アプリを共有セクション
                 Section {
                     HStack(alignment: .center) {
@@ -187,6 +216,19 @@ struct SettingsView: View {
                 }
             }
         )
+    }
+    
+    // Twitterプロフィールを開くメソッドを追加
+    private func openTwitterProfile() {
+        // Twitterアプリを優先的に開き、なければWebブラウザで開く
+        let twitterAppURL = URL(string: "twitter://user?screen_name=ttttttt12345654")!
+        let twitterWebURL = URL(string: "https://x.com/ttttttt12345654")!
+        
+        if UIApplication.shared.canOpenURL(twitterAppURL) {
+            UIApplication.shared.open(twitterAppURL)
+        } else {
+            UIApplication.shared.open(twitterWebURL)
+        }
     }
     
     // 通知設定を確認して画面を更新する関数
