@@ -306,10 +306,6 @@ struct StatisticsCardWithPeriod: View {
                 }
                 
                 Spacer()
-                
-                Text("詳細を見る")
-                    .font(.caption)
-                    .foregroundColor(.blue)
             }
             
             HStack(spacing: 20) {

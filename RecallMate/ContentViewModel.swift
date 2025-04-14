@@ -53,23 +53,16 @@ class ContentViewModel: ObservableObject {
             loadMemoData(memo: memo)
             contentChanged = false
             recordActivityOnSave = false
-            showTitleInputGuide = false
+            showTitleInputGuide = false  // 既存メモの場合は常にfalse
         } else {
             // 新規メモの場合
             resetForm()
             contentChanged = false
             recordActivityOnSave = true
             
-            // 初回メモ作成時のみガイドを表示
+            // 初回メモ作成時のみガイドを表示（この行は重複しているので削除）
             let hasCreatedFirstMemo = UserDefaults.standard.bool(forKey: "hasCreatedFirstMemo")
             showTitleInputGuide = !hasCreatedFirstMemo
-        }
-        // 初回メモ作成時のみガイドを表示
-        if memo == nil {
-            let hasCreatedFirstMemo = UserDefaults.standard.bool(forKey: "hasCreatedFirstMemo")
-            showTitleInputGuide = !hasCreatedFirstMemo
-        } else {
-            showTitleInputGuide = false
         }
     }
     // タイトルフィールドのフォーカス状態変更を監視するメソッド
