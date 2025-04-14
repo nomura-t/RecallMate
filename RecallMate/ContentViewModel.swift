@@ -39,6 +39,8 @@ class ContentViewModel: ObservableObject {
     
     @Published var showMemoContentGuide: Bool = false
     @Published var contentFieldFocused: Bool = false
+    
+    @Published var triggerBottomScroll: Bool = false
 
 
     // 初期化メソッドでの設定
@@ -157,13 +159,22 @@ class ContentViewModel: ObservableObject {
         UserDefaults.standard.set(true, forKey: "hasSeenRecallSliderGuide")
     }
     
-    // 新規タグ追加後に記憶定着度ガイドを表示する関数
     func showRecallGuideAfterTagAdded() {
         let hasSeenRecallSliderGuide = UserDefaults.standard.bool(forKey: "hasSeenRecallSliderGuide")
         if !hasSeenRecallSliderGuide {
-            // 少し遅延させて表示
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.showRecallSliderGuide = true
+            // スクロールトリガーをオンにする
+            DispatchQueue.main.async {
+                self.triggerBottomScroll = true
+                
+                // トリガーをリセット（次回用）
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.triggerBottomScroll = false
+                }
+                
+                // スクロール完了後に少し遅延させてガイドを表示
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    self.showRecallSliderGuide = true
+                }
             }
         }
     }

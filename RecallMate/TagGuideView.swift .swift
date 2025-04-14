@@ -27,7 +27,7 @@ struct TagGuideView: View {
                         // タグエリアを囲む半透明の背景
                         RoundedRectangle(cornerRadius: 12)
                             .fill(Color.white.opacity(0.2))
-                            .frame(width: geometry.size.width * 0.9, height: 140)
+                            .frame(width: geometry.size.width * 0.9, height: 160)
                         
                         // ガイドテキスト
                         Text("これはメモを検索したり\n分析したりするときに便利なタグ機能だよ！\n今回は試しに新規タグから追加してみよう！")
