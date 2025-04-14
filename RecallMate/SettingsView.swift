@@ -18,10 +18,26 @@ struct SettingsView: View {
     @State private var showNotificationPermission = false
     @State private var showSocialShareView = false // ソーシャルシェアビュー表示用状態変数を追加
     @StateObject private var notificationObserver = NotificationSettingsObserver()
+    @State private var showAppInfoView = false
 
     var body: some View {
         NavigationStack {
             Form {
+                // 「このアプリについて」セクションを追加
+                Section(header: Text("アプリ情報")) {
+                    NavigationLink(destination: AppInfoView()) {
+                        HStack {
+                            Image(systemName: "brain.head.profile")
+                                .foregroundColor(.blue)
+                                .font(.system(size: 22))
+                                .frame(width: 30)
+                            
+                            Text("このアプリについて")
+                                .font(.headline)
+                        }
+                        .padding(.vertical, 8)
+                    }
+                }
                 // アプリを共有セクション
                 Section {
                     HStack(alignment: .center) {
