@@ -20,7 +20,7 @@ struct RecallSliderGuideView: View {
             GeometryReader { geometry in
                 VStack {
                     // スクロール後の位置に合わせて調整（上部余白を小さく）
-                    Spacer().frame(height: geometry.size.height * 0.2)
+                    Spacer().frame(height: geometry.size.height * 0.5)
                     
                     // ガイドコンテンツを中央に配置
                     VStack(spacing: 16) {
@@ -30,7 +30,7 @@ struct RecallSliderGuideView: View {
                             .frame(width: geometry.size.width * 0.9, height: 180)
                         
                         // ガイドテキスト
-                        Text("あなたの記憶度を評価してみよう！\nどのくらい記憶できているか自己評価することで\n次回の復習タイミングを最適化します\nスライダーを動かして評価してみよう！")
+                        Text("あなたの記憶度を評価してみよう！\nどのくらい記憶できているか自己評価することで\n次回の復習タイミングを最適化するよ\nスライダーを動かして評価してみよう！\n最後に「記憶した！」を押して\n一つの学習セッションが完了だよ！")
                             .font(.headline)
                             .foregroundColor(.white)
                             .shadow(color: .black, radius: 2)

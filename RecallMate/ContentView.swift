@@ -444,25 +444,30 @@ struct ContentView: View {
                             .frame(maxWidth: .infinity, alignment: .center)
                             .padding(.horizontal, 20)
                             .padding(.vertical, 8)
-                            .id("bottomAnchor")
+                            .id("bottomAnchor") // 最下部のアンカー
                         }
                         .listStyle(InsetGroupedListStyle())
                         .onTapGesture {
                             // キーボードを閉じる
                             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                         }
-                        // 記憶定着度スライダーへのスクロール通知を受け取る
                         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ScrollToBottom"))) { _ in
-                            print("📜 最下部へのスクロール通知を受信")
-                            // スクロール実行時にハプティックフィードバックを追加
+                            print("📜 最下部へのスクロール通知を受信 - SwiftUI経由で処理")
+                            
+                            // ハプティックフィードバックを追加
                             let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
                             impactFeedback.impactOccurred()
                             
                             // 記憶定着度セクションまでスクロール
                             withAnimation(.easeInOut(duration: 0.8)) {
-                                proxy.scrollTo("ScrollToBottom", anchor: .bottom)
-                                print("📜 最下部へのスクロール通知を受信")
-
+                                proxy.scrollTo("recallSliderSection", anchor: .top)
+                                
+                                // 失敗した場合のバックアップとして、少し遅延させて最下部へのスクロールも試みる
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    withAnimation(.easeInOut(duration: 0.5)) {
+                                        proxy.scrollTo("bottomAnchor", anchor: .bottom)
+                                    }
+                                }
                             }
                         }
                     }

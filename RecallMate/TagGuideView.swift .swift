@@ -20,7 +20,7 @@ struct TagGuideView: View {
             GeometryReader { geometry in
                 VStack {
                     // タグセクションまでのスペース
-                    Spacer().frame(height: geometry.size.height * 0.4)
+                    Spacer().frame(height: geometry.size.height * 0.35)
                     
                     // ガイドコンテンツを中央に配置
                     VStack(spacing: 16) {
