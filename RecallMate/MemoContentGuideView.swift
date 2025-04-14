@@ -21,7 +21,7 @@ struct MemoContentGuideView: View {
             GeometryReader { geometry in
                 VStack {
                     // メモ内容フィールドに合わせた位置調整
-                    Spacer().frame(height: geometry.size.height * 0.07)
+                    Spacer().frame(height: geometry.size.height * 0.035)
                     
                     // ガイドコンテンツを中央に配置
                     VStack(spacing: 16) {
