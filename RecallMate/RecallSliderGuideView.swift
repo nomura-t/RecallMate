@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct TagGuideView: View {
+struct RecallSliderGuideView: View {
     @Binding var isPresented: Bool
     var onDismiss: () -> Void
     
@@ -16,21 +16,21 @@ struct TagGuideView: View {
                     }
                 }
             
-            // タグエリア周辺のレイアウト
+            // 記憶定着度スライダーエリア周辺のレイアウト
             GeometryReader { geometry in
                 VStack {
-                    // タグセクションまでのスペース
-                    Spacer().frame(height: geometry.size.height * 0.4)
+                    // スクロール後の位置に合わせて調整（上部余白を小さく）
+                    Spacer().frame(height: geometry.size.height * 0.2)
                     
                     // ガイドコンテンツを中央に配置
                     VStack(spacing: 16) {
-                        // タグエリアを囲む半透明の背景
+                        // スライダーエリアを囲む半透明の背景 - 高さを調整
                         RoundedRectangle(cornerRadius: 12)
                             .fill(Color.white.opacity(0.2))
-                            .frame(width: geometry.size.width * 0.9, height: 160)
+                            .frame(width: geometry.size.width * 0.9, height: 180)
                         
                         // ガイドテキスト
-                        Text("これはメモを検索したり\n分析したりするときに便利なタグ機能だよ！\n今回は試しに新規タグから追加してみよう！")
+                        Text("あなたの記憶度を評価してみよう！\nどのくらい記憶できているか自己評価することで\n次回の復習タイミングを最適化します\nスライダーを動かして評価してみよう！")
                             .font(.headline)
                             .foregroundColor(.white)
                             .shadow(color: .black, radius: 2)
