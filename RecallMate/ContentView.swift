@@ -431,7 +431,7 @@ struct ContentView: View {
                                     dismiss()
                                 }
                             }) {
-                                Text("記憶した！")
+                                Text("メモ完了！")
                                     .font(.headline)
                                     .foregroundColor(.white)
                                     .padding(.vertical, 12)
