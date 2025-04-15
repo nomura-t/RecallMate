@@ -661,7 +661,8 @@ class ContentViewModel: ObservableObject {
                             }
                         }
                     }
-                    
+                    SoundManager.shared.playMemoryCompletedSound()
+
                     // 状態をリセット
                     self.contentChanged = false
                     ReviewManager.shared.incrementTaskCompletionCount()
