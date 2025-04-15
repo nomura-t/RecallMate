@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "background_gradation.jpg",
+      "filename" : "LINE_ALBUM_RecallMate_icon_all_250414_7.jpg",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -13,7 +13,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "background_gradation 1.jpg",
+      "filename" : "LINE_ALBUM_RecallMate_icon_all_250414_7 1.jpg",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -25,67 +25,67 @@
           "value" : "tinted"
         }
       ],
-      "filename" : "background_gradation 2.jpg",
+      "filename" : "LINE_ALBUM_RecallMate_icon_all_250414_7 2.jpg",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
     },
     {
-      "filename" : "background_gradation 3.jpg",
+      "filename" : "LINE_ALBUM_RecallMate_icon_all_250414_1.jpg",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "16x16"
     },
     {
-      "filename" : "background_gradation 4.jpg",
+      "filename" : "LINE_ALBUM_RecallMate_icon_all_250414_2.jpg",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "16x16"
     },
     {
-      "filename" : "background_gradation 5.jpg",
+      "filename" : "LINE_ALBUM_RecallMate_icon_all_250414_2 1.jpg",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "32x32"
     },
     {
-      "filename" : "background_gradation 6.jpg",
+      "filename" : "LINE_ALBUM_RecallMate_icon_all_250414_3.jpg",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "32x32"
     },
     {
-      "filename" : "background_gradation 7.jpg",
+      "filename" : "LINE_ALBUM_RecallMate_icon_all_250414_4.jpg",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "128x128"
     },
     {
-      "filename" : "background_gradation 8.jpg",
+      "filename" : "LINE_ALBUM_RecallMate_icon_all_250414_5.jpg",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "128x128"
     },
     {
-      "filename" : "background_gradation 9.jpg",
+      "filename" : "LINE_ALBUM_RecallMate_icon_all_250414_5 1.jpg",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "256x256"
     },
     {
-      "filename" : "background_gradation 10.jpg",
+      "filename" : "LINE_ALBUM_RecallMate_icon_all_250414_6 1.jpg",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "256x256"
     },
     {
-      "filename" : "background_gradation 11.jpg",
+      "filename" : "LINE_ALBUM_RecallMate_icon_all_250414_6.jpg",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "512x512"
     },
     {
-      "filename" : "background_gradation 12.jpg",
+      "filename" : "LINE_ALBUM_RecallMate_icon_all_250414_7 3.jpg",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "512x512"
