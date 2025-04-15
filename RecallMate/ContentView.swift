@@ -42,6 +42,8 @@ struct ContentView: View {
     @Namespace var titleField
     @Namespace var recallSliderSection
 
+    @State private var showUnsavedChangesAlert = false
+
     // すべてのタグを取得
     @FetchRequest(
         entity: Tag.entity(),
@@ -61,10 +63,17 @@ struct ContentView: View {
                     // カスタムヘッダー
                     HStack {
                         Button(action: {
-                            if memo == nil {
-                                viewModel.cleanupOrphanedQuestions()
+                            // 変更があるか確認
+                            if viewModel.contentChanged {
+                                // 変更があれば確認ダイアログを表示
+                                showUnsavedChangesAlert = true
+                            } else {
+                                // 変更がなければそのまま戻る
+                                if memo == nil {
+                                    viewModel.cleanupOrphanedQuestions()
+                                }
+                                dismiss()
                             }
-                            dismiss()
                         }) {
                             Label("ホームに戻る", systemImage: "arrow.left")
                                 .font(.headline)
@@ -660,6 +669,26 @@ struct ContentView: View {
                     } message: {
                         Text("メモの内容をクリアしますか？この操作は元に戻せません。")
                     }
+                }
+                .alert("変更が保存されていません", isPresented: $showUnsavedChangesAlert) {
+                    Button("キャンセル", role: .cancel) {
+                        // 何もせずダイアログを閉じる
+                    }
+                    Button("保存", role: .none) {
+                        // 保存して戻る
+                        viewModel.saveMemoWithTracking {
+                            dismiss()
+                        }
+                    }
+                    Button("保存せずに戻る", role: .destructive) {
+                        // 保存せずに戻る
+                        if memo == nil {
+                            viewModel.cleanupOrphanedQuestions()
+                        }
+                        dismiss()
+                    }
+                } message: {
+                    Text("メモの変更内容を保存しますか？")
                 }
             }
         }
