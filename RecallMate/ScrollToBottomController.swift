@@ -13,7 +13,6 @@ struct ScrollToBottomController: UIViewControllerRepresentable {
     
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
         if triggerScroll {
-            print("📜 ScrollToBottomController: スクロールトリガーON")
             
             // 十分な遅延を設けて、ビュー階層が確実に構築された後に実行
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -24,23 +23,19 @@ struct ScrollToBottomController: UIViewControllerRepresentable {
     
     private func findAndScrollToBottom(from viewController: UIViewController?) {
         guard let viewController = viewController else {
-            print("❌ ルートビューコントローラーが見つかりません")
             return
         }
         
-        print("📜 ルートから探索開始: \(type(of: viewController))")
         
         // すべてのスクロールビューを列挙する
         var allScrollViews: [UIScrollView] = []
         findAllScrollViews(in: viewController.view, result: &allScrollViews)
         
-        print("📜 見つかったスクロールビュー: \(allScrollViews.count)個")
         
         // 最も見込みのあるスクロールビューを選択（通常はコンテンツサイズが最大のもの）
         if let bestScrollView = allScrollViews.max(by: {
             $0.contentSize.height < $1.contentSize.height
         }) {
-            print("✅ 最適なスクロールビューを発見: contentSize=\(bestScrollView.contentSize)")
             
             // 最下部までスクロール
             let bottomOffset = CGPoint(
@@ -48,7 +43,6 @@ struct ScrollToBottomController: UIViewControllerRepresentable {
                 y: max(0, bestScrollView.contentSize.height - bestScrollView.bounds.height + bestScrollView.contentInset.bottom)
             )
             
-            print("📜 スクロール実行: \(bottomOffset)")
             
             // アニメーションを追加
             UIView.animate(withDuration: 0.8) {
@@ -64,7 +58,6 @@ struct ScrollToBottomController: UIViewControllerRepresentable {
                 NotificationCenter.default.post(name: NSNotification.Name("ScrollToBottom"), object: nil)
             }
         } else {
-            print("❌ 適切なスクロールビューが見つかりませんでした")
             
             // 代替手段として通知だけ送信する
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {

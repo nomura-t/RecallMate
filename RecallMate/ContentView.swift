@@ -452,7 +452,6 @@ struct ContentView: View {
                             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                         }
                         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ScrollToBottom"))) { _ in
-                            print("📜 最下部へのスクロール通知を受信 - SwiftUI経由で処理")
                             
                             // ハプティックフィードバックを追加
                             let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
@@ -634,11 +633,9 @@ struct ContentView: View {
                     )
                     // 新規タグ作成の通知を受け取る
                     .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("NewTagCreated"))) { _ in
-                        print("📜 新規タグ作成通知を受信")
                         
                         // 直接ビューモデルのトリガーをオンにする
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            print("📜 スクロールトリガーをONにします")
                             viewModel.triggerBottomScroll = true
                             
                             // 少し遅延してから次のステップへ

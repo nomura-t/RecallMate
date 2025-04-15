@@ -66,7 +66,6 @@ struct MainView: View {
                     .transition(.opacity)
                     .zIndex(1)
                     .onDisappear {
-                        print("🔍 オンボーディング非表示")
                         // オンボーディング非表示時に通知チェック
                         if !viewState.hasCheckedNotifications {
                             viewState.hasCheckedNotifications = true
@@ -80,7 +79,6 @@ struct MainView: View {
                 FloatingGuideView(isPresented: $viewState.showFloatingGuide)
                     .zIndex(10)
                     .onAppear {
-                        print("🔍 ガイド表示")
                         // 10秒後に非表示
                         DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
                             withAnimation {
@@ -102,14 +100,12 @@ struct MainView: View {
                 NotificationPermissionView(isPresented: $viewState.showNotificationPermission)
                     .zIndex(3)
                     .onDisappear {
-                        print("🔍 通知許可モーダル非表示")
                         // 通知後にガイド表示
                         viewState.showGuideAfterNotification()
                     }
             }
         }
         .onAppear {
-            print("🔍 MainView表示")
             if !viewState.isShowingOnboarding && !viewState.hasCheckedNotifications {
                 viewState.hasCheckedNotifications = true
                 viewState.checkNotificationPermission()
@@ -131,32 +127,26 @@ class MainViewState: ObservableObject {
     init() {
         // 初期化時に1回だけUserDefaultsを読み込む
         let hasSeenOnboarding = UserDefaults.standard.bool(forKey: "hasSeenOnboarding")
-        print("🔍 ViewState初期化 - hasSeenOnboarding: \(hasSeenOnboarding)")
         isShowingOnboarding = !hasSeenOnboarding
     }
     
     // 通知許可をチェック
     func checkNotificationPermission() {
-        print("🔍 通知許可チェック実行")
         
         // 通知が表示済みかチェック
         if !UserDefaults.standard.bool(forKey: "hasPromptedForNotifications") {
             UNUserNotificationCenter.current().getNotificationSettings { settings in
                 DispatchQueue.main.async {
-                    print("🔍 通知設定: \(settings.authorizationStatus.rawValue)")
                     
                     if settings.authorizationStatus == .notDetermined {
-                        print("🔍 通知未決定 -> 通知許可ダイアログを表示")
                         self.showNotificationPermission = true
                         UserDefaults.standard.set(true, forKey: "hasPromptedForNotifications")
                     } else {
-                        print("🔍 通知既決定 -> ガイドへ")
                         self.showGuideAfterNotification()
                     }
                 }
             }
         } else {
-            print("🔍 通知プロンプト表示済み -> ガイドへ")
             self.showGuideAfterNotification()
         }
     }
@@ -164,15 +154,12 @@ class MainViewState: ObservableObject {
     // 通知許可後にガイドを表示
     func showGuideAfterNotification() {
         if !UserDefaults.standard.bool(forKey: "hasSeenFloatingGuide") {
-            print("🔍 ガイド表示条件OK")
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 withAnimation {
-                    print("🔍 ガイド表示実行")
                     self.showFloatingGuide = true
                 }
             }
         } else {
-            print("🔍 ガイド表示済み")
         }
     }
 }

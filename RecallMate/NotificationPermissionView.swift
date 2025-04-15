@@ -94,23 +94,17 @@ struct NotificationPermissionView: View {
     }
     // 通知許可をリクエスト
     private func requestNotifications() {
-        print("🔍 通知許可リクエスト開始")
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             DispatchQueue.main.async {
-                print("🔍 通知許可リクエスト結果: granted=\(granted)")
                 if let error = error {
-                    print("🔍 通知許可エラー: \(error.localizedDescription)")
                 }
                 
                 if granted {
-                    print("🔍 通知許可OK → コールバック実行")
                     self.onPermissionGranted?()
                     self.isPresented = false
                     
-                    print("🔍 通知スケジュール実行")
                     StreakNotificationManager.shared.scheduleStreakReminder()
                 } else {
-                    print("🔍 通知許可拒否 → コールバック実行")
                     self.onPermissionDenied?()
                     self.isPresented = false
                 }
@@ -120,14 +114,11 @@ struct NotificationPermissionView: View {
     
     // 通知ステータスの確認
     private func checkNotificationStatus() {
-        print("🔍 通知ステータス確認")
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
-                print("🔍 現在の通知ステータス: \(settings.authorizationStatus.rawValue)")
                 notificationStatus = settings.authorizationStatus
                 
                 if settings.authorizationStatus == .authorized {
-                    print("🔍 通知が既に許可されているためモーダルを閉じる")
                     isPresented = false
                 }
             }

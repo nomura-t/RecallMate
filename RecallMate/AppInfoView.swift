@@ -194,37 +194,37 @@ struct MotivationTipsView: View {
                 }
             }
             
-            NavigationLink(destination: DetailContentView(title: "学ぶ意味を見つけよう", content: "学習内容の実生活における価値を認識することでモチベーションを高める方法について解説します。「なぜ学ぶのか」がわかると続けやすくなります。")) {
-                HStack {
-                    Image(systemName: "chart.bar.fill")
-                        .foregroundColor(.orange)
-                    Text("学ぶ意味を見つけよう")
-                }
-            }
-            
-            NavigationLink(destination: DetailContentView(title: "「できる！」という自信の育て方", content: "「自分にはできる」という自信を育み、維持するための実践的な方法を紹介します。小さな成功体験を積み重ねていきましょう。")) {
-                HStack {
-                    Image(systemName: "figure.strengthtraining.traditional")
-                        .foregroundColor(.orange)
-                    Text("「できる！」という自信の育て方")
-                }
-            }
-            
-            NavigationLink(destination: DetailContentView(title: "進歩を目に見える形に", content: "学習の進捗を可視化し、達成感を得ることでモチベーションを維持する方法を解説します。小さな一歩も見逃さず、成長を実感しましょう。")) {
-                HStack {
-                    Image(systemName: "chart.line.uptrend.xyaxis")
-                        .foregroundColor(.orange)
-                    Text("進歩を目に見える形に")
-                }
-            }
-            
-            NavigationLink(destination: DetailContentView(title: "内側から湧き出るやる気の見つけ方", content: "外部からの報酬ではなく、内側から湧き上がるモチベーションを育む方法について解説します。本当の「楽しさ」を見つけると学習が変わります。")) {
-                HStack {
-                    Image(systemName: "heart.fill")
-                        .foregroundColor(.orange)
-                    Text("内側から湧き出るやる気の見つけ方")
-                }
-            }
+//            NavigationLink(destination: DetailContentView(title: "学ぶ意味を見つけよう", content: "学習内容の実生活における価値を認識することでモチベーションを高める方法について解説します。「なぜ学ぶのか」がわかると続けやすくなります。")) {
+//                HStack {
+//                    Image(systemName: "chart.bar.fill")
+//                        .foregroundColor(.orange)
+//                    Text("学ぶ意味を見つけよう")
+//                }
+//            }
+//            
+//            NavigationLink(destination: DetailContentView(title: "「できる！」という自信の育て方", content: "「自分にはできる」という自信を育み、維持するための実践的な方法を紹介します。小さな成功体験を積み重ねていきましょう。")) {
+//                HStack {
+//                    Image(systemName: "figure.strengthtraining.traditional")
+//                        .foregroundColor(.orange)
+//                    Text("「できる！」という自信の育て方")
+//                }
+//            }
+//            
+//            NavigationLink(destination: DetailContentView(title: "進歩を目に見える形に", content: "学習の進捗を可視化し、達成感を得ることでモチベーションを維持する方法を解説します。小さな一歩も見逃さず、成長を実感しましょう。")) {
+//                HStack {
+//                    Image(systemName: "chart.line.uptrend.xyaxis")
+//                        .foregroundColor(.orange)
+//                    Text("進歩を目に見える形に")
+//                }
+//            }
+//            
+//            NavigationLink(destination: DetailContentView(title: "内側から湧き出るやる気の見つけ方", content: "外部からの報酬ではなく、内側から湧き上がるモチベーションを育む方法について解説します。本当の「楽しさ」を見つけると学習が変わります。")) {
+//                HStack {
+//                    Image(systemName: "heart.fill")
+//                        .foregroundColor(.orange)
+//                    Text("内側から湧き出るやる気の見つけ方")
+//                }
+//            }
         }
         .navigationTitle("モチベーション")
     }
@@ -239,7 +239,9 @@ struct DetailContentView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 // ここから各記事の内容
-                if title == "勉強って何だろう？" {
+                if title == "自分に関連づけて覚えよう" {
+                    selfRelevanceContent
+                } else if title == "勉強って何だろう？" {
                     studyBasicsContent
                 } else if title == "あまり効果がない勉強法" {
                     ineffectiveMethodsContent
@@ -280,6 +282,125 @@ struct DetailContentView: View {
             .padding(.vertical)
         }
         .navigationTitle(title)
+    }
+    private var selfRelevanceContent: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("誰でも自分に関係することには興味が湧き、記憶に残りやすいものです。この「自分に関連付ける」を学習に活かすことで、効果が格段にアップします！")
+                .padding()
+            
+            Image(systemName: "person.fill.viewfinder")
+                .font(.system(size: 60))
+                .foregroundColor(.orange)
+                .frame(maxWidth: .infinity)
+                .padding()
+            
+            Text("なぜ自分に関連付けると効果があるの？")
+                .font(.headline)
+                .padding(.horizontal)
+            
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(alignment: .top, spacing: 12) {
+                    Image(systemName: "brain.fill")
+                        .foregroundColor(.orange)
+                        .frame(width: 24)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("脳が熱心に処理するから")
+                            .fontWeight(.semibold)
+                        Text("自分に関係する情報は、脳が特別に注意深く処理します。これは生まれつき持っている自然な特性なんです。")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                    }
+                }
+                
+                HStack(alignment: .top, spacing: 12) {
+                    Image(systemName: "link")
+                        .foregroundColor(.orange)
+                        .frame(width: 24)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("既存の知識と結びつけやすいから")
+                            .fontWeight(.semibold)
+                        Text("自分の経験や知識と関連付けると、新しい情報が記憶のネットワークにしっかり組み込まれます。")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                    }
+                }
+                
+                HStack(alignment: .top, spacing: 12) {
+                    Image(systemName: "heart.fill")
+                        .foregroundColor(.orange)
+                        .frame(width: 24)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("学ぶ意欲が自然と高まるから")
+                            .fontWeight(.semibold)
+                        Text("「これは自分に関係ある！」と感じると、自然とやる気が出てきて、集中力も高まります。")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                    }
+                }
+            }
+            .padding()
+            
+            Text("学校で「これ何の役に立つの？」と思った経験、ありませんか？")
+                .font(.headline)
+                .padding(.horizontal)
+            
+            Text("学校の授業で「これ将来使わないよね」と思ったことがある人は多いはず。実はこれ、その内容を自分と関連付けられていないサインなんです。何かを学ぶとき、それが自分の生活や将来にどう役立つのかわからないと、やる気も出ないし覚えることもできません。")
+                .padding(.horizontal)
+                .padding(.bottom, 8)
+            
+            Text("イーロン・マスクも推奨する方法")
+                .font(.headline)
+                .padding(.horizontal)
+            
+            VStack(alignment: .leading, spacing: 8) {
+                Text("イーロン・マスクはこう言っています：")
+                    .font(.subheadline)
+                    .padding(.horizontal)
+                
+                Text("「何かを覚えるためには、それに意味を与えなければなりません。なぜこれが自分に関連があるのかを言ってください。なぜ、自分に関連があるのかを言えれば、おそらくそれを覚えるでしょう」")
+                    .font(.subheadline)
+                    .italic()
+                    .padding(.horizontal)
+                    .padding(.bottom, 8)
+            }
+            
+            Text("今日から試せる実践法")
+                .font(.headline)
+                .padding(.horizontal)
+            
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 12) {
+                    Image(systemName: "pencil")
+                        .foregroundColor(.blue)
+                    Text("勉強を始める前に「これが自分の何に役立つか」を1分書き出してみる")
+                }
+                
+                HStack(spacing: 12) {
+                    Image(systemName: "person.text.rectangle")
+                        .foregroundColor(.blue)
+                    Text("「これを友達に説明するとしたら？」と想像してみる")
+                }
+                
+                HStack(spacing: 12) {
+                    Image(systemName: "arrow.triangle.merge")
+                        .foregroundColor(.blue)
+                    Text("勉強する内容と自分の趣味や好きなことを結びつけてみる")
+                }
+                
+                HStack(spacing: 12) {
+                    Image(systemName: "doc.text.magnifyingglass")
+                        .foregroundColor(.blue)
+                    Text("「これがわかると、自分にどんな可能性が広がるか」を考えてみる")
+                }
+            }
+            .padding()
+            
+            Text("これを「利用価値介入」とも呼びます。特に苦手な科目や内容に取り組むときに効果的です。一度立ち止まって「これは自分にとってどんな意味があるのか」を問いかけてみましょう。学ぶ理由がはっきりすると、不思議とやる気も記憶力も高まりますよ！")
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(8)
+                .padding(.horizontal)
+        }
     }
     private var appUsageTipsContent: some View {
         VStack(alignment: .leading, spacing: 16) {
