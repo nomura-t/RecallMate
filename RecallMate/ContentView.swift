@@ -424,33 +424,32 @@ struct ContentView: View {
                                         viewModel.recordActivityOnSave = true
                                     }
                             }
-                            
-                            // 保存ボタン
-                            Button(action: {
-                                viewModel.saveMemoWithTracking {
-                                    dismiss()
-                                }
-                            }) {
-                                Text("メモ完了！")
-                                    .font(.headline)
-                                    .foregroundColor(.white)
-                                    .padding(.vertical, 12)
-                                    .padding(.horizontal, 40)
-                                    .background(Color.blue)
-                                    .cornerRadius(10)
-                                    .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                            .frame(maxWidth: .infinity, alignment: .center)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 8)
-                            .id("bottomAnchor") // 最下部のアンカー
                         }
                         .listStyle(InsetGroupedListStyle())
                         .onTapGesture {
                             // キーボードを閉じる
                             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                         }
+                        
+                        // フォームの外にボタンを配置（メモ完了ボタン）
+                        Button {
+                            viewModel.saveMemoWithTracking {
+                                dismiss()
+                            }
+                        } label: {
+                            Text("メモ完了！")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                        }
+                        .background(Color.blue)
+                        .cornerRadius(10)
+                        .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+                        .padding(.horizontal, 32)
+                        .padding(.vertical, 16)
+                        .id("bottomAnchor") // 最下部のアンカー
+                        
                         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ScrollToBottom"))) { _ in
                             
                             // ハプティックフィードバックを追加
