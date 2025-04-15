@@ -22,7 +22,7 @@ struct MainView: View {
             TabView(selection: $selectedTab) {
                 // 各タブの定義（変更なし）
                 HomeView(isAddingMemo: $isAddingMemo)
-                    .tabItem { Label("記憶する", systemImage: "house.fill") }
+                    .tabItem { Label("記憶する", systemImage: "brain.head.profile") }
                     .tag(0)
                 ActivityProgressView()
                     .tabItem { Label("振り返り", systemImage: "list.bullet.rectangle") }
