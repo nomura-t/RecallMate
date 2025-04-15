@@ -75,7 +75,7 @@ struct ContentView: View {
                                 dismiss()
                             }
                         }) {
-                            Label("ホームに戻る", systemImage: "arrow.left")
+                            Label("戻る", systemImage: "arrow.left")
                                 .font(.headline)
                                 .padding()
                                 .foregroundColor(.blue)

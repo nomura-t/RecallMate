@@ -39,7 +39,7 @@ struct NotificationPermissionView: View {
                     
                     PermissionBenefitRow(
                         icon: "timer",
-                        title: "ポモドーロタイマー通知",
+                        title: "集中タイマー通知",
                         description: "集中時間と休憩時間の切り替えを通知します"
                     )
                     

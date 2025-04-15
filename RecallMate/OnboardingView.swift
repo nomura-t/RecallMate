@@ -29,8 +29,8 @@ struct OnboardingView: View {
         ),
         (
             image: "timer",
-            title: "ポモドーロタイマー",
-            description: "集中力を最大化するポモドーロテクニックを活用しましょう。"
+            title: "集中タイマー",
+            description: "集中力を最大化するテクニックを活用しましょう。"
         ),
         // 最後に脳アイコン誘導を追加
         (
