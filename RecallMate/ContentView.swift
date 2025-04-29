@@ -1,4 +1,4 @@
-// ContentView.swift - 修正版
+// ContentView.swift - タブ構造再設計版
 import SwiftUI
 import CoreData
 import PencilKit
@@ -292,7 +292,7 @@ struct MemoContentSectionView: View {
             ZStack(alignment: .topLeading) {
                 TextEditor(text: $content)
                     .font(.system(size: CGFloat(appSettingsFontSize)))
-                    .frame(minHeight: 120)
+                    .frame(minHeight: 200) // 高さを大きくして表示領域を拡大
                     .padding(4)
                     .background(Color(.systemGray6))
                     .cornerRadius(8)
@@ -332,6 +332,9 @@ struct ContentView: View {
     @State private var showTagSelection = false
     @State private var sessionId: UUID? = nil
     
+    // タブ選択用の状態変数を追加
+    @State private var selectedTab = 0
+    
     // UIKitスクロール用のトリガー
     @State private var triggerScroll = false
     
@@ -365,253 +368,345 @@ struct ContentView: View {
     }
     
     var body: some View {
-        ScrollViewReader { proxy in
-            NavigationStack {
-                VStack {
-                    // カスタムヘッダー
-                    HStack {
-                        Button(action: handleBackButton) {
-                            Label("戻る", systemImage: "arrow.left")
-                                .font(.headline)
-                                .padding()
-                                .foregroundColor(.blue)
+        NavigationStack {
+            VStack(spacing: 0) {
+                // カスタムヘッダー
+                HStack {
+                    Button(action: handleBackButton) {
+                        Label("戻る", systemImage: "arrow.left")
+                            .font(.headline)
+                            .padding()
+                            .foregroundColor(.blue)
+                    }
+                    Spacer()
+                    
+                    // 使い方ボタンを追加
+                    Button(action: {
+                        showUsageModal = true
+                    }) {
+                        Label("使い方", systemImage: "info.circle")
+                            .font(.headline)
+                            .padding()
+                            .foregroundColor(.blue)
+                    }
+                }
+                
+                // UIKitスクロールコントローラー（非表示）
+                ScrollControllerView(shouldScroll: $triggerScroll)
+                    .frame(width: 0, height: 0)
+                
+                // スクロールコントローラー
+                ScrollToBottomController(triggerScroll: viewModel.triggerBottomScroll)
+                    .frame(width: 0, height: 0) // 非表示にする
+                
+                // タブビューを追加 - ページスタイルに変更
+                TabView(selection: $selectedTab) {
+                    // 記録するタブ
+                    recordTab
+                        .tabItem {
+                            Label("記録する", systemImage: "square.and.pencil")
                         }
-                        Spacer()
-                        
-                        // 使い方ボタンを追加
-                        Button(action: {
-                            showUsageModal = true
-                        }) {
-                            Label("使い方", systemImage: "info.circle")
-                                .font(.headline)
-                                .padding()
-                                .foregroundColor(.blue)
+                        .tag(0)
+                    
+                    // 学習するタブ
+                    learnTab
+                        .tabItem {
+                            Label("学習する", systemImage: "book")
+                        }
+                        .tag(1)
+                }
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic)) // ページスタイルに変更
+                .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
+            }
+            .navigationBarHidden(true)
+            .onAppear(perform: handleOnAppear)
+            .onDisappear(perform: handleOnDisappear)
+            // iPad 手書きモード
+            .fullScreenCover(isPresented: $isDrawing) {
+                FullScreenCanvasView(isDrawing: $isDrawing, canvas: $canvasView, toolPicker: $toolPicker)
+                    .onDisappear {
+                        // 手書き入力後は内容が変更されたとみなす
+                        viewModel.contentChanged = true
+                        viewModel.recordActivityOnSave = true
+                    }
+            }
+            // タグ選択画面
+            .sheet(isPresented: $showTagSelection, onDismiss: handleTagSelectionDismiss) {
+                NavigationView {
+                    TagSelectionView(
+                        selectedTags: $viewModel.selectedTags,
+                        onTagsChanged: memo != nil ? {
+                            viewModel.contentChanged = true
+                            viewModel.recordActivityOnSave = true
+                        } : nil
+                    )
+                    .environment(\.managedObjectContext, viewContext)
+                    .navigationTitle("")
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("完了") { showTagSelection = false }
                         }
                     }
-                    
-                    // UIKitスクロールコントローラー（非表示）
-                    ScrollControllerView(shouldScroll: $triggerScroll)
-                        .frame(width: 0, height: 0)
-                    // スクロールコントローラー
-                    ScrollToBottomController(triggerScroll: viewModel.triggerBottomScroll)
-                        .frame(width: 0, height: 0) // 非表示にする
-                    
-                    // ここでScrollViewReaderを配置して全体を包む
-                    ScrollViewReader { proxy in
-                        Form {
-                            // メモの詳細セクション
-                            memoDetailsSection
-                            
-                            // タグセクション
-                            tagSection
-                            
-                            // 記憶度セクション
-                            recallSection
-                        }
-                        .listStyle(InsetGroupedListStyle())
-                        .onTapGesture {
-                            // キーボードを閉じる
-                            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                        }
-                        
-                        // フォームの外にボタンを配置（メモ完了ボタン）
-                        completeButton
-                            .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ScrollToBottom"))) { _ in
-                                handleScrollToBottom(proxy: proxy)
-                            }
+                }
+            }
+            // 問題エディタへのシート遷移
+            .sheet(isPresented: $showQuestionEditor, onDismiss: handleQuestionEditorDismiss) {
+                QuestionEditorView(
+                    memo: memo,
+                    keywords: $viewModel.keywords,
+                    comparisonQuestions: $viewModel.comparisonQuestions
+                )
+            }
+            .environmentObject(ViewSettings())
+            // アラート群
+            .alert("タイトルが必要です", isPresented: $viewModel.showTitleAlert) {
+                Button("OK") { viewModel.showTitleAlert = false }
+            } message: {
+                Text("続行するにはメモのタイトルを入力してください。")
+            }
+            .alert("内容をリセット", isPresented: $showContentResetAlert) {
+                Button("キャンセル", role: .cancel) {}
+                Button("リセット", role: .destructive) {
+                    // ここでテキストをクリア - メインスレッドで明示的に実行
+                    DispatchQueue.main.async {
+                        viewModel.content = ""
+                        viewModel.contentChanged = true
                     }
-                    .navigationBarHidden(true)
-                    .onAppear(perform: handleOnAppear)
-                    .onDisappear(perform: handleOnDisappear)
-                    // iPad 手書きモード
-                    .fullScreenCover(isPresented: $isDrawing) {
-                        FullScreenCanvasView(isDrawing: $isDrawing, canvas: $canvasView, toolPicker: $toolPicker)
-                            .onDisappear {
-                                // 手書き入力後は内容が変更されたとみなす
+                }
+            } message: {
+                Text("メモの内容をクリアしますか？この操作は元に戻せません。")
+            }
+            .alert("変更が保存されていません", isPresented: $showUnsavedChangesAlert) {
+                Button("キャンセル", role: .cancel) {
+                    // 何もせずダイアログを閉じる
+                }
+                Button("保存", role: .none) {
+                    // 保存して戻る
+                    viewModel.saveMemoWithTracking {
+                        dismiss()
+                    }
+                }
+                Button("保存せずに戻る", role: .destructive) {
+                    // 保存せずに戻る
+                    if memo == nil {
+                        viewModel.cleanupOrphanedQuestions()
+                    }
+                    dismiss()
+                }
+            } message: {
+                Text("メモの変更内容を保存しますか？")
+            }
+        }
+    }
+    
+    // MARK: - タブビュー
+    
+    // 記録するタブ - タイトル、ページ範囲、タブ追加、記憶定着度バー、メモ完了ボタン
+    private var recordTab: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                // タイトルとページ範囲
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("メモ詳細")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal)
+                    
+                    VStack(spacing: 16) {
+                        // タイトル入力
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("タイトル")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            
+                            TextField("タイトル", text: $viewModel.title)
+                                .font(.headline)
+                                .padding()
+                                .background(Color(.systemGray6))
+                                .cornerRadius(8)
+                                .focused($titleFieldFocused)
+                                .id(titleField)
+                                .background(viewModel.shouldFocusTitle ? Color.red.opacity(0.1) : Color.clear)
+                                .onChange(of: viewModel.title) { _, _ in
+                                    viewModel.contentChanged = true
+                                }
+                                .onChange(of: titleFieldFocused) { _, newValue in
+                                    viewModel.onTitleFocusChanged(isFocused: newValue)
+                                }
+                        }
+                        .padding(.horizontal)
+                        
+                        // ページ範囲入力
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("ページ範囲")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            
+                            TextField("ページ範囲", text: $viewModel.pageRange)
+                                .font(.subheadline)
+                                .padding()
+                                .background(Color(.systemGray6))
+                                .cornerRadius(8)
+                                .onChange(of: viewModel.pageRange) { _, _ in
+                                    viewModel.contentChanged = true
+                                    viewModel.recordActivityOnSave = true
+                                }
+                        }
+                        .padding(.horizontal)
+                    }
+                    .padding(.vertical, 8)
+                    .background(Color(.systemBackground))
+                    .cornerRadius(12)
+                }
+                
+                // タグセクション
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("タグ")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal)
+                    
+                    VStack {
+                        TagSelectionSectionView(
+                            selectedTags: $viewModel.selectedTags,
+                            contentChanged: $viewModel.contentChanged,
+                            recordActivityOnSave: $viewModel.recordActivityOnSave,
+                            memo: memo,
+                            allTags: allTags,
+                            viewContext: viewContext,
+                            updateAndSaveTags: viewModel.updateAndSaveTags,
+                            refreshTags: viewModel.refreshTags,
+                            showTagSelection: $showTagSelection
+                        )
+                        .padding()
+                    }
+                    .background(Color(.systemBackground))
+                    .cornerRadius(12)
+                }
+                
+                // 記憶定着度セクション
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("記憶定着度振り返り")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal)
+                    
+                    VStack {
+                        CombinedRecallSection(viewModel: viewModel)
+                            .id("recallSliderSection")
+                            .onChange(of: viewModel.recallScore) { _, _ in
                                 viewModel.contentChanged = true
                                 viewModel.recordActivityOnSave = true
                             }
+                            .padding()
                     }
-                    // タグ選択画面
-                    .sheet(isPresented: $showTagSelection, onDismiss: handleTagSelectionDismiss) {
-                        NavigationView {
-                            TagSelectionView(
-                                selectedTags: $viewModel.selectedTags,
-                                onTagsChanged: memo != nil ? {
-                                    viewModel.contentChanged = true
-                                    viewModel.recordActivityOnSave = true
-                                } : nil
-                            )
-                            .environment(\.managedObjectContext, viewContext)
-                            .navigationTitle("")
-                            .toolbar {
-                                ToolbarItem(placement: .navigationBarTrailing) {
-                                    Button("完了") { showTagSelection = false }
-                                }
-                            }
-                        }
-                    }
-                    // 問題エディタへのシート遷移
-                    .sheet(isPresented: $showQuestionEditor, onDismiss: handleQuestionEditorDismiss) {
-                        QuestionEditorView(
-                            memo: memo,
-                            keywords: $viewModel.keywords,
-                            comparisonQuestions: $viewModel.comparisonQuestions
-                        )
-                    }
-                    .environmentObject(ViewSettings())
-                    // アラート群
-                    .alert("タイトルが必要です", isPresented: $viewModel.showTitleAlert) {
-                        Button("OK") { viewModel.showTitleAlert = false }
-                    } message: {
-                        Text("続行するにはメモのタイトルを入力してください。")
-                    }
-                    .alert("内容をリセット", isPresented: $showContentResetAlert) {
-                        Button("キャンセル", role: .cancel) {}
-                        Button("リセット", role: .destructive) {
-                            // ここでテキストをクリア - メインスレッドで明示的に実行
-                            DispatchQueue.main.async {
-                                viewModel.content = ""
-                                viewModel.contentChanged = true
-                            }
-                        }
-                    } message: {
-                        Text("メモの内容をクリアしますか？この操作は元に戻せません。")
-                    }
+                    .background(Color(.systemBackground))
+                    .cornerRadius(12)
                 }
-                .alert("変更が保存されていません", isPresented: $showUnsavedChangesAlert) {
-                    Button("キャンセル", role: .cancel) {
-                        // 何もせずダイアログを閉じる
-                    }
-                    Button("保存", role: .none) {
-                        // 保存して戻る
-                        viewModel.saveMemoWithTracking {
-                            dismiss()
-                        }
-                    }
-                    Button("保存せずに戻る", role: .destructive) {
-                        // 保存せずに戻る
-                        if memo == nil {
-                            viewModel.cleanupOrphanedQuestions()
-                        }
+                
+                // メモ完了ボタン
+                Button {
+                    viewModel.saveMemoWithTracking {
                         dismiss()
                     }
-                } message: {
-                    Text("メモの変更内容を保存しますか？")
+                } label: {
+                    Text("メモ完了！")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                }
+                .background(Color.blue)
+                .cornerRadius(10)
+                .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+                .padding(.horizontal)
+                .padding(.vertical, 10)
+                .id("bottomAnchor")
+            }
+            .padding()
+        }
+        .background(Color(.systemGroupedBackground))
+        .onTapGesture {
+            // キーボードを閉じる
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
+    }
+    
+    // 学習するタブ - メモの内容と問題カード
+    private var learnTab: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                // メモ内容セクション
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("メモ内容")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal)
+                    
+                    VStack {
+                        MemoContentSectionView(
+                            content: $viewModel.content,
+                            contentChanged: $viewModel.contentChanged,
+                            recordActivityOnSave: $viewModel.recordActivityOnSave,
+                            contentFieldFocused: _contentFieldFocused,
+                            contentFieldID: contentField,
+                            appSettingsFontSize: appSettings.memoFontSize,
+                            onResetAction: { showContentResetAlert = true },
+                            isIpad: UIDevice.current.userInterfaceIdiom == .pad,
+                            onDrawAction: { isDrawing = true },
+                            onContentFocusChanged: { newValue in
+                                viewModel.onContentFocusChanged(isFocused: newValue)
+                            }
+                        )
+                        .padding()
+                    }
+                    .background(Color(.systemBackground))
+                    .cornerRadius(12)
+                }
+                
+                // 問題カードセクション
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("問題カード")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal)
+                    
+                    VStack {
+                        // 問題カードを配置
+                        QuestionCarouselView(
+                            keywords: viewModel.keywords,
+                            comparisonQuestions: viewModel.comparisonQuestions,
+                            memo: memo,
+                            viewContext: viewContext,
+                            showQuestionEditor: $showQuestionEditor
+                        )
+                        .padding(.vertical, 8)
+                        
+                        // 問題編集ボタン
+                        Button(action: {
+                            showQuestionEditor = true
+                        }) {
+                            Label("問題を編集", systemImage: "square.and.pencil")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(Color.blue)
+                                .cornerRadius(10)
+                        }
+                        .padding()
+                    }
+                    .background(Color(.systemBackground))
+                    .cornerRadius(12)
                 }
             }
+            .padding()
         }
-    }
-    
-    // MARK: - セクションビュー
-    
-    private var memoDetailsSection: some View {
-        Section(header: Text("メモ詳細")) {
-            // タイトルとページ範囲
-            titleAndPageRangeView
-            
-            // 問題カードを配置
-            QuestionCarouselView(
-                keywords: viewModel.keywords,
-                comparisonQuestions: viewModel.comparisonQuestions,
-                memo: memo,
-                viewContext: viewContext,
-                showQuestionEditor: $showQuestionEditor
-            )
-            .padding(.vertical, 8)
-            
-            // 内容フィールド
-            MemoContentSectionView(
-                content: $viewModel.content,
-                contentChanged: $viewModel.contentChanged,
-                recordActivityOnSave: $viewModel.recordActivityOnSave,
-                contentFieldFocused: _contentFieldFocused,
-                contentFieldID: contentField,
-                appSettingsFontSize: appSettings.memoFontSize,
-                onResetAction: { showContentResetAlert = true },
-                isIpad: UIDevice.current.userInterfaceIdiom == .pad,
-                onDrawAction: { isDrawing = true },
-                onContentFocusChanged: { newValue in
-                    viewModel.onContentFocusChanged(isFocused: newValue)
-                }
-            )
+        .background(Color(.systemGroupedBackground))
+        .onTapGesture {
+            // キーボードを閉じる
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
-        .onChange(of: viewModel.shouldFocusTitle) { _, shouldFocus in
-            if shouldFocus {
-                titleFieldFocused = true
-            }
-        }
-    }
-    
-    private var titleAndPageRangeView: some View {
-        Group {
-            TextField("タイトル", text: $viewModel.title)
-                .font(.headline)
-                .focused($titleFieldFocused)
-                .id(titleField)
-                .background(viewModel.shouldFocusTitle ? Color.red.opacity(0.1) : Color.clear)
-                .onChange(of: viewModel.title) { _, _ in
-                    viewModel.contentChanged = true
-                }
-                .onChange(of: titleFieldFocused) { _, newValue in
-                    viewModel.onTitleFocusChanged(isFocused: newValue)
-                }
-            
-            TextField("ページ範囲", text: $viewModel.pageRange)
-                .font(.subheadline)
-                .padding(.bottom, 4)
-                .onChange(of: viewModel.pageRange) { _, _ in
-                    viewModel.contentChanged = true
-                    viewModel.recordActivityOnSave = true
-                }
-        }
-    }
-    
-    private var tagSection: some View {
-        Section(header: Text("タグ")) {
-            TagSelectionSectionView(
-                selectedTags: $viewModel.selectedTags,
-                contentChanged: $viewModel.contentChanged,
-                recordActivityOnSave: $viewModel.recordActivityOnSave,
-                memo: memo,
-                allTags: allTags,
-                viewContext: viewContext,
-                updateAndSaveTags: viewModel.updateAndSaveTags,
-                refreshTags: viewModel.refreshTags,
-                showTagSelection: $showTagSelection
-            )
-        }
-    }
-    
-    private var recallSection: some View {
-        Section(header: Text("記憶定着度振り返り")) {
-            CombinedRecallSection(viewModel: viewModel)
-                .id("recallSliderSection") // 文字列で明示的にID指定
-                .onChange(of: viewModel.recallScore) { _, _ in
-                    viewModel.contentChanged = true
-                    viewModel.recordActivityOnSave = true
-                }
-        }
-    }
-    
-    private var completeButton: some View {
-        Button {
-            viewModel.saveMemoWithTracking {
-                dismiss()
-            }
-        } label: {
-            Text("メモ完了！")
-                .font(.headline)
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-        }
-        .background(Color.blue)
-        .cornerRadius(10)
-        .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
-        .padding(.horizontal, 32)
-        .padding(.vertical, 16)
-        .id("bottomAnchor") // 最下部のアンカー
     }
     
     // MARK: - イベントハンドラメソッド
@@ -627,24 +722,6 @@ struct ContentView: View {
                 viewModel.cleanupOrphanedQuestions()
             }
             dismiss()
-        }
-    }
-    
-    private func handleScrollToBottom(proxy: ScrollViewProxy) {
-        // ハプティックフィードバックを追加
-        let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
-        impactFeedback.impactOccurred()
-        
-        // 記憶定着度セクションまでスクロール
-        withAnimation(.easeInOut(duration: 0.8)) {
-            proxy.scrollTo("recallSliderSection", anchor: .top)
-            
-            // 失敗した場合のバックアップとして、少し遅延させて最下部へのスクロールも試みる
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                withAnimation(.easeInOut(duration: 0.5)) {
-                    proxy.scrollTo("bottomAnchor", anchor: .bottom)
-                }
-            }
         }
     }
     
