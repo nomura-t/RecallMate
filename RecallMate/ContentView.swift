@@ -1102,143 +1102,124 @@ struct EnhancedQuestionCarouselView: View {
         )
     }
     
-    // 質問カード
     @ViewBuilder
     private func questionCard(for question: QuestionItem) -> some View {
-        VStack(spacing: 0) {
-            // カードコンテンツ
-            ZStack {
-                // 裏側（回答）
-                if isShowingAnswer {
-                    VStack(alignment: .leading, spacing: 12) {
-                        HStack {
-                            Text("Answer")
-                                .font(.caption)
-                                .fontWeight(.bold)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 4)
-                                .background(question.isExplanation ? Color.blue.opacity(0.1) : Color.orange.opacity(0.1))
-                                .foregroundColor(question.isExplanation ? .blue : .orange)
-                                .cornerRadius(8)
-                            
-                            Spacer()
-                            
-                            // タイプ表示
-                            Text(question.isExplanation ? "説明問題" : "比較問題")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                        }
-                        
-                        Divider()
-                        
-                        // 回答内容
-                        if let answer = question.answer, !answer.isEmpty {
-                            ScrollView {
-                                Text(answer)
-                                    .font(.body)
-                                    .lineLimit(nil)
-                                    .fixedSize(horizontal: false, vertical: true)
-                                    .padding(.bottom, 8)
-                            }
-                        } else {
-                            VStack(spacing: 16) {
-                                Image(systemName: "questionmark.circle")
-                                    .font(.system(size: 30))
-                                    .foregroundColor(.gray)
-                                
-                                Text("まだ回答がありません")
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                        }
-                    }
-                    .padding(16)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color.white)
-                    .cornerRadius(16)
-                    .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-                    .rotation3DEffect(
-                        .degrees(isShowingAnswer ? 0 : 180),
-                        axis: (x: 0, y: 1, z: 0)
-                    )
-                }
-                // 表側（質問）
-                else {
-                    VStack(alignment: .leading, spacing: 12) {
-                        HStack {
-                            Text("Question")
-                                .font(.caption)
-                                .fontWeight(.bold)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 4)
-                                .background(question.isExplanation ? Color.blue.opacity(0.1) : Color.orange.opacity(0.1))
-                                .foregroundColor(question.isExplanation ? .blue : .orange)
-                                .cornerRadius(8)
-                            
-                            Spacer()
-                            
-                            // タイプ表示
-                            Text(question.isExplanation ? "説明問題" : "比較問題")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                        }
-                        
-                        Divider()
-                        
-                        // 質問テキスト
-                        Text(question.questionText)
-                            .font(.headline)
-                            .lineLimit(nil)
-                            .fixedSize(horizontal: false, vertical: true)
-                        
-                        if !question.subText.isEmpty {
-                            Text(question.subText)
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
-                                .lineLimit(3)
-                        }
-                        
-                        Spacer()
-                        
-                        HStack {
-                            Spacer()
-                            
-                            // タップして回答を見るテキスト
-                            Text("タップして回答を見る")
-                                .font(.caption)
-                                .foregroundColor(.blue)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 5)
-                                .background(Color.blue.opacity(0.1))
-                                .cornerRadius(10)
-                        }
-                    }
-                    .padding(16)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color.white)
-                    .cornerRadius(16)
-                    .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-                    .rotation3DEffect(
-                        .degrees(isShowingAnswer ? 180 : 0),
-                        axis: (x: 0, y: 1, z: 0)
-                    )
-                }
-            }
-            .frame(height: 180)
-            .contentShape(Rectangle())
-            .onTapGesture {
-                withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
-                    isShowingAnswer.toggle()
-                }
+        VStack(alignment: .leading, spacing: 8) {
+            // カードヘッダー - シンプル化
+            HStack {
+                // タイプ表示
+                Text(question.isExplanation ? "説明問題" : "比較問題")
+                    .font(.caption)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(question.isExplanation ? Color.blue.opacity(0.1) : Color.orange.opacity(0.1))
+                    .foregroundColor(question.isExplanation ? .blue : .orange)
+                    .cornerRadius(8)
                 
-                // ハプティックフィードバック
-                let generator = UIImpactFeedbackGenerator(style: .light)
-                generator.impactOccurred()
+                Spacer()
+                
+                // シンプルな切り替えボタン - 単一ボタン
+                Button {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        isShowingAnswer.toggle()
+                    }
+                    // ハプティックフィードバック
+                    let generator = UIImpactFeedbackGenerator(style: .light)
+                    generator.impactOccurred()
+                } label: {
+                    HStack(spacing: 4) {
+                        Text(isShowingAnswer ? "問題を表示" : "回答を表示")
+                            .font(.caption)
+                        Image(systemName: isShowingAnswer ? "doc.text" : "text.bubble")
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Color.blue.opacity(0.2))
+                    .foregroundColor(.blue)
+                    .cornerRadius(16)
+                }
+                .buttonStyle(BorderlessButtonStyle())
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 16)
+            
+            Divider()
+                .padding(.horizontal, 16)
+            
+            // コンテンツ部分 - 構造をシンプル化
+            if isShowingAnswer {
+                // 回答表示
+                answerView(for: question)
+            } else {
+                // 問題表示
+                questionView(for: question)
             }
         }
+        .background(Color.white)
+        .cornerRadius(16)
+        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
         .padding(.horizontal, 8)
+    }
+
+    // 問題表示用ビュー - 分離してシンプル化
+    private func questionView(for question: QuestionItem) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("問題")
+                .font(.headline)
+                .foregroundColor(.blue)
+            
+            Text(question.questionText)
+                .font(.body)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+            
+            if !question.subText.isEmpty {
+                Text(question.subText)
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+                    .lineLimit(3)
+            }
+            
+            Spacer(minLength: 20)
+        }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 16)
+        .frame(height: 140, alignment: .topLeading)
+        .transition(.opacity)
+    }
+
+    // 回答表示用ビュー - 分離してシンプル化
+    private func answerView(for question: QuestionItem) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("回答")
+                .font(.headline)
+                .foregroundColor(.green)
+            
+            if let answer = question.answer, !answer.isEmpty {
+                ScrollView {
+                    Text(answer)
+                        .font(.body)
+                        .lineLimit(nil)
+                        .padding(.bottom, 8)
+                }
+            } else {
+                VStack(spacing: 16) {
+                    Image(systemName: "questionmark.circle")
+                        .font(.system(size: 30))
+                        .foregroundColor(.gray)
+                    
+                    Text("まだ回答がありません")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 16)
+        .frame(height: 140)
+        .transition(.opacity)
     }
     
     // 質問データの読み込み
@@ -1247,5 +1228,24 @@ struct EnhancedQuestionCarouselView: View {
             keywords: keywords,
             comparisonQuestions: comparisonQuestions
         )
+    }
+}
+extension View {
+    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+        clipShape(RoundedCorner(radius: radius, corners: corners))
+    }
+}
+
+struct RoundedCorner: Shape {
+    var radius: CGFloat = .infinity
+    var corners: UIRectCorner = .allCorners
+
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(
+            roundedRect: rect,
+            byRoundingCorners: corners,
+            cornerRadii: CGSize(width: radius, height: radius)
+        )
+        return Path(path.cgPath)
     }
 }

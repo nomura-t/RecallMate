@@ -185,9 +185,6 @@ struct RetentionView: View {
                     
                     // メモリスト
                     List {
-                        // 記憶定着度の概要
-                        retentionSummarySection
-                        
                         // メモリスト
                         Section(header: Text("メモの記憶定着度")
                             .frame(maxWidth: .infinity, alignment: .trailing)  // 右寄せにする
@@ -237,169 +234,6 @@ struct RetentionView: View {
             Spacer()
         }
         .padding(.top, 100)
-    }
-    
-    // 記憶定着度の概要セクション - 棒グラフと円グラフを横に並べる
-    private var retentionSummarySection: some View {
-        Section(header: Text("記憶定着度の概要")) {
-            VStack(spacing: 16) {
-                // 全体の平均定着度
-                HStack {
-                    Text("平均定着度")
-                        .font(.headline)
-                    
-                    Spacer()
-                    
-                    Text("\(Int(averageRetention))%")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundColor(progressColor(for: Int16(averageRetention)))
-                }
-
-                // グラフ表示 - iOS 16以降では2つのグラフを横に並べる
-                if #available(iOS 16.0, *) {
-                    HStack(alignment: .top, spacing: 10) {
-                        // 棒グラフ（左側）
-                        VStack(alignment: .center, spacing: 4) {
-                            Text("分布図")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                            
-                            Chart {
-                                ForEach(retentionDistribution.indices, id: \.self) { index in
-                                    let category = ["低（0-40%）", "中（41-70%）", "高（71-100%）"][index]
-                                    let count = retentionDistribution[index]
-                                    
-                                    BarMark(
-                                        x: .value("カテゴリ", category),
-                                        y: .value("メモ数", count),
-                                        width: .ratio(0.3) // 棒の幅を細く設定
-                                    )
-                                    .foregroundStyle(
-                                        index == 0 ? Color.red :
-                                        index == 1 ? Color.yellow : Color.green
-                                    )
-                                }
-                            }
-                            .frame(height: 150)
-                            .padding(.horizontal, 4)
-                            .padding(.bottom, 4)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .background(Color(.systemBackground))
-                        .cornerRadius(8)
-                        
-                        // 円グラフ（右側）
-                        VStack(alignment: .center, spacing: 4) {
-                            Text("比率")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                            
-                            Chart {
-                                ForEach(retentionDistribution.indices, id: \.self) { index in
-                                    let count = retentionDistribution[index]
-                                    
-                                    if count > 0 {
-                                        SectorMark(
-                                            angle: .value("メモ数", count),
-                                            innerRadius: .ratio(0.5),
-                                            angularInset: 2.0
-                                        )
-                                        .cornerRadius(5.0)
-                                        .foregroundStyle(
-                                            index == 0 ? Color.red :
-                                            index == 1 ? Color.yellow : Color.green
-                                        )
-                                        .annotation(position: .overlay) {
-                                            if count > 0 {
-                                                Text("\(count)")
-                                                    .font(.headline)
-                                                    .foregroundColor(.white)
-                                                    .shadow(radius: 1)
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            .frame(height: 150)
-                            .padding(.horizontal, 4)
-                            
-                            // グラフ下部に凡例を表示
-                            HStack(spacing: 15) {
-                                legendItem(color: .red, label: "低", count: retentionDistribution[0])
-                                legendItem(color: .yellow, label: "中", count: retentionDistribution[1])
-                                legendItem(color: .green, label: "高", count: retentionDistribution[2])
-                            }
-                            .padding(.top, 4)
-                            .padding(.bottom, 4)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .background(Color(.systemBackground))
-                        .cornerRadius(8)
-                    }
-                    .padding(.vertical, 8)
-                } else {
-                    // iOS 16未満用の代替表示
-                    VStack(spacing: 12) {
-                        Text("記憶定着度分布")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                        
-                        retentionDistributionView
-                            .padding(.vertical, 8)
-                        
-                        Text("※ iOS 16以降ではより詳細なグラフが表示されます")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                    }
-                }
-            }
-            .padding(.vertical, 10)
-        }
-    }
-    
-    // 凡例アイテム
-    @available(iOS 16.0, *)
-    private func legendItem(color: Color, label: String, count: Int) -> some View {
-        return HStack(spacing: 4) {
-            Circle()
-                .fill(color)
-                .frame(width: 8, height: 8)
-            Text(label)
-                .font(.caption2)
-            if count > 0 {
-                Text("(\(count))")
-                    .font(.caption2)
-                    .foregroundColor(.gray)
-            }
-        }
-    }
-    
-    // iOS 16未満用の分布ビュー
-    private var retentionDistributionView: some View {
-        HStack(alignment: .bottom, spacing: 8) {
-            ForEach(retentionDistribution.indices, id: \.self) { index in
-                let category = ["低\n0-40%", "中\n41-70%", "高\n71-100%"][index]
-                let count = retentionDistribution[index]
-                let color = index == 0 ? Color.red :
-                           index == 1 ? Color.yellow : Color.green
-                
-                VStack {
-                    Text("\(count)")
-                        .font(.headline)
-                    
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(color.opacity(0.7))
-                        .frame(height: CGFloat(count) * 30 + 20)
-                    
-                    Text(category)
-                        .font(.caption)
-                        .multilineTextAlignment(.center)
-                }
-                .frame(maxWidth: .infinity)
-            }
-        }
-        .padding(.vertical, 10)
     }
     
     // 各メモの記憶定着度表示行
@@ -489,29 +323,6 @@ struct RetentionView: View {
                 perfectRecallCount: memo.perfectRecallCount
             ))
         }
-    }
-    
-    private var averageRetention: Double {
-        guard !filteredMemos.isEmpty else { return 0 }
-        let total = filteredMemos.reduce(0) { $0 + Double(retentionScore(for: $1)) }
-        return total / Double(filteredMemos.count)
-    }
-    
-    private var retentionDistribution: [Int] {
-        var result = [0, 0, 0] // 低・中・高
-        
-        for memo in filteredMemos {
-            let score = retentionScore(for: memo)
-            if score <= 40 {
-                result[0] += 1
-            } else if score <= 70 {
-                result[1] += 1
-            } else {
-                result[2] += 1
-            }
-        }
-        
-        return result
     }
     
     private func progressColor(for score: Int16) -> Color {
