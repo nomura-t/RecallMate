@@ -1,3 +1,4 @@
+// RecallMate/CombinedRecallSection.swift (改良版)
 import SwiftUI
 
 /// 記憶度スライダーと詳細情報を1つのセクションにまとめたコンポーネント
@@ -5,86 +6,65 @@ struct CombinedRecallSection: View {
     @ObservedObject var viewModel: ContentViewModel
     
     var body: some View {
-        Section(header: Text("記憶定着度振り返り")) {
-            // シンプルなプログレスバー
-            HStack {
-                // 固定幅を確保し、右寄せにしてテキストが常に同じ位置に表示されるようにする
-                Text("\(Int(viewModel.recallScore))%")
+        // セクションヘッダー（"記憶定着度振り返り"）は ContentView で既に表示されているため、
+        // ここでは表示せず、内容だけを表示する
+        VStack(spacing: 16) {
+            // パーセンテージとアイコンをコンパクトに横並び
+            HStack(alignment: .center) {
+                // 左側: 状態アイコンとパーセント
+                HStack(spacing: 6) {
+                    Image(systemName: statusIcon(for: viewModel.recallScore))
+                        .foregroundColor(retentionColor(for: viewModel.recallScore))
+                        .font(.system(size: 22))
+                    
+                    Text("\(Int(viewModel.recallScore))%")
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .foregroundColor(retentionColor(for: viewModel.recallScore))
+                }
+                
+                Spacer()
+                
+                // 右側: 記憶状態を短く表示
+                Text(retentionDescription(for: viewModel.recallScore))
                     .font(.subheadline)
                     .foregroundColor(retentionColor(for: viewModel.recallScore))
-                    .frame(width: 60, alignment: .trailing) // 幅を60に設定し、100%でも崩れないようにする
-                
-                // プログレスバー
-                GeometryReader { geometry in
-                    ZStack(alignment: .leading) {
-                        // 背景バー
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.gray.opacity(0.2))
-                            .frame(height: 12)
-                        
-                        // 進捗バー
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(retentionColor(for: viewModel.recallScore))
-                            .frame(width: CGFloat(viewModel.recallScore) / 100.0 * geometry.size.width, height: 12)
-                    }
-                }
-                .frame(height: 12)
             }
-            .padding(.vertical, 4)
             
             // 記憶度のスライダー
             Slider(value: Binding(
                 get: { Double(viewModel.recallScore).isNaN ? 50.0 : Double(viewModel.recallScore) },
                 set: {
                     viewModel.recallScore = Int16($0)
-                    // スライダー操作時に直接状態を更新
                     viewModel.contentChanged = true
                     viewModel.recordActivityOnSave = true
-                    // 次回復習日を更新 - ViewModelのメソッドを呼び出す
                     viewModel.updateNextReviewDate()
                 }
             ), in: 0...100, step: 1)
             .modifier(SliderColorModifier(color: retentionColor(for: viewModel.recallScore)))
             
-            // 記憶度の説明
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(spacing: 8) {
-                    Image(systemName: statusIcon(for: viewModel.recallScore))
-                        .foregroundColor(retentionColor(for: viewModel.recallScore))
-                        .frame(width: 24) // アイコンの幅を固定
+            // 詳細説明
+            Text(retentionDetailedDescription(for: viewModel.recallScore))
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            
+            // 次回復習日があれば表示
+            if let nextReviewDate = viewModel.reviewDate {
+                HStack(spacing: 6) {
+                    Image(systemName: "calendar.badge.clock")
+                        .foregroundColor(.blue)
+                        .font(.system(size: 16))
                     
-                    Text(retentionDescription(for: viewModel.recallScore))
+                    Text("次回の推奨復習日: \(viewModel.formattedDate(nextReviewDate))")
                         .font(.subheadline)
-                }
-                
-                // 詳細説明
-                Text(retentionDetailedDescription(for: viewModel.recallScore))
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .padding(.vertical, 4)
-                
-                // 次回復習日（存在する場合）
-                // ここで viewModel.reviewDate は更新された値を表示
-                if let nextReviewDate = viewModel.reviewDate {
-                    HStack {
-                        Image(systemName: "calendar.badge.clock")
-                            .foregroundColor(.blue)
-                            .frame(width: 24) // アイコンの幅を固定
-                        
-                        Text("次回の推奨復習日: \(viewModel.formattedDate(nextReviewDate))")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(.top, 4)
+                        .foregroundColor(.secondary)
                 }
             }
-            .padding(.top, 8)
         }
-        // 元コードと同様にonChangeハンドラを追加
         .onChange(of: viewModel.recallScore) { _, _ in
             viewModel.contentChanged = true
             viewModel.recordActivityOnSave = true
-            // 次回復習日を更新 - ViewModelのメソッドを呼び出す
             viewModel.updateNextReviewDate()
         }
     }
@@ -110,7 +90,7 @@ struct CombinedRecallSection: View {
         case 61...80:
             return Color(red: 0.3, green: 0.7, blue: 0.0) // 黄緑
         case 41...60:
-            return Color(red: 0.95, green: 0.6, blue: 0.1) // オレンジ（画像のような色）
+            return Color(red: 0.95, green: 0.6, blue: 0.1) // オレンジ
         case 21...40:
             return Color(red: 0.9, green: 0.45, blue: 0.0) // 濃いオレンジ
         default:
@@ -122,31 +102,31 @@ struct CombinedRecallSection: View {
     private func statusIcon(for score: Int16) -> String {
         switch score {
         case 81...100:
-            return "checkmark.circle"
+            return "checkmark.circle.fill"
         case 61...80:
-            return "brain"
+            return "brain.fill"
         case 41...60:
-            return "questionmark.circle"
+            return "questionmark.circle.fill"
         case 21...40:
-            return "exclamationmark.circle"
+            return "exclamationmark.circle.fill"
         default:
-            return "exclamationmark.triangle"
+            return "exclamationmark.triangle.fill"
         }
     }
     
-    // 記憶度に応じた説明テキストを返す
+    // 記憶度に応じた簡潔な説明テキストを返す
     private func retentionDescription(for score: Int16) -> String {
         switch score {
         case 91...100:
-            return "完璧に覚えた！自信満々！"
+            return "完璧に覚えた！"
         case 81...90:
-            return "十分に理解、自分の言葉で説明可能"
+            return "十分に理解できる"
         case 71...80:
             return "だいたい理解している"
         case 61...70:
             return "要点は覚えている"
         case 51...60:
-            return "基本概念は思い出せる"
+            return "基本概念を思い出せる"
         case 41...50:
             return "断片的に覚えている"
         case 31...40:
