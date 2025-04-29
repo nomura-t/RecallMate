@@ -42,22 +42,7 @@ struct MainView: View {
                 ContentView(memo: nil)
             }
             
-            // 脳アイコンエフェクト
-            GeometryReader { geometry in
-                let isPad = UIDevice.current.userInterfaceIdiom == .pad
-                let effectYPosition: CGFloat = isPad ? geometry.size.height - 1260 : geometry.size.height - 670
 
-                if viewState.showFloatingGuide {
-                    Circle()
-                        .fill(Color.blue.opacity(0.3))
-                        .frame(width: 100, height: 100)
-                        .scaleEffect(1.2)
-                        .position(x: geometry.size.width - 60,
-                                  y: geometry.size.height - effectYPosition)
-                }
-            }
-
-            // 各オーバーレイの表示
             // オンボーディング
             if viewState.isShowingOnboarding {
                 OnboardingView(isShowingOnboarding: $viewState.isShowingOnboarding)
@@ -73,21 +58,7 @@ struct MainView: View {
                         }
                     }
             }
-            
-            // ガイド
-            if viewState.showFloatingGuide {
-                FloatingGuideView(isPresented: $viewState.showFloatingGuide)
-                    .zIndex(10)
-                    .onAppear {
-                        // 10秒後に非表示
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
-                            withAnimation {
-                                viewState.showFloatingGuide = false
-                                UserDefaults.standard.set(true, forKey: "hasSeenFloatingGuide")
-                            }
-                        }
-                    }
-            }
+
 
             // レビューモーダル
             if showingReviewRequest {
@@ -99,10 +70,6 @@ struct MainView: View {
             if viewState.showNotificationPermission {
                 NotificationPermissionView(isPresented: $viewState.showNotificationPermission)
                     .zIndex(3)
-                    .onDisappear {
-                        // 通知後にガイド表示
-                        viewState.showGuideAfterNotification()
-                    }
             }
         }
         .onAppear {
@@ -112,7 +79,6 @@ struct MainView: View {
             }
         }
         .animation(Animation.easeInOut(duration: 0.3), value: viewState.isShowingOnboarding)
-        .animation(Animation.easeInOut(duration: 0.3), value: viewState.showFloatingGuide)
     }
 }
 
@@ -120,7 +86,6 @@ struct MainView: View {
 class MainViewState: ObservableObject {
     // 状態変数
     @Published var isShowingOnboarding: Bool
-    @Published var showFloatingGuide = false
     @Published var showNotificationPermission = false
     @Published var hasCheckedNotifications = false
     
@@ -141,25 +106,9 @@ class MainViewState: ObservableObject {
                     if settings.authorizationStatus == .notDetermined {
                         self.showNotificationPermission = true
                         UserDefaults.standard.set(true, forKey: "hasPromptedForNotifications")
-                    } else {
-                        self.showGuideAfterNotification()
                     }
                 }
             }
-        } else {
-            self.showGuideAfterNotification()
-        }
-    }
-    
-    // 通知許可後にガイドを表示
-    func showGuideAfterNotification() {
-        if !UserDefaults.standard.bool(forKey: "hasSeenFloatingGuide") {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                withAnimation {
-                    self.showFloatingGuide = true
-                }
-            }
-        } else {
         }
     }
 }

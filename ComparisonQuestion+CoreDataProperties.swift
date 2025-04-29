@@ -1,11 +1,3 @@
-//
-//  ComparisonQuestion+CoreDataProperties.swift
-//  RecallMate
-//
-//  Created by 野村哲裕 on 2025/03/10.
-//
-//
-
 import Foundation
 import CoreData
 

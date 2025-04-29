@@ -36,10 +36,9 @@ class ContentViewModel: ObservableObject {
     @Published var titleFieldFocused: Bool = false
     @Published var previouslyFocused: Bool = false
     @Published var hasTitleInput: Bool = false
-    
     @Published var showMemoContentGuide: Bool = false
-    @Published var contentFieldFocused: Bool = false
     
+    @Published var contentFieldFocused: Bool = false
     @Published var triggerBottomScroll: Bool = false
 
 
@@ -67,25 +66,6 @@ class ContentViewModel: ObservableObject {
     }
     // タイトルフィールドのフォーカス状態変更を監視するメソッド
     func onTitleFocusChanged(isFocused: Bool) {
-        // フォーカスが外れた時の処理
-        if previouslyFocused && !isFocused {
-            // タイトルが入力されている場合
-            if !title.isEmpty && !hasTitleInput {
-                hasTitleInput = true
-                
-                // タイトル入力ガイドが表示されていなければ問題カードガイドを表示
-                if !showTitleInputGuide {
-                    let hasSeenQuestionCardGuide = UserDefaults.standard.bool(forKey: "hasSeenQuestionCardGuide")
-                    if !hasSeenQuestionCardGuide {
-                        // 少し遅延させてから表示（自然な流れにするため）
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            self.showQuestionCardGuide = true
-                        }
-                    }
-                }
-            }
-        }
-        
         // 現在の状態を保存
         previouslyFocused = isFocused
         titleFieldFocused = isFocused
@@ -93,85 +73,10 @@ class ContentViewModel: ObservableObject {
 
     // 内容フィールドのフォーカス状態変更を監視するメソッド
     func onContentFocusChanged(isFocused: Bool) {
-        // フォーカスが外れた時の処理
-        if contentFieldFocused && !isFocused {
-            // 内容が入力されている場合
-            if !content.isEmpty && hasTitleInput {
-                // 内容入力後にタグガイドを表示（初回のみ）
-                let hasSeenTagGuide = UserDefaults.standard.bool(forKey: "hasSeenTagGuide")
-                if !hasSeenTagGuide && !showMemoContentGuide {
-                    // 少し遅延させてから表示（自然な流れにするため）
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        self.showTagGuide = true
-                    }
-                }
-            }
-        }
-        
         // 現在の状態を保存
         contentFieldFocused = isFocused
     }
-
-    // ガイドを閉じる関数を追加
-    func dismissTitleInputGuide() {
-        showTitleInputGuide = false
-        UserDefaults.standard.set(true, forKey: "hasCreatedFirstMemo")
-    }
-    
-    func dismissQuestionCardGuide() {
-        showQuestionCardGuide = false
-        UserDefaults.standard.set(true, forKey: "hasSeenQuestionCardGuide")
         
-        // 問題カードガイド後に内容ガイドを表示（初回のみ）
-        let hasSeenMemoContentGuide = UserDefaults.standard.bool(forKey: "hasSeenMemoContentGuide")
-        if !hasSeenMemoContentGuide {
-            // 少し遅延させて表示（自然な遷移のため）
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.showMemoContentGuide = true
-            }
-        }
-    }
-    // 内容ガイドを閉じるメソッド
-    func dismissMemoContentGuide() {
-        showMemoContentGuide = false
-        UserDefaults.standard.set(true, forKey: "hasSeenMemoContentGuide")
-    }
-    
-    // タグガイドを閉じるメソッド
-    func dismissTagGuide() {
-        showTagGuide = false
-        UserDefaults.standard.set(true, forKey: "hasSeenTagGuide")
-        
-        // タグガイド後のフラグを設定（新規タグ追加後に表示するため）
-        UserDefaults.standard.set(false, forKey: "hasSeenRecallSliderGuide")
-    }
-    
-    // 記憶定着度ガイドを閉じるメソッド
-    func dismissRecallSliderGuide() {
-        showRecallSliderGuide = false
-        UserDefaults.standard.set(true, forKey: "hasSeenRecallSliderGuide")
-    }
-    
-    func showRecallGuideAfterTagAdded() {
-        let hasSeenRecallSliderGuide = UserDefaults.standard.bool(forKey: "hasSeenRecallSliderGuide")
-        if !hasSeenRecallSliderGuide {
-            // スクロールトリガーをオンにする
-            DispatchQueue.main.async {
-                self.triggerBottomScroll = true
-                
-                // トリガーをリセット（次回用）
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    self.triggerBottomScroll = false
-                }
-                
-                // スクロール完了後に少し遅延させてガイドを表示
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    self.showRecallSliderGuide = true
-                }
-            }
-        }
-    }
-    
     // loadMemoData関数内で次回復習日を確実に設定
     func loadMemoData(memo: Memo) {
         title = memo.title ?? ""
