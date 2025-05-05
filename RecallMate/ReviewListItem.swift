@@ -1,7 +1,9 @@
+// RecallMate/ReviewListItem.swift
 import SwiftUI
 
 struct ReviewListItem: View {
     let memo: Memo
+    @Environment(\.colorScheme) var colorScheme
     
     // 日付の状態を判定するプロパティ
     private var isOverdue: Bool {
@@ -61,18 +63,23 @@ struct ReviewListItem: View {
         .background(
             RoundedRectangle(cornerRadius: 10)
                 .fill(backgroundColorForState)
-                .shadow(radius: 1)
+                .shadow(
+                    color: colorScheme == .dark ? Color.black.opacity(0.3) : Color.black.opacity(0.1),
+                    radius: colorScheme == .dark ? 2 : 1,
+                    x: 0,
+                    y: colorScheme == .dark ? 1 : 1
+                )
         )
     }
     
-    // 状態に応じた背景色
+    // 状態に応じた背景色（ダークモード対応）
     private var backgroundColorForState: Color {
         if isOverdue {
-            return Color.blue.opacity(0.1)
+            return Color.blue.opacity(colorScheme == .dark ? 0.2 : 0.1)
         } else if isDueToday {
-            return Color.blue.opacity(0.1)
+            return Color.blue.opacity(colorScheme == .dark ? 0.2 : 0.1)
         } else {
-            return Color(.systemBackground)
+            return colorScheme == .dark ? Color(.secondarySystemBackground) : Color(.systemBackground)
         }
     }
     
