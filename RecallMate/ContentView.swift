@@ -11,6 +11,7 @@ class ViewSettings: ObservableObject {
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var appSettings: AppSettings
     
     var memo: Memo?
@@ -66,7 +67,7 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             // 背景
-            Color(.systemGroupedBackground)
+            AppColors.groupedBackground
                 .edgesIgnoringSafeArea(.all)
             
             VStack(spacing: 0) {
@@ -79,11 +80,16 @@ struct ContentView: View {
                             Text("戻る")
                                 .font(.system(size: 16, weight: .semibold))
                         }
-                        .foregroundColor(.blue)
+                        .foregroundColor(AppColors.accent)
                         .padding(12)
-                        .background(Color.white.opacity(0.8))
+                        .background(colorScheme == .dark ? Color(.systemGray5) : Color.white.opacity(0.8))
                         .cornerRadius(20)
-                        .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
+                        .shadow(
+                            color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.05),
+                            radius: 2,
+                            x: 0,
+                            y: 1
+                        )
                     }
                     
                     Spacer()
@@ -97,10 +103,10 @@ struct ContentView: View {
                                 .padding(.horizontal, 16)
                                 .background(
                                     Capsule()
-                                        .fill(selectedTab == index ? Color.blue : Color.clear)
+                                        .fill(selectedTab == index ? AppColors.accent : Color.clear)
                                         .animation(.spring(response: 0.3), value: selectedTab)
                                 )
-                                .foregroundColor(selectedTab == index ? .white : .primary)
+                                .foregroundColor(selectedTab == index ? (colorScheme == .dark ? .black : .white) : AppColors.primaryText)
                                 .onTapGesture {
                                     withAnimation(.spring(response: 0.3)) {
                                         selectedTab = index
@@ -109,7 +115,7 @@ struct ContentView: View {
                         }
                     }
                     .padding(3)
-                    .background(Color.gray.opacity(0.15))
+                    .background(Color.gray.opacity(colorScheme == .dark ? 0.3 : 0.15))
                     .cornerRadius(20)
                     
                     Spacer()
@@ -120,11 +126,16 @@ struct ContentView: View {
                     }) {
                         Image(systemName: "info.circle")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.blue)
+                            .foregroundColor(AppColors.accent)
                             .frame(width: 40, height: 40)
-                            .background(Color.white.opacity(0.8))
+                            .background(colorScheme == .dark ? Color(.systemGray5) : Color.white.opacity(0.8))
                             .clipShape(Circle())
-                            .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
+                            .shadow(
+                                color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.05),
+                                radius: 2,
+                                x: 0,
+                                y: 1
+                            )
                     }
                 }
                 .padding(.horizontal, 16)
@@ -141,7 +152,7 @@ struct ContentView: View {
                 }
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                 .animation(.easeInOut(duration: 0.3), value: selectedTab)
-                .background(Color(.systemGroupedBackground))
+                .background(AppColors.groupedBackground)
             }
             
             // フローティングボタン - 保存ボタン
@@ -169,13 +180,18 @@ struct ContentView: View {
                     .frame(minWidth: 180)
                     .background(
                         LinearGradient(
-                            gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
+                            gradient: Gradient(colors: [AppColors.accent, AppColors.accent.opacity(0.8)]),
                             startPoint: .leading,
                             endPoint: .trailing
                         )
                     )
                     .cornerRadius(28)
-                    .shadow(color: Color.blue.opacity(0.3), radius: 8, x: 0, y: 4)
+                    .shadow(
+                        color: AppColors.accent.opacity(colorScheme == .dark ? 0.4 : 0.3),
+                        radius: 8,
+                        x: 0,
+                        y: 4
+                    )
                     .padding(.bottom, 16)
                 }
                 .padding(.horizontal)
@@ -264,7 +280,7 @@ struct ContentView: View {
         )
     }
     
-    // 記録タブ - モダンなカードベースデザイン
+    // 記録タブ - ダークモード対応
     private var recordTab: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 16) {
@@ -288,9 +304,14 @@ struct ContentView: View {
                             TextField("学習内容のタイトルを入力", text: $viewModel.title)
                                 .font(.headline)
                                 .padding()
-                                .background(Color.white)
+                                .background(AppColors.background)
                                 .cornerRadius(12)
-                                .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
+                                .shadow(
+                                    color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.05),
+                                    radius: 2,
+                                    x: 0,
+                                    y: 1
+                                )
                                 .focused($titleFieldFocused)
                                 .id(titleField)
                                 .onChange(of: viewModel.title) { _, _ in
@@ -310,9 +331,14 @@ struct ContentView: View {
                             TextField("例: p.24-38", text: $viewModel.pageRange)
                                 .font(.subheadline)
                                 .padding()
-                                .background(Color.white)
+                                .background(AppColors.background)
                                 .cornerRadius(12)
-                                .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
+                                .shadow(
+                                    color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.05),
+                                    radius: 2,
+                                    x: 0,
+                                    y: 1
+                                )
                                 .onChange(of: viewModel.pageRange) { _, _ in
                                     viewModel.contentChanged = true
                                     viewModel.recordActivityOnSave = true
@@ -320,19 +346,24 @@ struct ContentView: View {
                         }
                     }
                     .padding(16)
-                    .background(Color.white)
+                    .background(AppColors.cardBackground)
                     .cornerRadius(16)
-                    .shadow(color: Color.black.opacity(0.05), radius: 3, x: 0, y: 2)
+                    .shadow(
+                        color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.05),
+                        radius: 3,
+                        x: 0,
+                        y: 2
+                    )
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 8)
                 
-                // タグセクション - 視覚的に魅力的なデザイン
+                // タグセクション - ダークモード対応
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
                         Label("タグ", systemImage: "tag.fill")
                             .font(.headline)
-                            .foregroundColor(.primary)
+                            .foregroundColor(AppColors.primaryText)
                         
                         Spacer()
                         
@@ -343,13 +374,13 @@ struct ContentView: View {
                                 .font(.caption)
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 5)
-                                .background(Color.blue.opacity(0.1))
-                                .foregroundColor(.blue)
+                                .background(AppColors.accent.opacity(0.1))
+                                .foregroundColor(AppColors.accent)
                                 .cornerRadius(12)
                         }
                     }
                     
-                    // タグリスト - 水平スクロール
+                    // タグリスト - 水平スクロール（ダークモード対応）
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
                             ForEach(allTags) { tag in
@@ -369,15 +400,20 @@ struct ContentView: View {
                                     .background(
                                         viewModel.selectedTags.contains(where: { $0.id == tag.id })
                                         ? tag.swiftUIColor().opacity(0.2)
-                                        : Color.white
+                                        : (colorScheme == .dark ? Color(.systemGray5) : Color.white)
                                     )
                                     .foregroundColor(
                                         viewModel.selectedTags.contains(where: { $0.id == tag.id })
                                         ? tag.swiftUIColor()
-                                        : .primary
+                                        : AppColors.primaryText
                                     )
                                     .cornerRadius(16)
-                                    .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
+                                    .shadow(
+                                        color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.05),
+                                        radius: 2,
+                                        x: 0,
+                                        y: 1
+                                    )
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
@@ -385,7 +421,7 @@ struct ContentView: View {
                         .padding(.vertical, 6)
                     }
                     
-                    // 選択されたタグ - 修正版
+                    // 選択されたタグ - ダークモード対応
                     VStack(alignment: .leading, spacing: 8) {
                         if viewModel.selectedTags.isEmpty {
                             Text("選択中: なし")
@@ -419,7 +455,7 @@ struct ContentView: View {
                                         }
                                         .padding(.horizontal, 8)
                                         .padding(.vertical, 4)
-                                        .background(tag.swiftUIColor().opacity(0.1))
+                                        .background(tag.swiftUIColor().opacity(colorScheme == .dark ? 0.15 : 0.1))
                                         .cornerRadius(10)
                                     }
                                 }
@@ -430,16 +466,21 @@ struct ContentView: View {
                     .padding(.top, 4) // 少し余白を追加
                 }
                 .padding(16)
-                .background(Color.white)
+                .background(AppColors.cardBackground)
                 .cornerRadius(16)
-                .shadow(color: Color.black.opacity(0.05), radius: 3, x: 0, y: 2)
+                .shadow(
+                    color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.05),
+                    radius: 3,
+                    x: 0,
+                    y: 2
+                )
                 .padding(.horizontal, 16)
                 
-                // 記憶定着度セクション - モダンなデザイン
+                // 記憶定着度セクション
                 VStack(alignment: .leading, spacing: 12) {
                     Label("記憶定着度振り返り", systemImage: "brain.head.profile")
                         .font(.headline)
-                        .foregroundColor(.primary)
+                        .foregroundColor(AppColors.primaryText)
                     
                     ModernRecallSection(viewModel: viewModel)
                         .id("recallSliderSection")
@@ -449,31 +490,36 @@ struct ContentView: View {
                         }
                 }
                 .padding(16)
-                .background(Color.white)
+                .background(AppColors.cardBackground)
                 .cornerRadius(16)
-                .shadow(color: Color.black.opacity(0.05), radius: 3, x: 0, y: 2)
+                .shadow(
+                    color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.05),
+                    radius: 3,
+                    x: 0,
+                    y: 2
+                )
                 .padding(.horizontal, 16)
                 .padding(.bottom, 100) // フローティングボタンのためのスペース
             }
             .padding(.bottom, 20)
         }
-        .background(Color(.systemGroupedBackground))
+        .background(AppColors.groupedBackground)
         .onTapGesture {
             // キーボードを閉じる
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
     }
     
-    // 学習タブ - より魅力的なレイアウト
+    // 学習タブ - ダークモード対応
     private var learnTab: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 16) {
-                // メモ内容セクション - よりエレガントなデザイン
+                // メモ内容セクション - よりエレガントなデザイン（ダークモード対応）
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
                         Label("メモ内容", systemImage: "doc.text.fill")
                             .font(.headline)
-                            .foregroundColor(.primary)
+                            .foregroundColor(AppColors.primaryText)
                         
                         Spacer()
                         
@@ -483,7 +529,7 @@ struct ContentView: View {
                                 Image(systemName: "arrow.counterclockwise")
                                     .foregroundColor(.red)
                                     .frame(width: 32, height: 32)
-                                    .background(Color.red.opacity(0.1))
+                                    .background(Color.red.opacity(colorScheme == .dark ? 0.15 : 0.1))
                                     .cornerRadius(16)
                             }
                             .buttonStyle(PlainButtonStyle())
@@ -492,9 +538,9 @@ struct ContentView: View {
                             if UIDevice.current.userInterfaceIdiom == .pad {
                                 Button(action: { isDrawing = true }) {
                                     Image(systemName: "pencil.tip")
-                                        .foregroundColor(.blue)
+                                        .foregroundColor(AppColors.accent)
                                         .frame(width: 32, height: 32)
-                                        .background(Color.blue.opacity(0.1))
+                                        .background(AppColors.accent.opacity(0.1))
                                         .cornerRadius(16)
                                 }
                                 .buttonStyle(PlainButtonStyle())
@@ -502,14 +548,19 @@ struct ContentView: View {
                         }
                     }
                     
-                    // TextEditor - より魅力的なスタイル
+                    // TextEditor - より魅力的なスタイル（ダークモード対応）
                     ZStack(alignment: .topLeading) {
                         TextEditor(text: $viewModel.content)
                             .font(.system(size: CGFloat(appSettings.memoFontSize)))
                             .padding(12)
-                            .background(Color.white)
+                            .background(AppColors.background)
                             .cornerRadius(12)
-                            .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
+                            .shadow(
+                                color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.05),
+                                radius: 2,
+                                x: 0,
+                                y: 1
+                            )
                             .focused($contentFieldFocused)
                             .id(contentField)
                             .onChange(of: viewModel.content) { _, _ in
@@ -527,7 +578,7 @@ struct ContentView: View {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text("アクティブリコール学習法")
                                         .font(.headline)
-                                        .foregroundColor(.blue)
+                                        .foregroundColor(AppColors.accent)
                                     
                                     Text("教科書を見ないで覚えている内容を書き出してみましょう")
                                         .font(.subheadline)
@@ -538,11 +589,11 @@ struct ContentView: View {
                                     HStack(spacing: 10) {
                                         ZStack {
                                             Circle()
-                                                .fill(Color.blue.opacity(0.2))
+                                                .fill(AppColors.accent.opacity(0.2))
                                                 .frame(width: 24, height: 24)
                                             Text("1")
                                                 .font(.caption)
-                                                .foregroundColor(.blue)
+                                                .foregroundColor(AppColors.accent)
                                         }
                                         
                                         Text("まずは自分の力で思い出してみる")
@@ -553,11 +604,11 @@ struct ContentView: View {
                                     HStack(spacing: 10) {
                                         ZStack {
                                             Circle()
-                                                .fill(Color.blue.opacity(0.2))
+                                                .fill(AppColors.accent.opacity(0.2))
                                                 .frame(width: 24, height: 24)
                                             Text("2")
                                                 .font(.caption)
-                                                .foregroundColor(.blue)
+                                                .foregroundColor(AppColors.accent)
                                         }
                                         
                                         Text("思い出せなかった部分は教科書で確認")
@@ -568,11 +619,11 @@ struct ContentView: View {
                                     HStack(spacing: 10) {
                                         ZStack {
                                             Circle()
-                                                .fill(Color.blue.opacity(0.2))
+                                                .fill(AppColors.accent.opacity(0.2))
                                                 .frame(width: 24, height: 24)
                                             Text("3")
                                                 .font(.caption)
-                                                .foregroundColor(.blue)
+                                                .foregroundColor(AppColors.accent)
                                         }
                                         
                                         Text("再度思い出す練習を繰り返す")
@@ -587,18 +638,23 @@ struct ContentView: View {
                     }
                 }
                 .padding(16)
-                .background(Color.white)
+                .background(AppColors.cardBackground)
                 .cornerRadius(16)
-                .shadow(color: Color.black.opacity(0.05), radius: 3, x: 0, y: 2)
+                .shadow(
+                    color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.05),
+                    radius: 3,
+                    x: 0,
+                    y: 2
+                )
                 .padding(.horizontal, 16)
                 .padding(.top, 8)
                 
-                // 問題カードセクション - より視覚的に魅力的なデザイン
+                // 問題カードセクション - ダークモード対応
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
                         Label("問題カード", systemImage: "rectangle.on.rectangle.angled")
                             .font(.headline)
-                            .foregroundColor(.primary)
+                            .foregroundColor(AppColors.primaryText)
                         
                         Spacer()
                         
@@ -609,13 +665,13 @@ struct ContentView: View {
                                 .font(.caption)
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 5)
-                                .background(Color.blue.opacity(0.1))
-                                .foregroundColor(.blue)
+                                .background(AppColors.accent.opacity(0.1))
+                                .foregroundColor(AppColors.accent)
                                 .cornerRadius(12)
                         }
                     }
                     
-                    // 問題カードを配置 - よりスタイリッシュなデザイン
+                    // 問題カードビューも同様に更新が必要
                     EnhancedQuestionCarouselView(
                         keywords: viewModel.keywords,
                         comparisonQuestions: viewModel.comparisonQuestions,
@@ -627,15 +683,20 @@ struct ContentView: View {
                     .padding(.vertical, 6)
                 }
                 .padding(16)
-                .background(Color.white)
+                .background(AppColors.cardBackground)
                 .cornerRadius(16)
-                .shadow(color: Color.black.opacity(0.05), radius: 3, x: 0, y: 2)
+                .shadow(
+                    color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.05),
+                    radius: 3,
+                    x: 0,
+                    y: 2
+                )
                 .padding(.horizontal, 16)
                 .padding(.bottom, 100) // フローティングボタンのためのスペース
             }
             .padding(.bottom, 20)
         }
-        .background(Color(.systemGroupedBackground))
+        .background(AppColors.groupedBackground)
         .onTapGesture {
             // キーボードを閉じる
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
@@ -805,6 +866,7 @@ struct FlowLayout: Layout {
 // モダンな記憶定着度セクション
 struct ModernRecallSection: View {
     @ObservedObject var viewModel: ContentViewModel
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         VStack(spacing: 16) {
@@ -813,13 +875,13 @@ struct ModernRecallSection: View {
                 // 記憶度表示 - より視覚的に魅力的なデザイン
                 ZStack {
                     Circle()
-                        .stroke(Color.gray.opacity(0.2), lineWidth: 8)
+                        .stroke(Color.gray.opacity(colorScheme == .dark ? 0.3 : 0.2), lineWidth: 8)
                         .frame(width: 80, height: 80)
                     
                     Circle()
                         .trim(from: 0, to: CGFloat(viewModel.recallScore) / 100)
                         .stroke(
-                            retentionColor(for: viewModel.recallScore),
+                            AppColors.retentionColor(for: viewModel.recallScore),
                             style: StrokeStyle(lineWidth: 8, lineCap: .round)
                         )
                         .frame(width: 80, height: 80)
@@ -831,13 +893,13 @@ struct ModernRecallSection: View {
                         Text("%")
                             .font(.system(size: 12))
                     }
-                    .foregroundColor(retentionColor(for: viewModel.recallScore))
+                    .foregroundColor(AppColors.retentionColor(for: viewModel.recallScore))
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(retentionDescription(for: viewModel.recallScore))
                         .font(.headline)
-                        .foregroundColor(retentionColor(for: viewModel.recallScore))
+                        .foregroundColor(AppColors.retentionColor(for: viewModel.recallScore))
                     
                     Text(retentionShortDescription(for: viewModel.recallScore))
                         .font(.subheadline)
@@ -866,7 +928,7 @@ struct ModernRecallSection: View {
                             viewModel.updateNextReviewDate()
                         }
                     ), in: 0...100, step: 1)
-                    .accentColor(retentionColor(for: viewModel.recallScore))
+                    .accentColor(AppColors.retentionColor(for: viewModel.recallScore))
                     
                     Text("100%")
                         .font(.caption)
@@ -880,7 +942,7 @@ struct ModernRecallSection: View {
                         let isActive = viewModel.recallScore >= Int16(level)
                         
                         Rectangle()
-                            .fill(isActive ? retentionColorForLevel(i) : Color.gray.opacity(0.2))
+                            .fill(isActive ? retentionColorForLevel(i) : Color.gray.opacity(colorScheme == .dark ? 0.3 : 0.2))
                             .frame(height: 4)
                             .cornerRadius(2)
                     }
@@ -891,7 +953,7 @@ struct ModernRecallSection: View {
             if let nextReviewDate = viewModel.reviewDate {
                 HStack {
                     Image(systemName: "calendar.badge.clock")
-                        .foregroundColor(.blue)
+                        .foregroundColor(AppColors.accent)
                         .font(.system(size: 16))
                     
                     Text("次回の推奨復習日:")
@@ -903,32 +965,16 @@ struct ModernRecallSection: View {
                     Text(viewModel.formattedDate(nextReviewDate))
                         .font(.subheadline)
                         .fontWeight(.medium)
-                        .foregroundColor(.primary)
+                        .foregroundColor(AppColors.primaryText)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
-                        .background(Color.blue.opacity(0.1))
+                        .background(AppColors.accent.opacity(0.1))
                         .cornerRadius(8)
                 }
                 .padding(12)
-                .background(Color(.systemGray6).opacity(0.5))
+                .background(Color(.tertiarySystemBackground))
                 .cornerRadius(12)
             }
-        }
-    }
-    
-    // 記憶度に応じた色を返す
-    private func retentionColor(for score: Int16) -> Color {
-        switch score {
-        case 81...100:
-            return Color(red: 0.0, green: 0.7, blue: 0.3) // 緑
-        case 61...80:
-            return Color(red: 0.3, green: 0.7, blue: 0.0) // 黄緑
-        case 41...60:
-            return Color(red: 0.95, green: 0.6, blue: 0.1) // オレンジ
-        case 21...40:
-            return Color(red: 0.9, green: 0.45, blue: 0.0) // 濃いオレンジ
-        default:
-            return Color(red: 0.9, green: 0.2, blue: 0.2) // 赤
         }
     }
     
@@ -992,6 +1038,7 @@ struct ModernRecallSection: View {
 }
 
 // 強化された問題カードビュー
+// EnhancedQuestionCarouselView.swift
 struct EnhancedQuestionCarouselView: View {
     let keywords: [String]
     let comparisonQuestions: [ComparisonQuestion]
@@ -1002,14 +1049,15 @@ struct EnhancedQuestionCarouselView: View {
     @StateObject private var state = CarouselState()
     @State private var isShowingAnswer = false
     @State private var currentIndex = 0
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         VStack(spacing: 12) {
             if state.questions.isEmpty {
-                // プレースホルダーカード
+                // プレースホルダーカード（ダークモード対応）
                 emptyQuestionCard
             } else {
-                // タブビュー
+                // TabView（ダークモード対応）
                 TabView(selection: $currentIndex) {
                     ForEach(0..<state.questions.count, id: \.self) { index in
                         questionCard(for: state.questions[index])
@@ -1021,7 +1069,7 @@ struct EnhancedQuestionCarouselView: View {
                     isShowingAnswer = false
                 }
                 
-                // インジケーターとナビゲーション
+                // インジケーターとナビゲーション（ダークモード対応）
                 HStack {
                     Button(action: {
                         withAnimation {
@@ -1029,9 +1077,9 @@ struct EnhancedQuestionCarouselView: View {
                         }
                     }) {
                         Image(systemName: "chevron.left")
-                            .foregroundColor(.blue)
+                            .foregroundColor(AppColors.accent)
                             .padding(8)
-                            .background(Color.blue.opacity(0.1))
+                            .background(AppColors.accent.opacity(0.1))
                             .cornerRadius(12)
                     }
                     .disabled(currentIndex == 0)
@@ -1043,7 +1091,7 @@ struct EnhancedQuestionCarouselView: View {
                         .foregroundColor(.secondary)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
-                        .background(Color(.systemGray6))
+                        .background(colorScheme == .dark ? Color(.systemGray5) : Color(.systemGray6))
                         .cornerRadius(10)
                     
                     Spacer()
@@ -1054,9 +1102,9 @@ struct EnhancedQuestionCarouselView: View {
                         }
                     }) {
                         Image(systemName: "chevron.right")
-                            .foregroundColor(.blue)
+                            .foregroundColor(AppColors.accent)
                             .padding(8)
-                            .background(Color.blue.opacity(0.1))
+                            .background(AppColors.accent.opacity(0.1))
                             .cornerRadius(12)
                     }
                     .disabled(currentIndex == state.questions.count - 1)
@@ -1071,12 +1119,12 @@ struct EnhancedQuestionCarouselView: View {
         .onChange(of: comparisonQuestions) { _, _ in loadQuestions() }
     }
     
-    // 空のカードビュー
+    // 空のカードビュー（ダークモード対応）
     private var emptyQuestionCard: some View {
         VStack(spacing: 12) {
             Image(systemName: "rectangle.stack.fill.badge.plus")
                 .font(.system(size: 40))
-                .foregroundColor(.blue)
+                .foregroundColor(AppColors.accent)
                 .padding(.bottom, 8)
             
             Text("問題を追加してみましょう！")
@@ -1097,7 +1145,7 @@ struct EnhancedQuestionCarouselView: View {
                     .font(.subheadline)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
-                    .background(Color.blue)
+                    .background(AppColors.accent)
                     .foregroundColor(.white)
                     .cornerRadius(12)
             }
@@ -1107,28 +1155,35 @@ struct EnhancedQuestionCarouselView: View {
         .frame(maxWidth: .infinity)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color.white)
-                .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                .fill(AppColors.cardBackground)
+                .shadow(
+                    color: colorScheme == .dark ? Color.black.opacity(0.3) : Color.black.opacity(0.1),
+                    radius: 4,
+                    x: 0,
+                    y: 2
+                )
         )
     }
     
     @ViewBuilder
     private func questionCard(for question: QuestionItem) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            // カードヘッダー - シンプル化
+            // カードヘッダー - シンプル化（ダークモード対応）
             HStack {
                 // タイプ表示
                 Text(question.isExplanation ? "説明問題" : "比較問題")
                     .font(.caption)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(question.isExplanation ? Color.blue.opacity(0.1) : Color.orange.opacity(0.1))
+                    .background(question.isExplanation ?
+                        Color.blue.opacity(colorScheme == .dark ? 0.2 : 0.1) :
+                        Color.orange.opacity(colorScheme == .dark ? 0.2 : 0.1))
                     .foregroundColor(question.isExplanation ? .blue : .orange)
                     .cornerRadius(8)
                 
                 Spacer()
                 
-                // シンプルな切り替えボタン - 単一ボタン
+                // シンプルな切り替えボタン - 単一ボタン（ダークモード対応）
                 Button {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                         isShowingAnswer.toggle()
@@ -1144,7 +1199,7 @@ struct EnhancedQuestionCarouselView: View {
                     }
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(Color.blue.opacity(0.2))
+                    .background(Color.blue.opacity(colorScheme == .dark ? 0.3 : 0.2))
                     .foregroundColor(.blue)
                     .cornerRadius(16)
                 }
@@ -1156,7 +1211,7 @@ struct EnhancedQuestionCarouselView: View {
             Divider()
                 .padding(.horizontal, 16)
             
-            // コンテンツ部分 - 構造をシンプル化
+            // コンテンツ部分 - 構造をシンプル化（ダークモード対応）
             if isShowingAnswer {
                 // 回答表示
                 answerView(for: question)
@@ -1165,21 +1220,31 @@ struct EnhancedQuestionCarouselView: View {
                 questionView(for: question)
             }
         }
-        .background(Color.white)
+        .background(AppColors.cardBackground)
         .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(colorScheme == .dark ? Color.gray.opacity(0.2) : Color.clear, lineWidth: colorScheme == .dark ? 1 : 0)
+        )
+        .shadow(
+            color: colorScheme == .dark ? Color.black.opacity(0.3) : Color.black.opacity(0.1),
+            radius: colorScheme == .dark ? 2 : 4,
+            x: 0,
+            y: colorScheme == .dark ? 1 : 2
+        )
         .padding(.horizontal, 8)
     }
 
-    // 問題表示用ビュー - 分離してシンプル化
+    // 問題表示用ビュー（ダークモード対応）
     private func questionView(for question: QuestionItem) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("問題")
                 .font(.headline)
-                .foregroundColor(.blue)
+                .foregroundColor(AppColors.accent)
             
             Text(question.questionText)
                 .font(.body)
+                .foregroundColor(AppColors.primaryText)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
             
@@ -1198,7 +1263,7 @@ struct EnhancedQuestionCarouselView: View {
         .transition(.opacity)
     }
 
-    // 回答表示用ビュー - 分離してシンプル化
+    // 回答表示用ビュー（ダークモード対応）
     private func answerView(for question: QuestionItem) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("回答")
@@ -1209,6 +1274,7 @@ struct EnhancedQuestionCarouselView: View {
                 ScrollView {
                     Text(answer)
                         .font(.body)
+                        .foregroundColor(AppColors.primaryText)
                         .lineLimit(nil)
                         .padding(.bottom, 8)
                 }
@@ -1240,6 +1306,7 @@ struct EnhancedQuestionCarouselView: View {
         )
     }
 }
+
 extension View {
     func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
         clipShape(RoundedCorner(radius: radius, corners: corners))
