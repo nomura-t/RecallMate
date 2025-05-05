@@ -8,7 +8,7 @@ class ShareService {
     private init() {}
     
     // デフォルトのシェアテキスト
-    let defaultShareText = "RecallMateアプリを使って科学的に記憶力を強化することができます。長期記憶の定着に最適なアプリです！ https://apps.apple.com/app/recallmate/id000000000" // 実際のApp StoreリンクIDに変更する
+    let defaultShareText = "RecallMateアプリを使って科学的に記憶力を強化することができます。長期記憶の定着に最適なアプリです！ https://apps.apple.com/app/recallmate/id6744206597" // 実際のApp StoreリンクIDに変更する
     
     // プラットフォーム別のURLスキームチェックと共有処理
     func canShareTo(platform: SocialPlatform) -> Bool {

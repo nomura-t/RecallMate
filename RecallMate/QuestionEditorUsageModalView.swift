@@ -58,7 +58,7 @@ struct QuestionEditorUsageModalView: View {
                         VStack(alignment: .leading, spacing: 8) {
                             StepView(number: 1, text: "右上の「...」メニューから「問題をコピー」を選択")
                             StepView(number: 2, text: "問題がクリップボードにコピーされます")
-                            StepView(number: 3, text: "AIツール（ChatGPTなど）に貼り付けて回答を依頼")
+                            StepView(number: 3, text: "AIツールに貼り付けて回答を依頼")
                         }
                         .padding(.bottom, 8)
                         

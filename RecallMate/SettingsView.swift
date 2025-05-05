@@ -14,7 +14,7 @@ struct SettingsView: View {
     @State private var isShareSheetPresented = false
     @State private var showMissingAppAlert = false
     @State private var missingAppName = ""
-    @State private var shareText = "RecallMateアプリを使って科学的に記憶力を強化しています。長期記憶の定着に最適なアプリです！ https://apps.apple.com/app/recallmate/id000000000" // 実際のApp StoreリンクIDに変更する
+    @State private var shareText = "RecallMateアプリを使って科学的に記憶力を強化しています。長期記憶の定着に最適なアプリです！ https://apps.apple.com/app/recallmate/id6744206597" // 実際のApp StoreリンクIDに変更する
     @State private var showNotificationPermission = false
     @State private var showSocialShareView = false // ソーシャルシェアビュー表示用状態変数を追加
     @StateObject private var notificationObserver = NotificationSettingsObserver()
@@ -49,7 +49,7 @@ struct SettingsView: View {
                                 .frame(width: 30)
                             
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("開発者をフォロー")
+                                Text("開発者に言いたいことを言おう！")
                                     .font(.headline)
                                 
                                 Text("@ttttttt12345654")

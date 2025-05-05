@@ -1,4 +1,4 @@
-// ContentView.swift - モダンデザイン版
+// ContentView.swift - モダンデザイン版（修正版）
 import SwiftUI
 import CoreData
 import PencilKit
@@ -252,6 +252,16 @@ struct ContentView: View {
         } message: {
             Text("メモの変更内容を保存しますか？")
         }
+        // ここに「使い方」モーダルのオーバーレイを追加 - これが修正部分
+        .overlay(
+            Group {
+                if showUsageModal {
+                    UsageModalView(isPresented: $showUsageModal)
+                        .transition(.opacity)
+                        .animation(.easeInOut, value: showUsageModal)
+                }
+            }
+        )
     }
     
     // 記録タブ - モダンなカードベースデザイン
