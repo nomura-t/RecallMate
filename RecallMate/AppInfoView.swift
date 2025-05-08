@@ -14,10 +14,10 @@ struct AppInfoView: View {
                                 .frame(width: 32, height: 32)
                             
                             VStack(alignment: .leading) {
-                                Text("このアプリの使い方")
+                                Text("このアプリの使い方".localized)
                                     .font(.headline)
                                 
-                                Text("基本機能と活用のヒント")
+                                Text("基本機能と活用のヒント".localized)
                                     .font(.caption)
                                     .foregroundColor(.gray)
                             }
@@ -34,10 +34,10 @@ struct AppInfoView: View {
                                 .frame(width: 32, height: 32)
                             
                             VStack(alignment: .leading) {
-                                Text("効果のある勉強法について")
+                                Text("効果のある勉強法について".localized)
                                     .font(.headline)
                                 
-                                Text("科学的に証明された学習テクニック")
+                                Text("科学的に証明された学習テクニック".localized)
                                     .font(.caption)
                                     .foregroundColor(.gray)
                             }
@@ -54,10 +54,10 @@ struct AppInfoView: View {
                                 .frame(width: 32, height: 32)
                             
                             VStack(alignment: .leading) {
-                                Text("モチベーションについて")
+                                Text("モチベーションについて".localized)
                                     .font(.headline)
                                 
-                                Text("学習意欲を維持するための方法")
+                                Text("学習意欲を維持するための方法".localized)
                                     .font(.caption)
                                     .foregroundColor(.gray)
                             }
@@ -69,21 +69,21 @@ struct AppInfoView: View {
                 
                 Section {
                     HStack {
-                        Text("バージョン")
+                        Text("バージョン".localized)
                         Spacer()
                         Text("1.0.0")
                             .foregroundColor(.gray)
                     }
                     
                     HStack {
-                        Text("開発者")
+                        Text("開発者".localized)
                         Spacer()
                         Text("RecallMate Team")
                             .foregroundColor(.gray)
                     }
                 }
             }
-            .navigationTitle("このアプリについて")
+            .navigationTitle("このアプリについて".localized)
             .navigationBarTitleDisplayMode(.inline)
         }
     }
@@ -93,12 +93,12 @@ struct AppInfoView: View {
 struct AppUsageGuideView: View {
     var body: some View {
         List {
-            Section(header: Text("基本的な使い方")) {
+            Section(header: Text("基本的な使い方".localized)) {
                 NavigationLink(destination: DetailContentView(title: "スキマ時間の活用法", content: "忙しい日常の中でも、スキマ時間を活用して効率的に学習する方法をご紹介します。")) {
                     HStack {
                         Image(systemName: "clock.fill")
                             .foregroundColor(.blue)
-                        Text("スキマ時間の活用法")
+                        Text("スキマ時間の活用法".localized)
                     }
                 }
                 

@@ -1,0 +1,41 @@
+"1〜2件" = "1〜2 tasks";
+"3〜5件" = "3〜5 tasks";
+"6〜8件" = "6〜8 tasks";
+"9件以上" = "9 tasks over";
+// 共通UI要素
+"すべて" = "All";
+"日" = "Day";
+"週" = "Week";
+"月" = "Month";
+"年" = "Year";
+"表示期間" = "Display Period";
+"アクティビティ" = "Activities";
+"この期間のアクティビティはありません" = "No activities in this period";
+"削除" = "Delete";
+"無題" = "Untitled";
+
+// 期間表示
+"今日 (%@)" = "Today (%@)";
+"%@ - %@" = "%@ - %@";
+"過去30日" = "Last 30 Days";
+"過去365日" = "Last 365 Days";
+
+// 統計表示
+"学習統計 (%@)" = "Learning Statistics (%@)";
+"学習セッション" = "Learning Sessions";
+"合計学習時間" = "Total Study Time";
+"連続学習" = "Study Streak";
+"%d件" = "%d items";
+"%d分" = "%d min";
+"%d日" = "%d days";
+
+// アクティビティタイプ
+"新規作成" = "New Entry";
+"復習" = "Review";
+"読書" = "Reading";
+"新規メモ作成" = "New Memo Creation";
+"講義視聴" = "Lecture Viewing";
+"テスト" = "Test";
+"プロジェクト" = "Project";
+"実験/実習" = "Experiment/Practice";
+"その他" = "Other";
