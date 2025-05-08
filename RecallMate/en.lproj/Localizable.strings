@@ -1,7 +1,17 @@
-"1〜2件" = "1〜2 tasks";
-"3〜5件" = "3〜5 tasks";
-"6〜8件" = "6〜8 tasks";
-"9件以上" = "9 tasks over";
+// ヒートマップビュー用
+"1〜2件" = "1-2 tasks";
+"3〜5件" = "3-5 tasks";
+"6〜8件" = "6-8 tasks";
+"9件以上" = "9+ tasks";
+"%d年" = "%d Year";
+"%@: %d件" = "%@: %d items";
+
+// 一般的な日付表示
+"今日 (%@)" = "Today (%@)";
+"%@ - %@" = "%@ - %@";
+"過去30日" = "Last 30 Days";
+"過去365日" = "Last 365 Days";
+
 // 共通UI要素
 "すべて" = "All";
 "日" = "Day";
@@ -13,12 +23,6 @@
 "この期間のアクティビティはありません" = "No activities in this period";
 "削除" = "Delete";
 "無題" = "Untitled";
-
-// 期間表示
-"今日 (%@)" = "Today (%@)";
-"%@ - %@" = "%@ - %@";
-"過去30日" = "Last 30 Days";
-"過去365日" = "Last 365 Days";
 
 // 統計表示
 "学習統計 (%@)" = "Learning Statistics (%@)";
@@ -39,3 +43,28 @@
 "プロジェクト" = "Project";
 "実験/実習" = "Experiment/Practice";
 "その他" = "Other";
+
+// AnswerImportView関連
+"生成AIの回答を貼り付け" = "Paste AI-generated answers";
+"検出された回答" = "Detected Answers";
+"問題%@" = "Question %@";
+"回答を適用" = "Apply Answers";
+"回答のインポート" = "Import Answers";
+"キャンセル" = "Cancel";
+"エラー" = "Error";
+"OK" = "OK";
+"不明なエラーが発生しました" = "An unknown error occurred";
+"既存の回答を上書きしますか？" = "Overwrite existing answers?";
+"すべて上書き" = "Overwrite All";
+"新規のみ適用" = "Apply New Only";
+"%d個の問題にすでに回答があります。" = "There are already answers for %d questions.";
+
+// AppError関連
+"データの読み込みに失敗しました: %@" = "Failed to load data: %@";
+"データの保存に失敗しました: %@" = "Failed to save data: %@";
+"インポートに失敗しました: %@" = "Import failed: %@";
+"無効な入力です: %@" = "Invalid input: %@";
+"エラーが発生しました: %@" = "An error occurred: %@";
+"不明なエラーが発生しました" = "An unknown error occurred";
+"エラー" = "Error";
+"OK" = "OK";
