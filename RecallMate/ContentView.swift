@@ -48,9 +48,6 @@ struct ContentView: View {
     @Namespace var recallSliderSection
 
     @State private var showUnsavedChangesAlert = false
-    
-    // スクロール位置制御
-    @State private var scrollToBottom = false
 
     // すべてのタグを取得
     @FetchRequest(

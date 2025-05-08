@@ -27,16 +27,10 @@ class ContentViewModel: ObservableObject {
     
     @Published var showTitleAlert = false
     @Published var shouldFocusTitle = false
-    @Published var showTitleInputGuide: Bool = false
     
-    @Published var showQuestionCardGuide: Bool = false
-    @Published var showTagGuide: Bool = false
-    @Published var showRecallSliderGuide: Bool = false
-
     @Published var titleFieldFocused: Bool = false
     @Published var previouslyFocused: Bool = false
     @Published var hasTitleInput: Bool = false
-    @Published var showMemoContentGuide: Bool = false
     
     @Published var contentFieldFocused: Bool = false
     @Published var triggerBottomScroll: Bool = false
@@ -52,16 +46,11 @@ class ContentViewModel: ObservableObject {
             loadMemoData(memo: memo)
             contentChanged = false
             recordActivityOnSave = false
-            showTitleInputGuide = false  // 既存メモの場合は常にfalse
         } else {
             // 新規メモの場合
             resetForm()
             contentChanged = false
             recordActivityOnSave = true
-            
-            // 初回メモ作成時のみガイドを表示（この行は重複しているので削除）
-            let hasCreatedFirstMemo = UserDefaults.standard.bool(forKey: "hasCreatedFirstMemo")
-            showTitleInputGuide = !hasCreatedFirstMemo
         }
     }
     // タイトルフィールドのフォーカス状態変更を監視するメソッド
