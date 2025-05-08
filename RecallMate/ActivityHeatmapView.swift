@@ -33,7 +33,7 @@ struct ActivityHeatmapView: View {
                 }
                 .buttonStyle(PlainButtonStyle())       // ボタンスタイルを明示的に設定
                 
-                Text("\(selectedYear)年")
+                Text("\(selectedYear)年".localized)
                     .font(.subheadline)
                     .frame(width:.infinity)  // 幅を広げる
                 
@@ -76,7 +76,7 @@ struct ActivityHeatmapView: View {
                     Rectangle()
                         .fill(Color.green.opacity(0.1))
                         .frame(width: 12, height: 12)
-                    Text("1〜2件")
+                    Text("1〜2件".localized)
                         .font(.caption)
                 }
                 
@@ -84,7 +84,7 @@ struct ActivityHeatmapView: View {
                     Rectangle()
                         .fill(Color.green.opacity(0.4))
                         .frame(width: 12, height: 12)
-                    Text("3〜5件")
+                    Text("3〜5件".localized)
                         .font(.caption)
                 }
                 
@@ -92,7 +92,7 @@ struct ActivityHeatmapView: View {
                     Rectangle()
                         .fill(Color.green.opacity(0.7))
                         .frame(width: 12, height: 12)
-                    Text("6〜8件")
+                    Text("6〜8件".localized)
                         .font(.caption)
                 }
                 
@@ -100,7 +100,7 @@ struct ActivityHeatmapView: View {
                     Rectangle()
                         .fill(Color.green)
                         .frame(width: 12, height: 12)
-                    Text("9件以上")
+                    Text("9件以上".localized)
                         .font(.caption)
                 }
                 

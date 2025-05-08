@@ -35,9 +35,9 @@ extension View {
     func errorAlert(error: Binding<AppError?>, viewName: String) -> some View {
         self.alert(item: error) { error in
             Alert(
-                title: Text("エラー"),
+                title: Text("エラー".localized),
                 message: Text(error.errorDescription ?? "不明なエラーが発生しました"),
-                dismissButton: .default(Text("OK"))
+                dismissButton: .default(Text("OK".localized))
             )
         }
     }

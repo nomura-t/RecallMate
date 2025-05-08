@@ -20,7 +20,7 @@ struct AnswerImportView: View {
         NavigationStack {
             VStack {
                 Form {
-                    Section(header: Text("生成AIの回答を貼り付け")) {
+                    Section(header: Text("生成AIの回答を貼り付け".localized)) {
                         TextEditor(text: $aiResponse)
                             .frame(height: 200)
                             .onChange(of: aiResponse) { _, newValue in
@@ -29,7 +29,7 @@ struct AnswerImportView: View {
                     }
                     
                     if !processedAnswers.isEmpty {
-                        Section(header: Text("検出された回答")) {
+                        Section(header: Text("検出された回答".localized)) {
                             ForEach(Array(processedAnswers.keys.sorted()), id: \.self) { key in
                                 VStack(alignment: .leading) {
                                     Text("問題\(key)")
@@ -46,7 +46,7 @@ struct AnswerImportView: View {
                 }
                 
                 Button(action: checkForExistingAnswers) {
-                    Text("回答を適用")
+                    Text("回答を適用".localized)
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.blue)
@@ -61,9 +61,9 @@ struct AnswerImportView: View {
             .alert("エラー", isPresented: $showingErrorAlert) {
                 Button("OK") { }
             } message: {
-                Text(errorMessage ?? "不明なエラーが発生しました")
+                Text(errorMessage ?? "不明なエラーが発生しました".localized)
             }
-            .alert("既存の回答を上書きしますか？", isPresented: $showingConfirmDialog) {
+            .alert("既存の回答を上書きしますか？".localized, isPresented: $showingConfirmDialog) {
                 Button("すべて上書き", role: .destructive) {
                     applyAnswers(overwriteAll: true)
                 }

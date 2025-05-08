@@ -1,3 +1,5 @@
+// ActivityProgressView.swift のローカライズ対応版
+
 import SwiftUI
 import CoreData
 
@@ -77,13 +79,13 @@ struct ActivityProgressView: View {
         
         switch selectedTab {
         case 0: // 日間
-            return "今日 (\(dateFormatter.string(from: start)))"
+            return "今日 (%@)".localizedFormat(dateFormatter.string(from: start))
         case 1: // 週間
-            return "\(dateFormatter.string(from: start)) - \(dateFormatter.string(from: end))"
+            return "%@ - %@".localizedFormat(dateFormatter.string(from: start), dateFormatter.string(from: end))
         case 2: // 月間
-            return "過去30日"
+            return "過去30日".localized
         case 3: // 年間
-            return "過去365日"
+            return "過去365日".localized
         default:
             return ""
         }
@@ -99,7 +101,7 @@ struct ActivityProgressView: View {
                         Button(action: {
                             selectedTag = nil
                         }) {
-                            Text("すべて")
+                            Text("すべて".localized)
                                 .font(.subheadline)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 6)
@@ -140,11 +142,11 @@ struct ActivityProgressView: View {
                 }
                 
                 // 期間セレクター
-                Picker("表示期間", selection: $selectedTab) {
-                    Text("日").tag(0)
-                    Text("週").tag(1)
-                    Text("月").tag(2)
-                    Text("年").tag(3)
+                Picker("表示期間".localized, selection: $selectedTab) {
+                    Text("日".localized).tag(0)
+                    Text("週".localized).tag(1)
+                    Text("月".localized).tag(2)
+                    Text("年".localized).tag(3)
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .padding()
@@ -204,14 +206,12 @@ struct ActivityProgressView: View {
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("RefreshActivityData"))) { _ in
-
             refreshData()
         }
     }
     
     // データをリフレッシュするメソッド - デバッグ情報付き
     private func refreshData() {
-
         // ViewContextをリフレッシュ
         viewContext.refreshAllObjects()
         
@@ -221,22 +221,21 @@ struct ActivityProgressView: View {
         
         do {
             let activities = try viewContext.fetch(fetchRequest)
-
             if activities.isEmpty {
-
+                // Empty activities
             } else {
                 // 最新のアクティビティを表示
                 if let latest = activities.first, let date = latest.date {
-
+                    // Latest activity
                 }
             }
         } catch {
-
+            // Error handling
         }
         
         // 非同期で更新を反映（SwiftUIの更新サイクルを考慮）
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-
+            // Async update
         }
     }
 }
@@ -279,7 +278,6 @@ struct StatisticsCardWithPeriod: View {
             
             return activities
         } catch {
-
             return []
         }
     }
@@ -289,7 +287,7 @@ struct StatisticsCardWithPeriod: View {
             HStack {
                 if let selectedTag = selectedTag {
                     HStack {
-                        Text("学習統計 (\(periodText))")
+                        Text("学習統計 (%@)".localizedFormat(periodText))
                             .font(.headline)
                         
                         Circle()
@@ -301,7 +299,7 @@ struct StatisticsCardWithPeriod: View {
                             .foregroundColor(selectedTag.swiftUIColor())
                     }
                 } else {
-                    Text("学習統計 (\(periodText))")
+                    Text("学習統計 (%@)".localizedFormat(periodText))
                         .font(.headline)
                 }
                 
@@ -311,21 +309,21 @@ struct StatisticsCardWithPeriod: View {
             HStack(spacing: 20) {
                 StatItem(
                     value: "\(periodActivities.count)",
-                    label: "学習セッション",
+                    label: "学習セッション".localized,
                     icon: "book.fill",
                     color: .blue
                 )
                 
                 StatItem(
-                    value: "\(totalDuration)分",
-                    label: "合計学習時間",
+                    value: "\(totalDuration)分".localized,
+                    label: "合計学習時間".localized,
                     icon: "clock.fill",
                     color: .green
                 )
                 
                 StatItem(
-                    value: "\(streakDays)日",
-                    label: "連続学習",
+                    value: "\(streakDays)日".localized,
+                    label: "連続学習".localized,
                     icon: "flame.fill",
                     color: .orange
                 )
@@ -415,7 +413,6 @@ struct ActivityListWithPeriod: View {
             
             return activities
         } catch {
-
             return []
         }
     }
@@ -425,7 +422,7 @@ struct ActivityListWithPeriod: View {
             HStack {
                 if let selectedTag = selectedTag {
                     HStack {
-                        Text("アクティビティ")
+                        Text("アクティビティ".localized)
                             .font(.headline)
                         
                         Circle()
@@ -437,21 +434,21 @@ struct ActivityListWithPeriod: View {
                             .foregroundColor(selectedTag.swiftUIColor())
                     }
                 } else {
-                    Text("アクティビティ")
+                    Text("アクティビティ".localized)
                         .font(.headline)
                 }
                 
                 Spacer()
                 
                 // 件数表示
-                Text("\(periodActivities.count)件")
+                Text("%d件".localizedWithInt(periodActivities.count))
                     .font(.caption)
                     .foregroundColor(.gray)
             }
             .padding(.horizontal)
             
             if periodActivities.isEmpty {
-                Text("この期間のアクティビティはありません")
+                Text("この期間のアクティビティはありません".localized)
                     .font(.subheadline)
                     .foregroundColor(.gray)
                     .italic()
@@ -476,7 +473,7 @@ struct ActivityListWithPeriod: View {
                                     Button(role: .destructive) {
                                         deleteActivity(activity)
                                     } label: {
-                                        Label("削除", systemImage: "trash")
+                                        Label("削除".localized, systemImage: "trash")
                                     }
                                 }
                         }
@@ -498,9 +495,8 @@ struct ActivityListWithPeriod: View {
         // 変更を保存
         do {
             try viewContext.save()
-
         } catch {
-
+            // Error handling
         }
     }
     
@@ -545,7 +541,7 @@ struct ActivityRow: View {
                 // アクティビティのタイトル
                 HStack(spacing: 4) {
                     // メモのタイトル
-                    Text(activity.memo?.title ?? "無題")
+                    Text(activity.memo?.title ?? "無題".localized)
                         .font(.subheadline)
                         .fontWeight(.medium)
                     
@@ -569,7 +565,7 @@ struct ActivityRow: View {
                         .font(.caption)
                         .foregroundColor(.gray)
                     
-                    Text("\(activity.durationMinutes)分")
+                    Text("%d分".localizedWithInt(Int(activity.durationMinutes)))
                         .font(.caption)
                         .foregroundColor(.gray)
                     
@@ -602,9 +598,9 @@ struct ActivityRow: View {
     
     private func activityLabel(_ activity: LearningActivity) -> String {
         if activity.type == "exercise" {
-            return "新規作成"
+            return "新規作成".localized
         } else if activity.type == "review" {
-            return "復習"
+            return "復習".localized
         } else {
             return activityTypeString(activity.type ?? "")
         }
@@ -632,9 +628,9 @@ struct ActivityRow: View {
         default:
             // 新規メモと復習を特定できる場合（注釈を活用）
             if let note = activity.note {
-                if note.contains("新規メモ作成") {
+                if note.contains("新規メモ作成".localized) {
                     return "doc.badge.plus"
-                } else if note.contains("復習") {
+                } else if note.contains("復習".localized) {
                     return "arrow.counterclockwise"
                 }
             }
@@ -659,14 +655,14 @@ struct ActivityRow: View {
     // アクティビティタイプの文字列表現
     private func activityTypeString(_ type: String) -> String {
         switch type {
-        case "reading": return "読書"
-        case "exercise": return "新規メモ作成" // 表示名を変更
-        case "lecture": return "講義視聴"
-        case "test": return "テスト"
-        case "project": return "プロジェクト"
-        case "experiment": return "実験/実習"
-        case "review": return "復習"
-        default: return type.isEmpty ? "その他" : type
+        case "reading": return "読書".localized
+        case "exercise": return "新規メモ作成".localized // 表示名を変更
+        case "lecture": return "講義視聴".localized
+        case "test": return "テスト".localized
+        case "project": return "プロジェクト".localized
+        case "experiment": return "実験/実習".localized
+        case "review": return "復習".localized
+        default: return type.isEmpty ? "その他".localized : type
         }
     }
     

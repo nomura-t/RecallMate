@@ -1,3 +1,5 @@
+// String+Localization.swift
+
 import Foundation
 
 extension String {
@@ -10,7 +12,7 @@ extension String {
     }
     
     func localizedFormat(_ arguments: CVarArg...) -> String {
-        return String(format: self.localized, arguments)
+        return String(format: self.localized, arguments: arguments)
     }
     
     // 数値付きのパラメータ化された文字列に便利
