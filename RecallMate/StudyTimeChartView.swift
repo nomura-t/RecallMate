@@ -177,14 +177,14 @@ struct StudyTimeChartView: View {
         
         // 3時間ごとの時間帯に分ける
         let timeSlots = [
-            (start: 0, end: 3, label: "0-3時"),
-            (start: 3, end: 6, label: "3-6時"),
-            (start: 6, end: 9, label: "6-9時"),
-            (start: 9, end: 12, label: "9-12時"),
-            (start: 12, end: 15, label: "12-15時"),
-            (start: 15, end: 18, label: "15-18時"),
-            (start: 18, end: 21, label: "18-21時"),
-            (start: 21, end: 24, label: "21-24時")
+            (start: 0, end: 3, label: "0-3h"),
+            (start: 3, end: 6, label: "3-6h"),
+            (start: 6, end: 9, label: "6-9h"),
+            (start: 9, end: 12, label: "9-12h"),
+            (start: 12, end: 15, label: "12-15h"),
+            (start: 15, end: 18, label: "15-18h"),
+            (start: 18, end: 21, label: "18-21h"),
+            (start: 21, end: 24, label: "21-24h")
         ]
         
         // 各時間帯ごとの学習時間を集計
