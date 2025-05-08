@@ -32,7 +32,7 @@ struct AnswerImportView: View {
                         Section(header: Text("検出された回答".localized)) {
                             ForEach(Array(processedAnswers.keys.sorted()), id: \.self) { key in
                                 VStack(alignment: .leading) {
-                                    Text("問題\(key)")
+                                    Text("問題%@".localizedFormat(key))
                                         .font(.headline)
                                     
                                     Text(processedAnswers[key] ?? "")
@@ -56,23 +56,23 @@ struct AnswerImportView: View {
                 .padding()
                 .disabled(processedAnswers.isEmpty)
             }
-            .navigationTitle("回答のインポート")
-            .navigationBarItems(leading: Button("キャンセル") { dismiss() })
-            .alert("エラー", isPresented: $showingErrorAlert) {
-                Button("OK") { }
+            .navigationTitle("回答のインポート".localized)
+            .navigationBarItems(leading: Button("キャンセル".localized) { dismiss() })
+            .alert("エラー".localized, isPresented: $showingErrorAlert) {
+                Button("OK".localized) { }
             } message: {
                 Text(errorMessage ?? "不明なエラーが発生しました".localized)
             }
             .alert("既存の回答を上書きしますか？".localized, isPresented: $showingConfirmDialog) {
-                Button("すべて上書き", role: .destructive) {
+                Button("すべて上書き".localized, role: .destructive) {
                     applyAnswers(overwriteAll: true)
                 }
-                Button("新規のみ適用") {
+                Button("新規のみ適用".localized) {
                     applyAnswers(overwriteAll: false)
                 }
-                Button("キャンセル", role: .cancel) {}
+                Button("キャンセル".localized, role: .cancel) {}
             } message: {
-                Text("\(questionIndexesToConfirm.count)個の問題にすでに回答があります。")
+                Text("%d個の問題にすでに回答があります。".localizedWithInt(questionIndexesToConfirm.count))
             }
         }
     }

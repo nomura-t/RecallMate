@@ -21,11 +21,11 @@ enum AppError: Error, Identifiable, LocalizedError {
     
     var errorDescription: String? {
         switch self {
-        case .dataLoadFailed(let message): return "データの読み込みに失敗しました: \(message)"
-        case .dataSaveFailed(let message): return "データの保存に失敗しました: \(message)"
-        case .importFailed(let message): return "インポートに失敗しました: \(message)"
-        case .invalidInput(let message): return "無効な入力です: \(message)"
-        case .unknown(let message): return "エラーが発生しました: \(message)"
+        case .dataLoadFailed(let message): return "データの読み込みに失敗しました: %@".localizedFormat(message)
+        case .dataSaveFailed(let message): return "データの保存に失敗しました: %@".localizedFormat(message)
+        case .importFailed(let message): return "インポートに失敗しました: %@".localizedFormat(message)
+        case .invalidInput(let message): return "無効な入力です: %@".localizedFormat(message)
+        case .unknown(let message): return "エラーが発生しました: %@".localizedFormat(message)
         }
     }
 }
@@ -36,7 +36,7 @@ extension View {
         self.alert(item: error) { error in
             Alert(
                 title: Text("エラー".localized),
-                message: Text(error.errorDescription ?? "不明なエラーが発生しました"),
+                message: Text(error.errorDescription ?? "不明なエラーが発生しました".localized),
                 dismissButton: .default(Text("OK".localized))
             )
         }

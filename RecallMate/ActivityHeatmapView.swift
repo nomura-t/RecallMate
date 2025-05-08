@@ -33,9 +33,9 @@ struct ActivityHeatmapView: View {
                 }
                 .buttonStyle(PlainButtonStyle())       // ボタンスタイルを明示的に設定
                 
-                Text("\(selectedYear)年".localized)
+                Text("%d年".localizedWithInt(selectedYear))
                     .font(.subheadline)
-                    .frame(width:.infinity)  // 幅を広げる
+                    .frame(maxWidth: .infinity)  // 幅を修正: .infinityに変更
                 
                 Button(action: {
                     // 制限を緩和（例：現在の年から10年先まで許可）
@@ -122,8 +122,12 @@ struct ActivityHeatmapView: View {
 
 // 月ラベルを表示するビュー
 struct MonthLabelsView: View {
-    // 日本語の月名を使用
-    private let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    // ローカライズ対応した月名を使用
+    private var localizedMonths: [String] {
+        let formatter = DateFormatter()
+        formatter.locale = Locale.current
+        return formatter.shortMonthSymbols ?? ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    }
     
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
@@ -135,7 +139,7 @@ struct MonthLabelsView: View {
             // 月ラベルを横に並べる
             HStack(spacing: 22) { // 間隔を調整
                 ForEach(0..<12, id: \.self) { monthIndex in
-                    Text(months[monthIndex])
+                    Text(localizedMonths[monthIndex])
                         .font(.caption)
                         .foregroundColor(.gray)
                         .frame(width: 50, alignment: .leading) // 幅を最小限に
@@ -148,11 +152,24 @@ struct MonthLabelsView: View {
 
 // 曜日ラベルを表示するビュー
 struct WeekdayLabelsView: View {
-    private let weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    // ローカライズ対応した曜日名を使用
+    private var localizedWeekdays: [String] {
+        let formatter = DateFormatter()
+        formatter.locale = Locale.current
+        var weekdays = formatter.shortWeekdaySymbols ?? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        
+        // 多くの地域では日曜が最初だが、このUIでは月曜を最初にする
+        if weekdays.count == 7 {
+            let sunday = weekdays.removeFirst()
+            weekdays.append(sunday)
+        }
+        
+        return weekdays
+    }
     
     var body: some View {
         VStack(alignment: .trailing, spacing: 4) {
-            ForEach(weekdays, id: \.self) { weekday in
+            ForEach(localizedWeekdays, id: \.self) { weekday in
                 Text(weekday)
                     .font(.caption)
                     .foregroundColor(.gray)
@@ -193,7 +210,7 @@ struct HeatmapGridView: View {
                                     RoundedRectangle(cornerRadius: 2)
                                         .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
                                 )
-                                .tooltip("\(formattedDate(date)): \(count)件")
+                                .tooltip("%@: %d件".localizedFormat(formattedDate(date), count))
                         } else {
                             Rectangle()
                                 .fill(Color.clear)
@@ -278,6 +295,7 @@ struct HeatmapGridView: View {
     private func formattedDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
+        formatter.timeStyle = .none
         return formatter.string(from: date)
     }
 }
