@@ -33,12 +33,12 @@ struct TagSelectionView: View {
             VStack(spacing: 0) {
                 // 新規タグ作成セクションを分離
                 VStack(spacing: 12) {
-                    Text("新しいタグを作成")
+                    Text("新しいタグを作成".localized)
                         .font(.headline)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
                     HStack {
-                        TextField("タグ名", text: $newTagName)
+                        TextField("タグ名".localized, text: $newTagName)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .autocapitalization(.none)
                         
@@ -78,7 +78,7 @@ struct TagSelectionView: View {
                 // 選択中のタグセクション
                 if !selectedTags.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("選択中のタグ")
+                        Text("選択中のタグ".localized)
                             .font(.headline)
                             .padding(.horizontal)
                             .padding(.top, 8)
@@ -103,13 +103,13 @@ struct TagSelectionView: View {
                 // 利用可能なタグリスト
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("利用可能なタグ")
+                        Text("利用可能なタグ".localized)
                             .font(.headline)
                             .padding(.horizontal)
                             .padding(.top, 16)
                         
                         if allTags.isEmpty {
-                            Text("タグがありません")
+                            Text("タグがありません".localized)
                                 .foregroundColor(.gray)
                                 .italic()
                                 .frame(maxWidth: .infinity, alignment: .center)
@@ -171,7 +171,7 @@ struct TagSelectionView: View {
                     }
                     dismiss()
                 }) {
-                    Text("完了")
+                    Text("完了".localized)
                         .font(.headline)
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
@@ -184,8 +184,8 @@ struct TagSelectionView: View {
             .navigationTitle("")
             .alert(isPresented: $showAlert) {
                 Alert(
-                    title: Text("エラー"),
-                    message: Text(errorMessage ?? "不明なエラーが発生しました"),
+                    title: Text("エラー".localized),
+                    message: Text(errorMessage ?? "不明なエラーが発生しました".localized),
                     dismissButton: .default(Text("OK"))
                 )
             }
@@ -213,7 +213,7 @@ struct TagSelectionView: View {
                             }
                         } else {
                             // 編集失敗時のエラーハンドリング
-                            errorMessage = "タグの編集に失敗しました。同じ名前のタグが既に存在する可能性があります。"
+                            errorMessage = "タグの編集に失敗しました。同じ名前のタグが既に存在する可能性があります。".localized
                             showAlert = true
                         }
                     },
@@ -221,16 +221,15 @@ struct TagSelectionView: View {
                 )
             }
             // タグ削除確認ダイアログ
-            .alert("タグを削除", isPresented: $showDeleteConfirmation) {
-                Button("キャンセル", role: .cancel) {}
-                Button("削除", role: .destructive) {
+            .alert("タグを削除".localized, isPresented: $showDeleteConfirmation) {
+                Button("キャンセル".localized, role: .cancel) {}
+                Button("削除".localized, role: .destructive) {
                     if let tag = tagToDelete {
                         deleteTag(tag)
                     }
                 }
             } message: {
-                Text("タグ「\(tagToDelete?.name ?? "")」を削除しますか？このタグが付いているメモからも削除されます。")
-            }
+                Text("タグ「%@」を削除しますか？このタグが付いているメモからも削除されます。".localizedFormat(tagToDelete?.name ?? ""))            }
         }
     }
     
@@ -256,7 +255,7 @@ struct TagSelectionView: View {
         if tagService.deleteTag(tag, in: viewContext) {
             onTagsChanged?()
         } else {
-            errorMessage = "タグの削除に失敗しました"
+            errorMessage = "タグの削除に失敗しました".localized
             showAlert = true
         }
     }
@@ -276,7 +275,7 @@ struct TagSelectionView: View {
             newTagName = ""
             showColorPicker = false // 色選択パネルを閉じる
         } else {
-            errorMessage = "タグの作成に失敗しました"
+            errorMessage = "タグの作成に失敗しました".localized
             showAlert = true
         }
     }
@@ -323,15 +322,15 @@ struct TagEditView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: Text("タグ名")) {
-                    TextField("タグ名", text: $editedName)
+                Section(header: Text("タグ名".localized)) {
+                    TextField("タグ名".localized, text: $editedName)
                         .autocapitalization(.none)
                 }
                 
-                Section(header: Text("タグの色")) {
+                Section(header: Text("タグの色".localized)) {
                     // 現在選択されている色のプレビュー
                     HStack {
-                        Text("選択中の色:")
+                        Text("選択中の色:".localized)
                         Spacer()
                         Circle()
                             .fill(tagService.colorFromString(editedColor))
@@ -369,15 +368,15 @@ struct TagEditView: View {
                     }
                 }
             }
-            .navigationTitle("タグを編集")
+            .navigationTitle("タグを編集".localized)
             .navigationBarItems(
-                leading: Button("キャンセル") { onCancel() },
-                trailing: Button("保存") {
+                leading: Button("キャンセル".localized) { onCancel() },
+                trailing: Button("保存".localized) {
                     saveTag()
                 }
                 .disabled(editedName.isEmpty)
             )
-            .alert("エラー", isPresented: $showErrorAlert) {
+            .alert("エラー".localized, isPresented: $showErrorAlert) {
                 Button("OK") { }
             } message: {
                 Text(errorMessage)
@@ -392,14 +391,14 @@ struct TagEditView: View {
         // 名前が空かどうかチェック
         let trimmedName = editedName.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmedName.isEmpty {
-            errorMessage = "タグ名を入力してください"
+            errorMessage = "タグ名を入力してください".localized
             showErrorAlert = true
             return
         }
         
         // 色がリストに存在するかチェック
         if !tagService.availableColors.contains(where: { $0.lowercased() == editedColor.lowercased() }) {
-            errorMessage = "選択された色が無効です"
+            errorMessage = "選択された色が無効です".localized
             showErrorAlert = true
             return
         }
@@ -425,7 +424,7 @@ struct ColorGridView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("色を選択")
+            Text("色を選択".localized)
                 .font(.subheadline)
                 .foregroundColor(.gray)
             

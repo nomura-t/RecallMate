@@ -36,7 +36,7 @@ struct RetentionMultiTagPickerView: View {
                     Button(action: {
                         tempSelectedTags = []
                     }) {
-                        Text("すべてクリア")
+                        Text("すべてクリア".localized)
                             .foregroundColor(.red)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.vertical, 12)
@@ -47,7 +47,7 @@ struct RetentionMultiTagPickerView: View {
                     Button(action: {
                         tempSelectedTags = Array(allTags)
                     }) {
-                        Text("すべて選択")
+                        Text("すべて選択".localized)
                             .foregroundColor(.blue)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.vertical, 12)
@@ -58,7 +58,7 @@ struct RetentionMultiTagPickerView: View {
                 
                 Divider()
                 
-                Text("利用可能なタグ")
+                Text("利用可能なタグ".localized)
                     .font(.subheadline)
                     .foregroundColor(.gray)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -84,15 +84,15 @@ struct RetentionMultiTagPickerView: View {
                     .padding(.horizontal)
                 }
             }
-            .navigationTitle("タグを選択")
+            .navigationTitle("タグを選択".localized)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("キャンセル") {
+                    Button("キャンセル".localized) {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("適用") {
+                    Button("適用".localized) {
                         // 選択されたタグの配列を親ビューに渡す
                         DispatchQueue.main.async {
                             selectedTags = tempSelectedTags
@@ -138,7 +138,7 @@ struct RetentionTagRowItem: View {
                     .frame(width: 12, height: 12)
                 
                 // タグ名
-                Text(tag.name ?? "")
+                Text(tag.name ?? "タグ名なし".localized)
                     .foregroundColor(.primary)
                 
                 Spacer()

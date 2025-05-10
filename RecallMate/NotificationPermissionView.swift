@@ -25,7 +25,7 @@ struct NotificationPermissionView: View {
             // モーダルコンテンツ
             VStack(spacing: 20) {
                 // タイトル
-                Text("通知を有効にしませんか？")
+                Text("通知を有効にしませんか？".localized)
                     .font(.headline)
                     .padding(.top)
                 
@@ -33,20 +33,20 @@ struct NotificationPermissionView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     PermissionBenefitRow(
                         icon: "calendar.badge.clock",
-                        title: "習慣化をサポート",
-                        description: "継続学習のリマインダーで習慣化をサポートします"
+                        title: "習慣化をサポート".localized,
+                        description: "継続学習のリマインダーで習慣化をサポートします".localized
                     )
                     
                     PermissionBenefitRow(
                         icon: "timer",
-                        title: "集中タイマー通知",
-                        description: "集中時間と休憩時間の切り替えを通知します"
+                        title: "集中タイマー通知".localized,
+                        description: "集中時間と休憩時間の切り替えを通知します".localized
                     )
                     
                     PermissionBenefitRow(
                         icon: "brain.head.profile",
-                        title: "復習リマインダー",
-                        description: "最適なタイミングで復習通知を受け取れます"
+                        title: "復習リマインダー".localized,
+                        description: "最適なタイミングで復習通知を受け取れます".localized
                     )
                 }
                 .padding()
@@ -58,7 +58,7 @@ struct NotificationPermissionView: View {
                     Button(action: {
                         requestNotifications()
                     }) {
-                        Text("設定を開く")
+                        Text("設定を開く".localized)
                             .bold()
                             .foregroundColor(.white)
                             .padding()
@@ -68,7 +68,7 @@ struct NotificationPermissionView: View {
                     }
                     
                     // キャンセルボタンのアクションを修正
-                    Button("後で") {
+                    Button("後で".localized) {
                         isPresented = false
                         onPermissionDenied?()
                     }

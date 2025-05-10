@@ -14,7 +14,7 @@ struct SettingsView: View {
     @State private var isShareSheetPresented = false
     @State private var showMissingAppAlert = false
     @State private var missingAppName = ""
-    @State private var shareText = "RecallMateアプリを使って科学的に記憶力を強化しています。長期記憶の定着に最適なアプリです！ https://apps.apple.com/app/recallmate/id6744206597" // 実際のApp StoreリンクIDに変更する
+    @State private var shareText = "RecallMateアプリを使って科学的に記憶力を強化しています。長期記憶の定着に最適なアプリです！ https://apps.apple.com/app/recallmate/id6744206597".localized
     @State private var showNotificationPermission = false
     @State private var showSocialShareView = false // ソーシャルシェアビュー表示用状態変数を追加
     @StateObject private var notificationObserver = NotificationSettingsObserver()
@@ -24,7 +24,7 @@ struct SettingsView: View {
         NavigationStack {
             Form {
                 // 「このアプリについて」セクションを追加
-                Section(header: Text("アプリ情報")) {
+                Section(header: Text("アプリ情報".localized)) {
                     NavigationLink(destination: AppInfoView()) {
                         HStack {
                             Image(systemName: "brain.head.profile")
@@ -32,7 +32,7 @@ struct SettingsView: View {
                                 .font(.system(size: 22))
                                 .frame(width: 30)
                             
-                            Text("このアプリについて")
+                            Text("このアプリについて".localized)
                                 .font(.headline)
                         }
                         .padding(.vertical, 8)
@@ -49,7 +49,7 @@ struct SettingsView: View {
                                 .frame(width: 30)
                             
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("開発者に言いたいことを言おう！")
+                                Text("開発者に言いたいことを言おう！".localized)
                                     .font(.headline)
                                 
                                 Text("@ttttttt12345654")
@@ -72,10 +72,10 @@ struct SettingsView: View {
                     HStack(alignment: .center) {
                         // テキスト部分
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("RecallMateを友達に紹介する")
+                            Text("RecallMateを友達に紹介する".localized)
                                 .font(.headline)
                             
-                            Text("効率的な学習方法を友達にも教えてあげましょう")
+                            Text("効率的な学習方法を友達にも教えてあげましょう".localized)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -95,12 +95,12 @@ struct SettingsView: View {
                     }
                     .padding(.vertical, 8)
                 } header: {
-                    Text("アプリを共有")
+                    Text("アプリを共有".localized)
                 }
                 
-                Section(header: Text("一般設定")) {
+                Section(header: Text("一般設定".localized)) {
                     // SettingsView.swift の修正版（Toggle部分のみ）
-                    Toggle("通知を有効にする", isOn: Binding<Bool>(
+                    Toggle("通知を有効にする".localized, isOn: Binding<Bool>(
                         get: {
                             self.notificationEnabled
                         },
@@ -123,15 +123,15 @@ struct SettingsView: View {
                     ))
                 }
                 
-                Section(header: Text("通知設定")) {
+                Section(header: Text("通知設定".localized)) {
                     HStack {
-                        Text("現在の通知時間:")
+                        Text("現在の通知時間:".localized)
                         Spacer()
                         Text(StreakNotificationManager.shared.getPreferredTimeString())
                             .foregroundColor(.gray)
                     }
                     
-                    Button("現在時刻を通知時間に設定") {
+                    Button("現在時刻を通知時間に設定".localized) {
                         StreakNotificationManager.shared.updatePreferredTime()
                         // ビューを更新するために現在の通知時間を取得
                         currentNotificationTime = StreakNotificationManager.shared.getPreferredTimeString()
@@ -149,9 +149,9 @@ struct SettingsView: View {
             }
             .alert(isPresented: $showMissingAppAlert) {
                 Alert(
-                    title: Text("\(missingAppName)がインストールされていません"),
-                    message: Text("共有するには\(missingAppName)アプリをインストールしてください。"),
-                    dismissButton: .default(Text("OK"))
+                    title: Text("%@がインストールされていません".localizedFormat(missingAppName)),
+                    message: Text("共有するには%@アプリをインストールしてください。".localizedFormat(missingAppName)),
+                    dismissButton: .default(Text("OK".localized))
                 )
             }
             // ソーシャルシェアビューをオーバーレイとして表示

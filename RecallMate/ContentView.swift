@@ -74,7 +74,7 @@ struct ContentView: View {
                         HStack(spacing: 4) {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 16, weight: .semibold))
-                            Text("戻る")
+                            Text("戻る".localized)
                                 .font(.system(size: 16, weight: .semibold))
                         }
                         .foregroundColor(AppColors.accent)
@@ -94,7 +94,7 @@ struct ContentView: View {
                     // タブインジケーター - ピル型デザイン
                     HStack(spacing: 0) {
                         ForEach(0..<2) { index in
-                            Text(index == 0 ? "記録" : "学習")
+                            Text(index == 0 ? "記録".localized : "学習".localized)
                                 .font(.system(size: 14, weight: selectedTab == index ? .bold : .medium))
                                 .padding(.vertical, 8)
                                 .padding(.horizontal, 16)
@@ -169,7 +169,7 @@ struct ContentView: View {
                     HStack {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 18))
-                        Text("メモ完了！")
+                        Text("メモ完了！".localized)
                             .font(.headline)
                     }
                     .foregroundColor(.white)
@@ -216,10 +216,10 @@ struct ContentView: View {
                     } : nil
                 )
                 .environment(\.managedObjectContext, viewContext)
-                .navigationTitle("タグを選択")
+                .navigationTitle("タグを選択".localized)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("完了") { showTagSelection = false }
+                        Button("完了".localized) { showTagSelection = false }
                     }
                 }
             }
@@ -233,37 +233,37 @@ struct ContentView: View {
         }
         .environmentObject(ViewSettings())
         // アラート設定
-        .alert("タイトルが必要です", isPresented: $viewModel.showTitleAlert) {
+        .alert("タイトルが必要です".localized, isPresented: $viewModel.showTitleAlert) {
             Button("OK") { viewModel.showTitleAlert = false }
         } message: {
-            Text("続行するにはメモのタイトルを入力してください。")
+            Text("続行するにはメモのタイトルを入力してください。".localized)
         }
-        .alert("内容をリセット", isPresented: $showContentResetAlert) {
-            Button("キャンセル", role: .cancel) {}
-            Button("リセット", role: .destructive) {
+        .alert("内容をリセット".localized, isPresented: $showContentResetAlert) {
+            Button("キャンセル".localized, role: .cancel) {}
+            Button("リセット".localized, role: .destructive) {
                 DispatchQueue.main.async {
                     viewModel.content = ""
                     viewModel.contentChanged = true
                 }
             }
         } message: {
-            Text("メモの内容をクリアしますか？この操作は元に戻せません。")
+            Text("メモの内容をクリアしますか？この操作は元に戻せません。".localized)
         }
-        .alert("変更が保存されていません", isPresented: $showUnsavedChangesAlert) {
-            Button("キャンセル", role: .cancel) {}
-            Button("保存", role: .none) {
+        .alert("変更が保存されていません".localized, isPresented: $showUnsavedChangesAlert) {
+            Button("キャンセル".localized, role: .cancel) {}
+            Button("保存".localized, role: .none) {
                 viewModel.saveMemoWithTracking {
                     dismiss()
                 }
             }
-            Button("保存せずに戻る", role: .destructive) {
+            Button("保存せずに戻る".localized, role: .destructive) {
                 if memo == nil {
                     viewModel.cleanupOrphanedQuestions()
                 }
                 dismiss()
             }
         } message: {
-            Text("メモの変更内容を保存しますか？")
+            Text("メモの変更内容を保存しますか？".localized)
         }
         // ここに「使い方」モーダルのオーバーレイを追加 - これが修正部分
         .overlay(
@@ -287,18 +287,18 @@ struct ContentView: View {
                         // タイトル入力
                         VStack(alignment: .leading, spacing: 6) {
                             HStack {
-                                Text("タイトル")
+                                Text("タイトル".localized)
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                                 
                                 if viewModel.shouldFocusTitle {
-                                    Text("(必須)")
+                                    Text("(必須)".localized)
                                         .font(.caption)
                                         .foregroundColor(.red)
                                 }
                             }
                             
-                            TextField("学習内容のタイトルを入力", text: $viewModel.title)
+                            TextField("学習内容のタイトルを入力".localized, text: $viewModel.title)
                                 .font(.headline)
                                 .padding()
                                 .background(AppColors.background)
@@ -321,11 +321,11 @@ struct ContentView: View {
                         
                         // ページ範囲入力
                         VStack(alignment: .leading, spacing: 6) {
-                            Text("ページ範囲")
+                            Text("ページ範囲".localized)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                             
-                            TextField("例: p.24-38", text: $viewModel.pageRange)
+                            TextField("例: p.24-38".localized, text: $viewModel.pageRange)
                                 .font(.subheadline)
                                 .padding()
                                 .background(AppColors.background)
@@ -358,7 +358,7 @@ struct ContentView: View {
                 // タグセクション - ダークモード対応
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
-                        Label("タグ", systemImage: "tag.fill")
+                        Label("タグ".localized, systemImage: "tag.fill")
                             .font(.headline)
                             .foregroundColor(AppColors.primaryText)
                         
@@ -367,7 +367,7 @@ struct ContentView: View {
                         Button(action: {
                             showTagSelection = true
                         }) {
-                            Label("新規タグ", systemImage: "plus")
+                            Label("新規タグ".localized, systemImage: "plus")
                                 .font(.caption)
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 5)
@@ -421,11 +421,11 @@ struct ContentView: View {
                     // 選択されたタグ - ダークモード対応
                     VStack(alignment: .leading, spacing: 8) {
                         if viewModel.selectedTags.isEmpty {
-                            Text("選択中: なし")
+                            Text("選択中: なし".localized)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         } else {
-                            Text("選択中:")
+                            Text("選択中:".localized)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                             
@@ -475,7 +475,7 @@ struct ContentView: View {
                 
                 // 記憶定着度セクション
                 VStack(alignment: .leading, spacing: 12) {
-                    Label("記憶定着度振り返り", systemImage: "brain.head.profile")
+                    Label("記憶定着度振り返り".localized, systemImage: "brain.head.profile")
                         .font(.headline)
                         .foregroundColor(AppColors.primaryText)
                     
@@ -514,7 +514,7 @@ struct ContentView: View {
                 // メモ内容セクション - よりエレガントなデザイン（ダークモード対応）
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
-                        Label("メモ内容", systemImage: "doc.text.fill")
+                        Label("メモ内容".localized, systemImage: "doc.text.fill")
                             .font(.headline)
                             .foregroundColor(AppColors.primaryText)
                         
@@ -573,11 +573,11 @@ struct ContentView: View {
                         if viewModel.content.isEmpty {
                             VStack(alignment: .leading, spacing: 16) {
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text("アクティブリコール学習法")
+                                    Text("アクティブリコール学習法".localized)
                                         .font(.headline)
                                         .foregroundColor(AppColors.accent)
                                     
-                                    Text("教科書を見ないで覚えている内容を書き出してみましょう")
+                                    Text("教科書を見ないで覚えている内容を書き出してみましょう".localized)
                                         .font(.subheadline)
                                         .foregroundColor(.gray)
                                 }
@@ -593,7 +593,7 @@ struct ContentView: View {
                                                 .foregroundColor(AppColors.accent)
                                         }
                                         
-                                        Text("まずは自分の力で思い出してみる")
+                                        Text("まずは自分の力で思い出してみる".localized)
                                             .font(.caption)
                                             .foregroundColor(.gray)
                                     }
@@ -608,7 +608,7 @@ struct ContentView: View {
                                                 .foregroundColor(AppColors.accent)
                                         }
                                         
-                                        Text("思い出せなかった部分は教科書で確認")
+                                        Text("思い出せなかった部分は教科書で確認".localized)
                                             .font(.caption)
                                             .foregroundColor(.gray)
                                     }
@@ -623,7 +623,7 @@ struct ContentView: View {
                                                 .foregroundColor(AppColors.accent)
                                         }
                                         
-                                        Text("再度思い出す練習を繰り返す")
+                                        Text("再度思い出す練習を繰り返す".localized)
                                             .font(.caption)
                                             .foregroundColor(.gray)
                                     }
@@ -649,7 +649,7 @@ struct ContentView: View {
                 // 問題カードセクション - ダークモード対応
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
-                        Label("問題カード", systemImage: "rectangle.on.rectangle.angled")
+                        Label("問題カード".localized, systemImage: "rectangle.on.rectangle.angled")
                             .font(.headline)
                             .foregroundColor(AppColors.primaryText)
                         
@@ -658,7 +658,7 @@ struct ContentView: View {
                         Button(action: {
                             showQuestionEditor = true
                         }) {
-                            Label("編集", systemImage: "square.and.pencil")
+                            Label("編集".localized, systemImage: "square.and.pencil")
                                 .font(.caption)
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 5)
@@ -763,7 +763,7 @@ struct ContentView: View {
         
         if let memo = memo, let sessionId = viewModel.currentSessionId {
             if viewModel.contentChanged {
-                let noteText = "復習セッション: \(memo.title ?? "無題")"
+                let noteText = "復習セッション: %@".localizedFormat(memo.title ?? "無題".localized)
                 
                 let context = PersistenceController.shared.container.viewContext
                 LearningActivity.recordActivityWithHabitChallenge(
@@ -776,7 +776,7 @@ struct ContentView: View {
             }
         }
     }
-    
+
     // タグ選択画面閉じた後の処理
     private func handleTagSelectionDismiss() {
         if memo != nil {
@@ -784,7 +784,7 @@ struct ContentView: View {
             viewModel.contentChanged = true
         }
     }
-    
+
     // 問題エディタ閉じた後の処理
     private func handleQuestionEditorDismiss() {
         if let memo = memo {
@@ -909,7 +909,7 @@ struct ModernRecallSection: View {
             // 記憶度のスライダー - モダンでスタイリッシュなデザイン
             VStack(spacing: 12) {
                 HStack {
-                    Text("0%")
+                    Text("0%".localized)
                         .font(.caption)
                         .foregroundColor(.gray)
                     
@@ -927,7 +927,7 @@ struct ModernRecallSection: View {
                     ), in: 0...100, step: 1)
                     .accentColor(AppColors.retentionColor(for: viewModel.recallScore))
                     
-                    Text("100%")
+                    Text("100%".localized)
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
@@ -953,7 +953,7 @@ struct ModernRecallSection: View {
                         .foregroundColor(AppColors.accent)
                         .font(.system(size: 16))
                     
-                    Text("次回の推奨復習日:")
+                    Text("次回の推奨復習日:".localized)
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     
@@ -995,25 +995,25 @@ struct ModernRecallSection: View {
     private func retentionDescription(for score: Int16) -> String {
         switch score {
         case 91...100:
-            return "完璧に覚えた！"
+            return "完璧に覚えた！".localized
         case 81...90:
-            return "十分に理解できる"
+            return "十分に理解できる".localized
         case 71...80:
-            return "だいたい理解している"
+            return "だいたい理解している".localized
         case 61...70:
-            return "要点は覚えている"
+            return "要点は覚えている".localized
         case 51...60:
-            return "基本概念を思い出せる"
+            return "基本概念を思い出せる".localized
         case 41...50:
-            return "断片的に覚えている"
+            return "断片的に覚えている".localized
         case 31...40:
-            return "うっすらと覚えている"
+            return "うっすらと覚えている".localized
         case 21...30:
-            return "ほとんど忘れている"
+            return "ほとんど忘れている".localized
         case 1...20:
-            return "ほぼ完全に忘れている"
+            return "ほぼ完全に忘れている".localized
         default:
-            return "全く覚えていない"
+            return "全く覚えていない".localized
         }
     }
     
@@ -1021,15 +1021,15 @@ struct ModernRecallSection: View {
     private func retentionShortDescription(for score: Int16) -> String {
         switch score {
         case 81...100:
-            return "長期記憶に定着しています"
+            return "長期記憶に定着しています".localized
         case 61...80:
-            return "基本的な理解は定着しています"
+            return "基本的な理解は定着しています".localized
         case 41...60:
-            return "より頻繁な復習が必要です"
+            return "より頻繁な復習が必要です".localized
         case 21...40:
-            return "基礎から再確認しましょう"
+            return "基礎から再確認しましょう".localized
         default:
-            return "もう一度学び直しましょう"
+            return "もう一度学び直しましょう".localized
         }
     }
 }
@@ -1083,7 +1083,7 @@ struct EnhancedQuestionCarouselView: View {
                     
                     Spacer()
                     
-                    Text("\(currentIndex + 1) / \(state.questions.count)")
+                    Text("%d / %d".localizedFormat(currentIndex + 1, state.questions.count))
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .padding(.horizontal, 10)
@@ -1124,11 +1124,11 @@ struct EnhancedQuestionCarouselView: View {
                 .foregroundColor(AppColors.accent)
                 .padding(.bottom, 8)
             
-            Text("問題を追加してみましょう！")
+            Text("問題を追加してみましょう！".localized)
                 .font(.headline)
                 .multilineTextAlignment(.center)
             
-            Text("単語を入力するか、編集ボタンから問題を作成できます")
+            Text("単語を入力するか、編集ボタンから問題を作成できます".localized)
                 .font(.caption)
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
@@ -1138,7 +1138,7 @@ struct EnhancedQuestionCarouselView: View {
             Button(action: {
                 showQuestionEditor = true
             }) {
-                Text("問題を追加")
+                Text("問題を追加".localized)
                     .font(.subheadline)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
@@ -1168,7 +1168,7 @@ struct EnhancedQuestionCarouselView: View {
             // カードヘッダー - シンプル化（ダークモード対応）
             HStack {
                 // タイプ表示
-                Text(question.isExplanation ? "説明問題" : "比較問題")
+                Text(question.isExplanation ? "説明問題".localized : "比較問題".localized)
                     .font(.caption)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
@@ -1190,7 +1190,7 @@ struct EnhancedQuestionCarouselView: View {
                     generator.impactOccurred()
                 } label: {
                     HStack(spacing: 4) {
-                        Text(isShowingAnswer ? "問題を表示" : "回答を表示")
+                        Text(isShowingAnswer ? "問題を表示".localized : "回答を表示".localized)
                             .font(.caption)
                         Image(systemName: isShowingAnswer ? "doc.text" : "text.bubble")
                     }
@@ -1235,7 +1235,7 @@ struct EnhancedQuestionCarouselView: View {
     // 問題表示用ビュー（ダークモード対応）
     private func questionView(for question: QuestionItem) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("問題")
+            Text("問題".localized)
                 .font(.headline)
                 .foregroundColor(AppColors.accent)
             
@@ -1263,7 +1263,7 @@ struct EnhancedQuestionCarouselView: View {
     // 回答表示用ビュー（ダークモード対応）
     private func answerView(for question: QuestionItem) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("回答")
+            Text("回答".localized)
                 .font(.headline)
                 .foregroundColor(.green)
             
@@ -1281,7 +1281,7 @@ struct EnhancedQuestionCarouselView: View {
                         .font(.system(size: 30))
                         .foregroundColor(.gray)
                     
-                    Text("まだ回答がありません")
+                    Text("まだ回答がありません".localized)
                         .font(.subheadline)
                         .foregroundColor(.gray)
                 }

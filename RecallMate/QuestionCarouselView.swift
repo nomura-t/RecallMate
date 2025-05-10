@@ -151,12 +151,12 @@ struct QuestionCarouselView: View {
 // プレースホルダーカード - 修正バージョン
     private var placeholderCard: some View {
         VStack(spacing: 12) {
-            Text("問題を追加してみましょう！")
+            Text("問題を追加してみましょう！".localized)
                 .font(.subheadline)
                 .foregroundColor(.primary)
                 .padding(.top, 12)
             
-            Text("単語を入力するか、編集ボタンから\n問題を作成できます")
+            Text("単語を入力するか、編集ボタンから\n問題を作成できます".localized)
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -170,7 +170,7 @@ struct QuestionCarouselView: View {
                 let generator = UIImpactFeedbackGenerator(style: .light)
                 generator.impactOccurred()
             } label: {
-                Text("問題を追加")
+                Text("問題を追加".localized)
                     .font(.subheadline)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 6)
@@ -230,7 +230,7 @@ struct QuestionCarouselView: View {
                 HStack {
                     Spacer()
                     
-                    Text(currentQuestion.isExplanation ? "説明問題" : "比較問題")
+                    Text(currentQuestion.isExplanation ? "説明問題".localized : "比較問題".localized)
                         .font(.caption2)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
@@ -317,7 +317,7 @@ struct QuestionCarouselView: View {
                             .font(.title2)
                             .foregroundColor(.secondary)
                         
-                        Text("まだ回答がありません")
+                        Text("まだ回答がありません".localized)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }

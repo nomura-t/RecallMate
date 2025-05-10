@@ -23,7 +23,7 @@ struct QuestionCard: View {
             HStack {
                 Spacer()
                 
-                Text(question.isExplanation ? "説明問題" : "比較問題")
+                Text(question.isExplanation ? "説明問題".localized : "比較問題".localized)
                     .font(.caption2)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)

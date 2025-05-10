@@ -84,7 +84,7 @@ struct RetentionView: View {
                                     selectedTags = []
                                 }
                             }) {
-                                Text("すべて")
+                                Text("すべて".localized)
                                     .font(.subheadline)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 6)
@@ -168,13 +168,13 @@ struct RetentionView: View {
                     // 高度なフィルターモードの追加コントロール
                     if showAdvancedFilter && !selectedTags.isEmpty {
                         HStack(spacing: 12) {
-                            Text("フィルター条件:")
+                            Text("フィルター条件:".localized)
                                 .font(.subheadline)
                                 .foregroundColor(.gray)
                             
                             Picker("", selection: $isAndCondition) {
-                                Text("すべて含む (AND)").tag(true)
-                                Text("いずれか含む (OR)").tag(false)
+                                Text("すべて含む (AND)".localized).tag(true)
+                                Text("いずれか含む (OR)".localized).tag(false)
                             }
                             .pickerStyle(SegmentedPickerStyle())
                             .frame(width: 220)
@@ -186,12 +186,12 @@ struct RetentionView: View {
                     // メモリスト
                     List {
                         // メモリスト
-                        Section(header: Text("メモの記憶定着度")
+                        Section(header: Text("メモの記憶定着度".localized)
                             .frame(maxWidth: .infinity, alignment: .trailing)  // 右寄せにする
                             .padding(.trailing, 16)  // 右側に少し余白を追加
                         ) {
                             if filteredMemos.isEmpty {
-                                Text("条件に一致するメモがありません")
+                                Text("条件に一致するメモがありません".localized)
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
                                     .italic()
@@ -222,11 +222,11 @@ struct RetentionView: View {
                 .font(.system(size: 60))
                 .foregroundColor(.gray)
             
-            Text("メモがありません")
+            Text("メモがありません".localized)
                 .font(.title2)
                 .fontWeight(.medium)
             
-            Text("「ホーム」タブから新しいメモを追加して\n学習を記録しましょう")
+            Text("「ホーム」タブから新しいメモを追加して\n学習を記録しましょう".localized)
                 .font(.subheadline)
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
@@ -244,7 +244,7 @@ struct RetentionView: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     // タイトルとページ範囲を表示
-                    Text(memo.title ?? "無題")
+                    Text(memo.title ?? "無題".localized)
                         .font(.subheadline)
                     
                     // ページ範囲を表示（存在する場合のみ）
@@ -257,7 +257,7 @@ struct RetentionView: View {
                     Spacer()
                     
                     // 記憶定着度
-                    Text("\(retentionScore(for: memo))%")
+                    Text("%d%%".localizedWithInt(retentionScore(for: memo)))
                         .font(.subheadline)
                         .foregroundColor(progressColor(for: Int16(retentionScore(for: memo))))
                 }
@@ -269,7 +269,7 @@ struct RetentionView: View {
                 
                 HStack {
                     // 最終復習日
-                    Text("最終復習: \(formattedDate(memo.lastReviewedDate))")
+                    Text("最終復習: %@".localizedFormat(formattedDate(memo.lastReviewedDate)))
                         .font(.caption)
                         .foregroundColor(.gray)
                     
@@ -285,14 +285,14 @@ struct RetentionView: View {
                                             .fill(tag.swiftUIColor())
                                             .frame(width: 6, height: 6)
                                         
-                                        Text(tag.name ?? "")
+                                        Text(tag.name ?? "タグ名なし".localized)
                                             .font(.caption2)
                                             .foregroundColor(.gray)
                                     }
                                 }
                                 
                                 if memo.tagsArray.count > 2 {
-                                    Text("+\(memo.tagsArray.count - 2)")
+                                    Text("+%d".localizedWithInt(memo.tagsArray.count - 2))
                                         .font(.caption2)
                                         .foregroundColor(.gray)
                                 }
@@ -336,7 +336,7 @@ struct RetentionView: View {
     }
     
     private func formattedDate(_ date: Date?) -> String {
-        guard let date = date else { return "未定" }
+        guard let date = date else { return "未定".localized }
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .none

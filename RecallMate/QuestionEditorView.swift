@@ -42,9 +42,9 @@ struct QuestionEditorView: View {
         NavigationStack {
             VStack(spacing: 0) {
                 // タブビュー切り替え用のセグメントコントロール
-                Picker("編集モード", selection: $selectedTab) {
-                    Text("問題編集").tag(0)
-                    Text("回答編集").tag(1)
+                Picker("編集モード".localized, selection: $selectedTab) {
+                    Text("問題編集".localized).tag(0)
+                    Text("回答編集".localized).tag(1)
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .padding()
@@ -65,7 +65,7 @@ struct QuestionEditorView: View {
             .toolbar {
                 // 共通のナビゲーションバーアイテム
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(viewModel.isEditMode ? "キャンセル" : "キャンセル") {
+                    Button(viewModel.isEditMode ? "キャンセル".localized : "キャンセル".localized) {
                         if viewModel.isEditMode {
                             // 編集モードを終了
                             viewModel.isEditMode = false
@@ -101,7 +101,7 @@ struct QuestionEditorView: View {
                 // 保存ボタン（編集モードでない場合のみ表示）
                 ToolbarItem(placement: .primaryAction) {
                     if !viewModel.isEditMode {
-                        Button("保存") {
+                        Button("保存".localized) {
                             viewModel.saveChanges {
                                 dismiss()
                             }
@@ -175,7 +175,7 @@ struct QuestionEditorView: View {
                     showAlert = true
                 }
             }
-            .alert("エラー", isPresented: $showAlert) {
+            .alert("エラー".localized, isPresented: $showAlert) {
                 Button("OK") {
                     viewModel.error = nil
                 }
@@ -183,7 +183,7 @@ struct QuestionEditorView: View {
                 if let errorMessage = viewModel.error {
                     Text(errorMessage)
                 } else {
-                    Text("不明なエラーが発生しました")
+                    Text("不明なエラーが発生しました".localized)
                 }
             }
         }
@@ -212,7 +212,7 @@ struct QuestionEditorView: View {
     
     // キーワードセクション
     private var keywordSection: some View {
-        Section(header: Text("重要単語")) {
+        Section(header: Text("重要単語".localized)) {
             ForEach(viewModel.editingKeywords.indices, id: \.self) { index in
                 let keyword = viewModel.editingKeywords[index]
                 HStack {
@@ -251,7 +251,7 @@ struct QuestionEditorView: View {
             
             if !viewModel.isEditMode {
                 HStack {
-                    TextField("新しいキーワード", text: $viewModel.newKeyword)
+                    TextField("新しいキーワード".localized, text: $viewModel.newKeyword)
                         .ignoresSafeArea(.keyboard, edges: .bottom)
                     Button(action: viewModel.addKeyword) {
                         Image(systemName: "plus.circle.fill")
@@ -317,7 +317,7 @@ struct QuestionEditorView: View {
     private var answerEditTab: some View {
         List {
             // キーワード問題の回答セクション
-            Section(header: Text("キーワード問題の回答")) {
+            Section(header: Text("キーワード問題の回答".localized)) {
                 ForEach(viewModel.editingKeywords.indices, id: \.self) { index in
                     let keyword = viewModel.editingKeywords[index]
                     let answerKey = "keyword_answer_\(keyword)"
@@ -325,7 +325,7 @@ struct QuestionEditorView: View {
                     
                     NavigationLink {
                         AnswerEditDetailView(
-                            questionText: "「\(keyword)」について説明してください。",
+                            questionText: "「%@」について説明してください。".localizedFormat(keyword),
                             answer: answer,
                             onSave: { newAnswer in
                                 QuestionService.shared.saveKeywordAnswer(
@@ -345,7 +345,7 @@ struct QuestionEditorView: View {
                                     .foregroundColor(.gray)
                                     .lineLimit(2)
                             } else {
-                                Text("未回答")
+                                Text("未回答".localized)
                                     .font(.caption)
                                     .foregroundColor(.gray)
                                     .italic()
@@ -358,7 +358,7 @@ struct QuestionEditorView: View {
             
             // 比較問題の回答セクション
             if !comparisonQuestions.isEmpty {
-                Section(header: Text("比較問題の回答")) {
+                Section(header: Text("比較問題の回答".localized)) {
                     ForEach(comparisonQuestions) { question in
                         NavigationLink {
                             AnswerEditDetailView(
@@ -383,7 +383,7 @@ struct QuestionEditorView: View {
                                         .foregroundColor(.gray)
                                         .lineLimit(2)
                                 } else {
-                                    Text("未回答")
+                                    Text("未回答".localized)
                                         .font(.caption)
                                         .foregroundColor(.gray)
                                         .italic()
@@ -401,7 +401,7 @@ struct QuestionEditorView: View {
     private var problemListToolbarItems: some View {
         Group {
             if viewModel.isEditMode {
-                Button("削除") {
+                Button("削除".localized) {
                     viewModel.deleteSelectedItems()
                 }
                 .foregroundColor(.red)
@@ -411,19 +411,19 @@ struct QuestionEditorView: View {
                     Button(action: {
                         viewModel.copyQuestionsToClipboard()
                     }) {
-                        Label("問題をコピー", systemImage: "doc.on.doc")
+                        Label("問題をコピー".localized, systemImage: "doc.on.doc")
                     }
                     
                     Button(action: {
                         showAnswerImport = true
                     }) {
-                        Label("回答をインポート", systemImage: "square.and.arrow.down")
+                        Label("回答をインポート".localized, systemImage: "square.and.arrow.down")
                     }
                     
                     Button(action: {
                         viewModel.isEditMode = true
                     }) {
-                        Label("編集", systemImage: "pencil")
+                        Label("編集".localized, systemImage: "pencil")
                     }
                 } label: {
                     Image(systemName: "ellipsis.circle")
@@ -438,7 +438,7 @@ struct QuestionEditorView: View {
         Button(action: {
             showAnswerImport = true
         }) {
-            Label("回答をインポート", systemImage: "square.and.arrow.down")
+            Label("回答をインポート".localized, systemImage: "square.and.arrow.down")
                 .labelStyle(.titleAndIcon)
         }
     }
@@ -477,7 +477,7 @@ struct QuestionEditorView: View {
                 viewModel.loadComparisonQuestions(for: memo)
             }
         } catch {
-            viewModel.error = "比較問題の更新に失敗しました: \(error.localizedDescription)"
+            viewModel.error = "比較問題の更新に失敗しました: \(error.localizedDescription)".localized
         }
     }
 }
@@ -502,13 +502,13 @@ struct KeywordEditView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: Text("キーワード編集")) {
-                    TextField("キーワード", text: $editedKeyword)
+                Section(header: Text("キーワード編集".localized)) {
+                    TextField("キーワード".localized, text: $editedKeyword)
                         .padding()
                 }
                 
                 Button(action: saveKeyword) {
-                    Text("保存")
+                    Text("保存".localized)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
                         .background(Color.blue)
@@ -518,23 +518,23 @@ struct KeywordEditView: View {
                 .padding(.top, 10)
                 .disabled(editedKeyword.isEmpty)
             }
-            .navigationTitle("キーワードの編集")
+            .navigationTitle("キーワードの編集".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("キャンセル") {
+                    Button("キャンセル".localized) {
                         dismiss()
                     }
                 }
             }
-            .alert("確認", isPresented: $showConfirmation) {
-                Button("はい", role: .destructive) {
+            .alert("確認".localized, isPresented: $showConfirmation) {
+                Button("はい".localized, role: .destructive) {
                     onSave(editedKeyword)
                     dismiss()
                 }
-                Button("キャンセル", role: .cancel) { }
+                Button("キャンセル".localized, role: .cancel) { }
             } message: {
-                Text("キーワードを変更すると、関連する回答の関連付けが変わる可能性があります。続行しますか？")
+                Text("キーワードを変更すると、関連する回答の関連付けが変わる可能性があります。続行しますか？".localized)
             }
         }
     }
@@ -568,7 +568,7 @@ struct QuestionEditView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: Text("問題内容")) {
+                Section(header: Text("問題内容".localized)) {
                     TextEditor(text: $questionText)
                         .frame(minHeight: 120)
                         .padding(4)
@@ -578,7 +578,7 @@ struct QuestionEditView: View {
                         )
                 }
                 
-                Section(header: Text("補足情報")) {
+                Section(header: Text("補足情報".localized)) {
                     TextEditor(text: $questionNote)
                         .frame(height: 100)
                         .padding(4)
@@ -589,7 +589,7 @@ struct QuestionEditView: View {
                 }
                 
                 Button(action: saveQuestion) {
-                    Text("保存")
+                    Text("保存".localized)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
                         .background(Color.blue)
@@ -599,11 +599,11 @@ struct QuestionEditView: View {
                 .padding(.top, 10)
                 .disabled(questionText.isEmpty)
             }
-            .navigationTitle("問題の編集")
+            .navigationTitle("問題の編集".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("キャンセル") {
+                    Button("キャンセル".localized) {
                         dismiss()
                     }
                 }
@@ -651,10 +651,10 @@ struct AnswerEditDetailView: View {
             // 回答編集エリア
             VStack(alignment: .leading) {
                 HStack {
-                    Text("回答")
+                    Text("回答".localized)
                         .font(.headline)
                     Spacer()
-                    Button("クリア") {
+                    Button("クリア".localized) {
                         answerText = ""
                     }
                     .foregroundColor(.red)
@@ -677,7 +677,7 @@ struct AnswerEditDetailView: View {
                 onSave(answerText)
                 dismiss()
             }) {
-                Text("保存")
+                Text("保存".localized)
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -687,7 +687,7 @@ struct AnswerEditDetailView: View {
                     .padding()
             }
         }
-        .navigationTitle("回答編集")
+        .navigationTitle("回答編集".localized)
         .navigationBarTitleDisplayMode(.inline)
     }
 }

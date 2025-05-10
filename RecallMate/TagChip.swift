@@ -103,7 +103,7 @@ struct MultiTagPickerView: View {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.gray)
                     
-                    TextField("タグを検索", text: $searchText)
+                    TextField("タグを検索".localized, text: $searchText)
                         .disableAutocorrection(true)
                     
                     if !searchText.isEmpty {
@@ -124,7 +124,7 @@ struct MultiTagPickerView: View {
                 // 選択したタグの表示
                 if !tempSelectedTags.isEmpty {
                     VStack(alignment: .leading) {
-                        Text("選択中のタグ:")
+                        Text("選択中のタグ:".localized)
                             .font(.caption)
                             .foregroundColor(.gray)
                             .padding(.horizontal)
@@ -156,7 +156,7 @@ struct MultiTagPickerView: View {
                             tempSelectedTags = []
                         }) {
                             HStack {
-                                Text("すべてクリア")
+                                Text("すべてクリア".localized)
                                     .foregroundColor(.red)
                                 
                                 Spacer()
@@ -167,7 +167,7 @@ struct MultiTagPickerView: View {
                             tempSelectedTags = Array(allTags)
                         }) {
                             HStack {
-                                Text("すべて選択")
+                                Text("すべて選択".localized)
                                     .foregroundColor(.blue)
                                 
                                 Spacer()
@@ -177,14 +177,14 @@ struct MultiTagPickerView: View {
                     
                     if filteredTags.isEmpty {
                         Section {
-                            Text("タグが見つかりません")
+                            Text("タグが見つかりません".localized)
                                 .foregroundColor(.gray)
                                 .italic()
                                 .frame(maxWidth: .infinity, alignment: .center)
                                 .padding()
                         }
                     } else {
-                        Section(header: Text("利用可能なタグ")) {
+                        Section(header: Text("利用可能なタグ".localized)) {
                             ForEach(filteredTags) { tag in
                                 TagRowItem(
                                     tag: tag,
@@ -198,15 +198,15 @@ struct MultiTagPickerView: View {
                     }
                 }
             }
-            .navigationTitle("タグを選択")
+            .navigationTitle("タグを選択".localized)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("キャンセル") {
+                    Button("キャンセル".localized) {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("適用") {
+                    Button("適用".localized) {
                         // 選択されたタグの配列を親ビューに渡す
                         let updatedTags = tempSelectedTags
                         

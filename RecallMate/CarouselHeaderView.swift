@@ -9,7 +9,7 @@ struct CarouselHeaderView: View {
         VStack {
             HStack {
                 if totalCount > 0 {
-                    Text("\(currentIndex + 1) / \(totalCount)")
+                    Text(String(format: "%d / %d".localized, currentIndex + 1, totalCount))
                         .font(.caption)
                         .foregroundColor(.gray)
                         .padding(4)

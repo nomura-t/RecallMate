@@ -13,13 +13,13 @@ struct CustomQuestionCreatorView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: Text("カスタム問題文")) {
+                Section(header: Text("カスタム問題文".localized)) {
                     TextEditor(text: $questionText)
                         .frame(height: 120)
                         .overlay(
                             Group {
                                 if questionText.isEmpty {
-                                    Text("例: この章で学んだ内容を要約してください。")
+                                    Text("例: この章で学んだ内容を要約してください。".localized)
                                         .foregroundColor(.gray)
                                         .padding(8)
                                         .allowsHitTesting(false)
@@ -29,13 +29,13 @@ struct CustomQuestionCreatorView: View {
                         .ignoresSafeArea(.keyboard, edges: .bottom)
                 }
                 
-                Section(header: Text("メモ（オプション）")) {
+                Section(header: Text("メモ（オプション）".localized)) {
                     TextEditor(text: $questionNote)
                         .frame(height: 100)
                         .overlay(
                             Group {
                                 if questionNote.isEmpty {
-                                    Text("この問題に関するメモやヒントを入力できます")
+                                    Text("この問題に関するメモやヒントを入力できます".localized)
                                         .foregroundColor(.gray)
                                         .padding(8)
                                         .allowsHitTesting(false)
@@ -46,13 +46,13 @@ struct CustomQuestionCreatorView: View {
                 }
                 
                 Button(action: saveCustomQuestion) {
-                    Text("問題を保存")
+                    Text("問題を保存".localized)
                         .frame(maxWidth: .infinity)
                 }
                 .disabled(questionText.isEmpty)
             }
-            .navigationTitle("カスタム問題作成")
-            .navigationBarItems(trailing: Button("キャンセル") { onCancel() })
+            .navigationTitle("カスタム問題作成".localized)
+            .navigationBarItems(trailing: Button("キャンセル".localized) { onCancel() })
         }
     }
     

@@ -18,11 +18,11 @@ struct ReviewRequestView: View {
             
             // モーダルカード
             VStack(spacing: 20) {
-                Text("RecallMateをお使いいただきありがとうございます")
+                Text("RecallMateをお使いいただきありがとうございます".localized)
                     .font(.headline)
                     .multilineTextAlignment(.center)
                 
-                Text("アプリは気に入っていただけましたか？")
+                Text("アプリは気に入っていただけましたか？".localized)
                     .font(.subheadline)
                 
                 HStack(spacing: 30) {
@@ -30,7 +30,7 @@ struct ReviewRequestView: View {
                     Button(action: {
                         isPresented = false
                     }) {
-                        Text("いいえ")
+                        Text("いいえ".localized)
                             .frame(width: 100)
                             .padding()
                             .background(Color.gray.opacity(0.2))
@@ -42,7 +42,7 @@ struct ReviewRequestView: View {
                     Button(action: {
                         hasRespondedPositively = true
                     }) {
-                        Text("はい")
+                        Text("はい".localized)
                             .frame(width: 100)
                             .padding()
                             .background(Color.blue)
@@ -52,7 +52,7 @@ struct ReviewRequestView: View {
                 }
                 
                 if hasRespondedPositively {
-                    Text("開発者の励みになります。良かったらレビューをお願いします！")
+                    Text("開発者(tenten)の励みになります。良かったらレビューをお願いします！".localized)
                         .font(.subheadline)
                         .multilineTextAlignment(.center)
                         .foregroundColor(.secondary)
@@ -61,7 +61,7 @@ struct ReviewRequestView: View {
                         requestReview()
                         isPresented = false
                     }) {
-                        Text("レビューを書く")
+                        Text("レビューを書く".localized)
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(Color.blue)
@@ -72,7 +72,7 @@ struct ReviewRequestView: View {
                     Button(action: {
                         isPresented = false
                     }) {
-                        Text("また今度")
+                        Text("また今度".localized)
                             .foregroundColor(.blue)
                     }
                     .padding(.top, 5)
