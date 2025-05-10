@@ -117,7 +117,7 @@ struct SessionInfoView: View {
                 .fontWeight(.bold)
             
             if pomodoroTimer.currentSession == .work {
-                Text("セッション: \(pomodoroTimer.sessionCount + 1)")
+                Text("セッション: %d".localizedWithInt(pomodoroTimer.sessionCount + 1))
                     .font(.headline)
                     .foregroundColor(.secondary)
             }
@@ -132,7 +132,7 @@ struct NotificationWarningView: View {
         HStack {
             Image(systemName: "bell.slash")
                 .foregroundColor(.red)
-            Text("通知が許可されていません。設定アプリで許可してください。")
+            Text("通知が許可されていません。設定アプリで許可してください。".localized)
                 .font(.caption)
                 .foregroundColor(.red)
         }
@@ -204,7 +204,7 @@ struct ControlButtonsView: View {
                 Button(action: {
                     pomodoroTimer.resetSessionCount()
                 }) {
-                    Label("セッションをリセット", systemImage: "gobackward")
+                    Label("セッションをリセット".localized, systemImage: "gobackward")
                 }
             }
             
@@ -249,15 +249,15 @@ struct SessionDescriptionView: View {
             
             switch session {
             case .work:
-                Text("🧠 集中して作業しましょう")
+                Text("🧠 集中して作業しましょう".localized)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             case .shortBreak:
-                Text("☕️ 短い休憩でリフレッシュ")
+                Text("☕️ 短い休憩でリフレッシュ".localized)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             case .longBreak:
-                Text("🌿 長い休憩でしっかり回復")
+                Text("🌿 長い休憩でしっかり回復".localized)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
@@ -314,42 +314,42 @@ struct PomodoroSettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: Text("作業時間")) {
+                Section(header: Text("作業時間".localized)) {
                     Slider(value: $workMinutes, in: 5...60, step: 5) {
-                        Text("作業時間: \(Int(workMinutes))分")
+                        Text("作業時間: %d分".localizedWithInt(Int(workMinutes)))
                     }
-                    Text("\(Int(workMinutes))分")
+                    Text("%d分".localizedWithInt(Int(workMinutes)))
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
                 
-                Section(header: Text("短い休憩")) {
+                Section(header: Text("短い休憩".localized)) {
                     Slider(value: $shortBreakMinutes, in: 1...15, step: 1) {
-                        Text("短い休憩: \(Int(shortBreakMinutes))分")
+                        Text("短い休憩: %d分".localizedWithInt(Int(shortBreakMinutes)))
                     }
-                    Text("\(Int(shortBreakMinutes))分")
+                    Text("%d分".localizedWithInt(Int(shortBreakMinutes)))
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
                 
-                Section(header: Text("長い休憩")) {
+                Section(header: Text("長い休憩".localized)) {
                     Slider(value: $longBreakMinutes, in: 5...30, step: 5) {
-                        Text("長い休憩: \(Int(longBreakMinutes))分")
+                        Text("長い休憩: %d分".localizedWithInt(Int(longBreakMinutes)))
                     }
-                    Text("\(Int(longBreakMinutes))分")
+                    Text("%d分".localizedWithInt(Int(longBreakMinutes)))
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
                 
-                Section(header: Text("長い休憩の頻度")) {
+                Section(header: Text("長い休憩の頻度".localized)) {
                     Slider(value: $longBreakAfter, in: 2...8, step: 1) {
-                        Text("\(Int(longBreakAfter))セッションごと")
+                        Text("%dセッションごと".localizedWithInt(Int(longBreakAfter)))
                     }
-                    Text("\(Int(longBreakAfter))セッションごとに長い休憩")
+                    Text("%dセッションごとに長い休憩".localizedWithInt(Int(longBreakAfter)))
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
                 
-                Section(header: Text("通知音")) {
-                    Picker("通知音", selection: $notificationSound) {
-                        Text("デフォルト").tag("default")
-                        Text("なし").tag("none")
+                Section(header: Text("通知音".localized)) {
+                    Picker("通知音".localized, selection: $notificationSound) {
+                        Text("デフォルト".localized).tag("default")
+                        Text("なし".localized).tag("none")
                     }
                     .pickerStyle(SegmentedPickerStyle())
                 }
@@ -357,7 +357,7 @@ struct PomodoroSettingsView: View {
                 // 通知確認セクション
                 if !pomodoroTimer.notificationsEnabled {
                     Section {
-                        Button("通知設定を開く") {
+                        Button("通知設定を開く".localized) {
                             if let url = URL(string: UIApplication.openSettingsURLString) {
                                 UIApplication.shared.open(url)
                             }
@@ -365,14 +365,14 @@ struct PomodoroSettingsView: View {
                         .foregroundColor(.red)
                         .frame(maxWidth: .infinity, alignment: .center)
                         
-                        Text("タイマー終了通知を受け取るには通知を許可してください")
+                        Text("タイマー終了通知を受け取るには通知を許可してください".localized)
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
                 }
             }
-            .navigationTitle("ポモドーロ設定")
-            .navigationBarItems(trailing: Button("保存") {
+            .navigationTitle("ポモドーロ設定".localized)
+            .navigationBarItems(trailing: Button("保存".localized) {
                 // 設定を保存
                 pomodoroTimer.workDuration = workMinutes * 60
                 pomodoroTimer.shortBreakDuration = shortBreakMinutes * 60

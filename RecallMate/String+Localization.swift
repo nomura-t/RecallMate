@@ -20,6 +20,9 @@ extension String {
         return String(format: self.localized, value)
     }
     
+    func localizedWithFormat(_ args: CVarArg...) -> String {
+        return String(format: self.localized, arguments: args)
+    }
     // 日付付きのパラメータ化された文字列に便利
     func localizedWithDate(_ date: Date, style: DateFormatter.Style = .medium) -> String {
         let formatter = DateFormatter()

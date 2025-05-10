@@ -9,34 +9,34 @@ struct OnboardingView: View {
     private let pages: [(image: String, title: String, description: String)] = [
         (
             image: "doc.text",
-            title: "新規メモを作成",
-            description: "ホーム画面右下の「🧠」ボタンから学習内容のメモを作成できます。"
+            title: "新規メモを作成".localized,
+            description: "ホーム画面右下の「🧠」ボタンから学習内容のメモを作成できます。".localized
         ),
         (
             image: "arrow.clockwise",
-            title: "アクティブリコール",
-            description: "メモを閉じて学んだ内容を思い出し、記憶を強化しましょう。"
+            title: "アクティブリコール".localized,
+            description: "メモを閉じて学んだ内容を思い出し、記憶を強化しましょう。".localized
         ),
         (
             image: "calendar",
-            title: "分散学習",
-            description: "最適な間隔で復習することで、長期記憶への定着率が向上します。"
+            title: "分散学習".localized,
+            description: "最適な間隔で復習することで、長期記憶への定着率が向上します。".localized
         ),
         (
             image: "slider.horizontal.3",
-            title: "記憶度の評価",
-            description: "記憶度を評価すると、次回の復習タイミングが自動的に最適化されます。"
+            title: "記憶度の評価".localized,
+            description: "記憶度を評価すると、次回の復習タイミングが自動的に最適化されます。".localized
         ),
         (
             image: "timer",
-            title: "集中タイマー",
-            description: "集中力を最大化するテクニックを活用しましょう。"
+            title: "集中タイマー".localized,
+            description: "集中力を最大化するテクニックを活用しましょう。".localized
         ),
         // 最後に脳アイコン誘導を追加
         (
             image: "brain.head.profile",
-            title: "メモを作成してみましょう",
-            description: "ホーム画面に戻ったら、右下の脳アイコンをタップして最初のメモを作成してみましょう！"
+            title: "メモを作成してみましょう".localized,
+            description: "ホーム画面に戻ったら、右下の脳アイコンをタップして最初のメモを作成してみましょう！".localized
         )
     ]
     
@@ -52,7 +52,7 @@ struct OnboardingView: View {
                 // スキップボタン
                 HStack {
                     Spacer()
-                    Button("スキップ") {
+                    Button("スキップ".localized) {
                         withAnimation {
                             isShowingOnboarding = false
                             saveOnboardingShown()
@@ -104,7 +104,7 @@ struct OnboardingView: View {
                             }
                         }
                     }) {
-                        Text(currentPage == pages.count - 1 ? "RecallMateを始める" : "次へ")
+                        Text(currentPage == pages.count - 1 ? "RecallMateを始める".localized : "次へ".localized)
                             .font(.headline)
                             .frame(maxWidth: .infinity)
                             .padding()

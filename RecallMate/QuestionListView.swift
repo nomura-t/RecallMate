@@ -22,10 +22,9 @@ struct QuestionListView: View {
                     if isExplanationQuestionsExpanded {
                         ForEach(keywords, id: \.self) { keyword in
                             VStack(alignment: .leading) {
-                                Text("「\(keyword)」について説明してください。")
-                                    .font(.headline)
+                                Text("「%@」について説明してください。".localizedFormat(keyword))                                    .font(.headline)
                                 
-                                Text("概念、特徴、重要性について詳しく述べてください。")
+                                Text("概念、特徴、重要性について詳しく述べてください。".localized)
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
                             }
@@ -35,7 +34,7 @@ struct QuestionListView: View {
                 } header: {
                     Button(action: { isExplanationQuestionsExpanded.toggle() }) {
                         HStack {
-                            Text("説明問題 (\(keywords.count))")
+                            Text("説明問題 (%d)".localizedWithInt(keywords.count))
                             Spacer()
                             Image(systemName: isExplanationQuestionsExpanded ? "chevron.up" : "chevron.down")
                         }
@@ -47,7 +46,7 @@ struct QuestionListView: View {
             // 保存された比較問題リスト
             Section {
                 if comparisonQuestions.isEmpty {
-                    Text("保存された問題はありません")
+                    Text("保存された問題はありません".localized)
                         .foregroundColor(.gray)
                         .italic()
                 } else if isComparisonQuestionsExpanded {
@@ -57,7 +56,7 @@ struct QuestionListView: View {
                                 .font(.headline)
                             
                             if let note = question.note, !note.isEmpty {
-                                Text("メモ: \(note)")
+                                Text("メモ: %@".localizedFormat(note))
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
                             }
@@ -69,7 +68,7 @@ struct QuestionListView: View {
             } header: {
                 Button(action: { isComparisonQuestionsExpanded.toggle() }) {
                     HStack {
-                        Text("保存された問題 (\(comparisonQuestions.count))")
+                        Text("保存された問題 (%d)".localizedWithInt(comparisonQuestions.count))
                         Spacer()
                         Image(systemName: isComparisonQuestionsExpanded ? "chevron.up" : "chevron.down")
                     }

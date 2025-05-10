@@ -42,7 +42,7 @@ struct FullScreenCanvasView: View {
                     }
                     .disabled(currentPageIndex <= 0)
                     
-                    Text("ページ \(currentPageIndex + 1)/\(canvasPages.count)")
+                    Text("ページ %d/%d".localizedFormat(currentPageIndex + 1, canvasPages.count))
                         .font(.subheadline)
                     
                     Button(action: {

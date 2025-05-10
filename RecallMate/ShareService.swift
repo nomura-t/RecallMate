@@ -151,7 +151,7 @@ enum SocialPlatform: String, CaseIterable, Identifiable {
     case facebook = "Facebook"
     case instagram = "Instagram"
     case twitter = "X (Twitter)"
-    case system = "その他"
+    case system = "other"
     
     var id: String { self.rawValue }
     

@@ -19,7 +19,7 @@ struct PomodoroUsageModalView: View {
             VStack(spacing: 0) {
                 // ヘッダー部分
                 HStack {
-                    Text("ポモドーロテクニック")
+                    Text("ポモドーロテクニック".localized)
                         .font(.headline)
                         .foregroundColor(.primary)
                     
@@ -44,11 +44,11 @@ struct PomodoroUsageModalView: View {
                     VStack(alignment: .leading, spacing: 16) {
                         // ポモドーロテクニックの説明
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("ポモドーロテクニックとは？")
+                            Text("ポモドーロテクニックとは？".localized)
                                 .font(.headline)
                                 .foregroundColor(.primary)
                             
-                            Text("集中して作業をする時間と短い休憩を交互に繰り返すことで、生産性を高める時間管理法です。通常、25分の作業と5分の休憩を1セットとして行います。")
+                            Text("集中して作業をする時間と短い休憩を交互に繰り返すことで、生産性を高める時間管理法です。通常、25分の作業と5分の休憩を1セットとして行います。".localized)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                         }
@@ -58,7 +58,7 @@ struct PomodoroUsageModalView: View {
                         
                         // 使い方の説明
                         VStack(alignment: .leading, spacing: 10) {
-                            Text("基本的な使い方")
+                            Text("基本的な使い方".localized)
                                 .font(.headline)
                                 .foregroundColor(.primary)
                             
@@ -73,11 +73,11 @@ struct PomodoroUsageModalView: View {
                                         .cornerRadius(10)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
-                                        Text("タイマーをスタート")
+                                        Text("タイマーをスタート".localized)
                                             .font(.subheadline)
                                             .fontWeight(.medium)
                                         
-                                        Text("中央の再生ボタンを押して、作業セッションをスタートします。")
+                                        Text("中央の再生ボタンを押して、作業セッションをスタートします。".localized)
                                             .font(.caption)
                                             .foregroundColor(.secondary)
                                     }
@@ -94,11 +94,11 @@ struct PomodoroUsageModalView: View {
                                         .cornerRadius(10)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
-                                        Text("集中して作業")
+                                        Text("集中して作業".localized)
                                             .font(.subheadline)
                                             .fontWeight(.medium)
                                         
-                                        Text("タイマーが終了するまで、集中して作業に取り組みます。途中で一時停止することもできます。")
+                                        Text("タイマーが終了するまで、集中して作業に取り組みます。途中で一時停止することもできます。".localized)
                                             .font(.caption)
                                             .foregroundColor(.secondary)
                                     }
@@ -115,11 +115,11 @@ struct PomodoroUsageModalView: View {
                                         .cornerRadius(10)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
-                                        Text("休憩を取る")
+                                        Text("休憩を取る".localized)
                                             .font(.subheadline)
                                             .fontWeight(.medium)
                                         
-                                        Text("作業時間が終わると自動的に休憩モードに切り替わります。リフレッシュしましょう。")
+                                        Text("作業時間が終わると自動的に休憩モードに切り替わります。リフレッシュしましょう。".localized)
                                             .font(.caption)
                                             .foregroundColor(.secondary)
                                     }
@@ -136,11 +136,11 @@ struct PomodoroUsageModalView: View {
                                         .cornerRadius(10)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
-                                        Text("サイクルを繰り返す")
+                                        Text("サイクルを繰り返す".localized)
                                             .font(.subheadline)
                                             .fontWeight(.medium)
                                         
-                                        Text("4セッション終了すると、より長い休憩が取れます。ポモドーロテクニックを続けてみましょう。")
+                                        Text("4セッション終了すると、より長い休憩が取れます。ポモドーロテクニックを続けてみましょう。".localized)
                                             .font(.caption)
                                             .foregroundColor(.secondary)
                                     }
@@ -152,16 +152,16 @@ struct PomodoroUsageModalView: View {
                         
                         // ポモドーロテクニックのコツ
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("効果的に使うコツ")
+                            Text("効果的に使うコツ".localized)
                                 .font(.headline)
                                 .foregroundColor(.primary)
                             
                             VStack(alignment: .leading, spacing: 6) {
-                                BulletPoint(text: "作業開始前に、何をするか明確にしておきましょう")
-                                BulletPoint(text: "作業中は通知をオフにして、集中環境を作りましょう")
-                                BulletPoint(text: "休憩時間はしっかり休み、画面から離れましょう")
-                                BulletPoint(text: "長時間の作業は複数のポモドーロに分けると効果的です")
-                                BulletPoint(text: "実績を記録して、モチベーションを維持しましょう")
+                                BulletPoint(text: "作業開始前に、何をするか明確にしておきましょう".localized)
+                                BulletPoint(text: "作業中は通知をオフにして、集中環境を作りましょう".localized)
+                                BulletPoint(text: "休憩時間はしっかり休み、画面から離れましょう".localized)
+                                BulletPoint(text: "長時間の作業は複数のポモドーロに分けると効果的です".localized)
+                                BulletPoint(text: "実績を記録して、モチベーションを維持しましょう".localized)
                             }
                         }
                         .padding()
@@ -170,26 +170,26 @@ struct PomodoroUsageModalView: View {
                         
                         // アプリの操作方法
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("アプリの操作方法")
+                            Text("アプリの操作方法".localized)
                                 .font(.headline)
                                 .foregroundColor(.primary)
                             
                             VStack(alignment: .leading, spacing: 4) {
-                                IconExplanation(icon: "play.fill", text: "再生ボタン - タイマーをスタート")
-                                IconExplanation(icon: "pause.fill", text: "一時停止ボタン - 作業を中断")
-                                IconExplanation(icon: "arrow.clockwise", text: "リセットボタン - タイマーをリセット")
-                                IconExplanation(icon: "gear", text: "設定ボタン - 作業時間や休憩時間をカスタマイズ")
+                                IconExplanation(icon: "play.fill", text: "再生ボタン - タイマーをスタート".localized)
+                                IconExplanation(icon: "pause.fill", text: "一時停止ボタン - 作業を中断".localized)
+                                IconExplanation(icon: "arrow.clockwise", text: "リセットボタン - タイマーをリセット".localized)
+                                IconExplanation(icon: "gear", text: "設定ボタン - 作業時間や休憩時間をカスタマイズ".localized)
                             }
                         }
                         .padding()
                         
                         // ポモドーロテクニックの効果
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("ポモドーロテクニックの効果")
+                            Text("ポモドーロテクニックの効果".localized)
                                 .font(.headline)
                                 .foregroundColor(.primary)
                             
-                            Text("集中力の向上、作業効率のアップ、疲労の軽減、時間管理スキルの向上などの効果があります。続けることでさらに効果が高まります。")
+                            Text("集中力の向上、作業効率のアップ、疲労の軽減、時間管理スキルの向上などの効果があります。続けることでさらに効果が高まります。".localized)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                                 .padding(.vertical, 8)

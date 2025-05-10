@@ -19,7 +19,7 @@ struct UsageModalView: View {
             VStack(spacing: 0) {
                 // ヘッダー部分
                 HStack {
-                    Text("アクティブリコール・メソッド")
+                    Text("アクティブリコール・メソッド".localized)
                         .font(.headline)
                         .foregroundColor(.primary)
                     
@@ -44,7 +44,7 @@ struct UsageModalView: View {
                     VStack(alignment: .leading, spacing: 16) {
                         // 3つの記憶術の説明
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("3つの記憶術のしくみ")
+                            Text("3つの記憶術のしくみ".localized)
                                 .font(.headline)
                                 .foregroundColor(.primary)
                             
@@ -61,11 +61,11 @@ struct UsageModalView: View {
                                     )
                                 
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text("アクティブリコール")
+                                    Text("アクティブリコール".localized)
                                         .font(.subheadline)
                                         .fontWeight(.semibold)
                                     
-                                    Text("情報を思い出そうとすることで、記憶が強くなります。ただ読み返すよりも、自分で思い出す方が記憶に残ります！")
+                                    Text("情報を思い出そうとすることで、記憶が強くなります。ただ読み返すよりも、自分で思い出す方が記憶に残ります！".localized)
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                 }
@@ -84,11 +84,11 @@ struct UsageModalView: View {
                                     )
                                 
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text("プロダクション効果")
+                                    Text("プロダクション効果".localized)
                                         .font(.subheadline)
                                         .fontWeight(.semibold)
                                     
-                                    Text("声に出しながら情報を書き出すことで、記憶に定着しやすくなります。")
+                                    Text("声に出しながら情報を書き出すことで、記憶に定着しやすくなります。".localized)
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                 }
@@ -107,11 +107,11 @@ struct UsageModalView: View {
                                     )
                                 
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text("自己説明効果")
+                                    Text("自己説明効果".localized)
                                         .font(.subheadline)
                                         .fontWeight(.semibold)
                                     
-                                    Text("学んだことを自分で説明すると理解が深まります。誰かに教えるつもりで説明すると記憶に残ります！")
+                                    Text("学んだことを自分で説明すると理解が深まります。誰かに教えるつもりで説明すると記憶に残ります！".localized)
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                 }
@@ -122,7 +122,7 @@ struct UsageModalView: View {
                         
                         // やり方の説明
                         VStack(alignment: .leading, spacing: 10) {
-                            Text("やり方はカンタン4ステップ")
+                            Text("やり方はカンタン4ステップ".localized)
                                 .font(.headline)
                                 .foregroundColor(.primary)
                             
@@ -137,11 +137,11 @@ struct UsageModalView: View {
                                         .cornerRadius(10)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
-                                        Text("覚えたいことを教科書を見ないで書き出す")
+                                        Text("覚えたいことを教科書を見ないで書き出す".localized)
                                             .font(.subheadline)
                                             .fontWeight(.medium)
                                         
-                                        Text("まずは自分の力で思い出してみましょう。わからなくても大丈夫！")
+                                        Text("まずは自分の力で思い出してみましょう。わからなくても大丈夫！".localized)
                                             .font(.caption)
                                             .foregroundColor(.secondary)
                                     }
@@ -158,11 +158,11 @@ struct UsageModalView: View {
                                         .cornerRadius(10)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
-                                        Text("わからない点は教科書で確認する")
+                                        Text("わからない点は教科書で確認する".localized)
                                             .font(.subheadline)
                                             .fontWeight(.medium)
                                         
-                                        Text("思い出せなかった部分を確認して、知識を補いましょう。")
+                                        Text("思い出せなかった部分を確認して、知識を補いましょう。".localized)
                                             .font(.caption)
                                             .foregroundColor(.secondary)
                                     }
@@ -179,11 +179,11 @@ struct UsageModalView: View {
                                         .cornerRadius(10)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
-                                        Text("①と②を繰り返す")
+                                        Text("①と②を繰り返す".localized)
                                             .font(.subheadline)
                                             .fontWeight(.medium)
                                         
-                                        Text("再度挑戦して、どれだけ覚えているか試してみましょう。")
+                                        Text("再度挑戦して、どれだけ覚えているか試してみましょう。".localized)
                                             .font(.caption)
                                             .foregroundColor(.secondary)
                                     }
@@ -200,11 +200,11 @@ struct UsageModalView: View {
                                         .cornerRadius(10)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
-                                        Text("時間をおいてまた、①〜③を繰り返す")
+                                        Text("時間をおいてまた、①〜③を繰り返す".localized)
                                             .font(.subheadline)
                                             .fontWeight(.medium)
                                         
-                                        Text("翌日など時間をあけると、より記憶に残りやすくなります。RecallMateが自動的に最適な復習タイミングを計算してお知らせしてくれます。")
+                                        Text("翌日など時間をあけると、より記憶に残りやすくなります。RecallMateが自動的に最適な復習タイミングを計算してお知らせしてくれます。".localized)
                                             .font(.caption)
                                             .foregroundColor(.secondary)
                                     }
@@ -217,47 +217,47 @@ struct UsageModalView: View {
                         
                         // アプリでの活用法
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("RecallMateでの活用法")
+                            Text("RecallMateでの活用法".localized)
                                 .font(.headline)
                                 .foregroundColor(.primary)
                             
                             // 新規メモの使い方
                             VStack(alignment: .leading, spacing: 6) {
-                                Text("新規メモの使い方")
+                                Text("新規メモの使い方".localized)
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
                                 
                                 VStack(alignment: .leading, spacing: 4) {
-                                    BulletPoint(text: "勉強したあと、教科書を閉じてアプリを開きます")
-                                    BulletPoint(text: "思い出せることを「新規メモ」に書きます")
-                                    BulletPoint(text: "わからない部分は確認して追加します")
-                                    BulletPoint(text: "自分の言葉で書くのがポイントです！")
+                                    BulletPoint(text: "勉強したあと、教科書を閉じてアプリを開きます".localized)
+                                    BulletPoint(text: "思い出せることを「新規メモ」に書きます".localized)
+                                    BulletPoint(text: "わからない部分は確認して追加します".localized)
+                                    BulletPoint(text: "自分の言葉で書くのがポイントです！".localized)
                                 }
                             }
                             .padding(.vertical, 8)
                             
                             // 問題カードの使い方
                             VStack(alignment: .leading, spacing: 6) {
-                                Text("問題カードの使い方")
+                                Text("問題カードの使い方".localized)
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
                                 
                                 VStack(alignment: .leading, spacing: 4) {
-                                    BulletPoint(text: "重要な概念を問題カードにします")
-                                    BulletPoint(text: "自分で答えを説明してみます（自己説明）")
-                                    BulletPoint(text: "複数の概念を比較する問題も作れます")
-                                    BulletPoint(text: "定期的に問題カードを見直すと効果的！")
+                                    BulletPoint(text: "重要な概念を問題カードにします".localized)
+                                    BulletPoint(text: "自分で答えを説明してみます（自己説明）".localized)
+                                    BulletPoint(text: "複数の概念を比較する問題も作れます".localized)
+                                    BulletPoint(text: "定期的に問題カードを見直すと効果的！".localized)
                                 }
                             }
                         }
                         
                         // おすすめの使い方
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("おすすめのポイント")
+                            Text("おすすめのポイント".localized)
                                 .font(.headline)
                                 .foregroundColor(.primary)
                             
-                            Text("勉強したあとすぐにRecallMateで内容を思い出して書いてみましょう。図や表も自分で書き直すと、より記憶に残ります。")
+                            Text("勉強したあとすぐにRecallMateで内容を思い出して書いてみましょう。図や表も自分で書き直すと、より記憶に残ります。".localized)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                                 .padding(.vertical, 8)

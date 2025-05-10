@@ -17,7 +17,7 @@ struct CombinedRecallSection: View {
                         .foregroundColor(retentionColor(for: viewModel.recallScore))
                         .font(.system(size: 22))
                     
-                    Text("\(Int(viewModel.recallScore))%")
+                    Text("\(Int(viewModel.recallScore))%".localized)
                         .font(.title3)
                         .fontWeight(.bold)
                         .foregroundColor(retentionColor(for: viewModel.recallScore))
@@ -26,7 +26,7 @@ struct CombinedRecallSection: View {
                 Spacer()
                 
                 // 右側: 記憶状態を短く表示
-                Text(retentionDescription(for: viewModel.recallScore))
+                Text(retentionDescription(for: viewModel.recallScore).localized)
                     .font(.subheadline)
                     .foregroundColor(retentionColor(for: viewModel.recallScore))
             }
@@ -44,7 +44,7 @@ struct CombinedRecallSection: View {
             .modifier(SliderColorModifier(color: retentionColor(for: viewModel.recallScore)))
             
             // 詳細説明
-            Text(retentionDetailedDescription(for: viewModel.recallScore))
+            Text(retentionDetailedDescription(for: viewModel.recallScore).localized)
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -56,7 +56,7 @@ struct CombinedRecallSection: View {
                         .foregroundColor(.blue)
                         .font(.system(size: 16))
                     
-                    Text("次回の推奨復習日: \(viewModel.formattedDate(nextReviewDate))")
+                    Text(String(format: "次回の推奨復習日: %@".localized, viewModel.formattedDate(nextReviewDate)))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }

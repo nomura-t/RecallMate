@@ -24,23 +24,23 @@ struct StudyTimeChartView: View {
         let mins = minutes % 60
         
         if hours > 0 {
-            return "\(hours)時間\(mins)分"
+            return "%d時間%d分".localizedWithFormat(hours, mins)
         } else {
-            return "\(mins)分"
+            return "%d分".localizedWithInt(mins)
         }
     }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("学習時間推移")
+                Text("学習時間推移".localized)
                     .font(.headline)
                 
                 Spacer()
                 
                 // 平均時間表示
                 HStack(spacing: 4) {
-                    Text("平均:")
+                    Text("平均:".localized)
                         .font(.caption)
                         .foregroundColor(.gray)
                     
@@ -69,7 +69,7 @@ struct StudyTimeChartView: View {
                             .lineStyle(StrokeStyle(lineWidth: 1, dash: [5, 5]))
                             .foregroundStyle(Color.red)
                             .annotation(position: .top, alignment: .trailing) {
-                                Text("平均: \(formatMinutes(averageStudyTime))")
+                                Text("平均: %@".localizedWithFormat(formatMinutes(averageStudyTime)))
                                     .font(.caption)
                                     .foregroundColor(.red)
                             }
@@ -89,7 +89,7 @@ struct StudyTimeChartView: View {
             
             // データがない場合のメッセージ
             if chartData.isEmpty {
-                Text("この期間のデータはありません")
+                Text("この期間のデータはありません".localized)
                     .font(.subheadline)
                     .foregroundColor(.gray)
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -238,8 +238,8 @@ struct StudyTimeChartView: View {
             
             // 日付だけを表示
             let dayStr = calendar.component(.day, from: date)
-            let label = "\(dayStr)日"
-            
+            let label = "%d日".localizedWithInt(dayStr)
+
             result.append(ChartItem(date: date, label: label, minutes: totalMinutes))
         }
         

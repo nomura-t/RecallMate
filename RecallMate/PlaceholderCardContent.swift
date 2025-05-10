@@ -8,12 +8,12 @@ struct PlaceholderCardContent: View {
     
     var body: some View {
         VStack(spacing: 12) {
-            Text("問題を追加してみましょう！")
+            Text("問題を追加してみましょう！".localized)
                 .font(.subheadline)
                 .foregroundColor(.primary)
                 .padding(.top, 12)
             
-            Text("単語を入力するか、編集ボタンから\n問題を作成できます")
+            Text("単語を入力するか、編集ボタンから\n問題を作成できます".localized)
                 .font(.caption)
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
@@ -23,7 +23,7 @@ struct PlaceholderCardContent: View {
             Button {
                 editAction()
             } label: {
-                Text("問題を追加")
+                Text("問題を追加".localized)
                     .font(.subheadline)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 6)

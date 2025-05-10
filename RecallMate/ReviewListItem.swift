@@ -26,7 +26,7 @@ struct ReviewListItem: View {
             VStack(alignment: .leading, spacing: 4) {
                 // タイトルとページ範囲を表示
                 HStack {
-                    Text(memo.title ?? "無題")
+                    Text(memo.title ?? "無題".localized)
                         .font(.subheadline)
                         .foregroundColor(.primary)
                 }
@@ -46,7 +46,7 @@ struct ReviewListItem: View {
                     
                     // 遅延日数を表示（遅延の場合のみ）
                     if isOverdue && daysOverdue > 0 {
-                        Text("(\(daysOverdue)日経過)")
+                        Text("(%d日経過)".localizedWithInt(daysOverdue))
                             .font(.caption)
                             .foregroundColor(.red)
                     }
@@ -97,11 +97,11 @@ struct ReviewListItem: View {
     // 復習日の表示テキスト
     private var reviewDateText: String {
         if isOverdue {
-            return "復習予定日: \(formattedDate(memo.nextReviewDate))"
+            return "復習予定日: %@".localizedFormat(formattedDate(memo.nextReviewDate))
         } else if isDueToday {
-            return "今日が復習日"
+            return "今日が復習日".localized
         } else {
-            return "復習日: \(formattedDate(memo.nextReviewDate))"
+            return "復習日: %@".localizedFormat(formattedDate(memo.nextReviewDate))
         }
     }
 
@@ -121,6 +121,6 @@ struct ReviewListItem: View {
     private func formattedDate(_ date: Date?) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
-        return date != nil ? formatter.string(from: date!) : "未定"
+        return date != nil ? formatter.string(from: date!) : "未定".localized
     }
 }

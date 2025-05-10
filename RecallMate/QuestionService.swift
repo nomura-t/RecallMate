@@ -27,8 +27,8 @@ class QuestionService {
                 
                 items.append(QuestionItem(
                     id: "keyword_\(keyword)",
-                    questionText: "「\(keyword)」について説明してください。",
-                    subText: "この概念、特徴、重要性について詳しく述べてください。",
+                    questionText: "「%@」について説明してください。".localizedFormat(keyword),
+                    subText: "この概念、特徴、重要性について詳しく述べてください。".localized,
                     isExplanation: true,
                     answer: answer,
                     onAnswerChanged: { [weak self] newAnswer in
@@ -190,18 +190,18 @@ class QuestionService {
     
     /// 問題文をクリップボード用にフォーマット
     func formatQuestionsForClipboard(questions: [QuestionItem]) -> String {
-        var clipboardText = "以下の問題に対する回答を作成してください。各回答の前には「問題X回答:」(Xは問題番号)というタグをつけてください。\n\n"
-        
+        var clipboardText = "以下の問題に対する回答を作成してください。各回答の前には「問題X回答:」(Xは問題番号)というタグをつけてください。\n\n".localized
+
         for (index, question) in questions.enumerated() {
-            clipboardText += "問題\(index + 1): \(question.questionText)\n"
+            clipboardText += "問題%d: %@\n".localizedFormat(index + 1, question.questionText)
             if !question.subText.isEmpty {
-                clipboardText += "補足情報: \(question.subText)\n"
+                clipboardText += "補足情報: %@\n".localizedFormat(question.subText)
             }
             clipboardText += "\n"
         }
         
-        clipboardText += "回答は「問題X回答:」の形式で始め、次の問題の回答までの間に空行を入れないでください。"
-        
+        clipboardText += "回答は「問題X回答:」の形式で始め、次の問題の回答までの間に空行を入れないでください。".localized
+
         return clipboardText
     }
 }

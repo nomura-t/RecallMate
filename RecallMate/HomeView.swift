@@ -62,7 +62,7 @@ struct HomeView: View {
                         Button(action: {
                             selectedTags = []
                         }) {
-                            Text("すべて")
+                            Text("すべて".localized)
                                 .font(.subheadline)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 6)
@@ -115,11 +115,11 @@ struct HomeView: View {
                 if selectedTags.count > 0 {
                     HStack {
                         if selectedTags.count == 1 {
-                            Text("フィルター:")
+                            Text("フィルター:".localized)
                                 .font(.caption)
                                 .foregroundColor(.gray)
                         } else {
-                            Text("フィルター（すべてを含む）:")
+                            Text("フィルター（すべてを含む）:".localized)
                                 .font(.caption)
                                 .foregroundColor(.gray)
                         }
@@ -172,7 +172,7 @@ struct HomeView: View {
                     // フィルター適用後メモがない場合の表示
                     if !selectedTags.isEmpty {
                         VStack(spacing: 20) {
-                            Text("条件に一致するメモがありません")
+                            Text("条件に一致するメモがありません".localized)
                                 .font(.headline)
                                 .foregroundColor(.gray)
                                 .multilineTextAlignment(.center)
@@ -180,7 +180,7 @@ struct HomeView: View {
                             Button(action: {
                                 selectedTags = []
                             }) {
-                                Text("フィルターをクリア")
+                                Text("フィルターをクリア".localized)
                                     .foregroundColor(.blue)
                             }
                         }
@@ -193,11 +193,11 @@ struct HomeView: View {
                                 .font(.system(size: 50))
                                 .foregroundColor(.gray)
                             
-                            Text("メモはまだありません")
+                            Text("メモはまだありません".localized)
                                 .font(.headline)
                                 .foregroundColor(.gray)
                             
-                            Text("右下のボタンからメモを追加できます")
+                            Text("右下のボタンからメモを追加できます".localized)
                                 .font(.subheadline)
                                 .foregroundColor(.gray)
                                 .multilineTextAlignment(.center)

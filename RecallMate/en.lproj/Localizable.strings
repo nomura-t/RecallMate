@@ -68,3 +68,906 @@
 "不明なエラーが発生しました" = "An unknown error occurred";
 "エラー" = "Error";
 "OK" = "OK";
+
+// AppInfoView関連
+"このアプリについて" = "About This App";
+"このアプリの使い方" = "How to Use This App";
+"基本機能と活用のヒント" = "Basic Functions and Usage Tips";
+"効果のある勉強法について" = "About Effective Study Methods";
+"科学的に証明された学習テクニック" = "Scientifically Proven Learning Techniques";
+"モチベーションについて" = "About Motivation";
+"学習意欲を維持するための方法" = "Methods to Maintain Learning Motivation";
+"バージョン" = "Version";
+"開発者" = "Developer";
+
+// AppUsageGuideView関連
+"基本的な使い方" = "Basic Usage";
+"スキマ時間の活用法" = "Making Use of Spare Time";
+"忙しい日常の中でも、スキマ時間を活用して効率的に学習する方法をご紹介します。" = "Learn how to efficiently study by using small pockets of time even in your busy daily life.";
+"アプリの使いこなし方" = "Advanced App Usage";
+"RecallMateの様々な機能を組み合わせて、より効果的に学習する方法をご紹介します。" = "We'll introduce how to combine various features of RecallMate for more effective learning.";
+"開発者も実践！効果的な使い方" = "How Developers Use It! Effective Usage";
+"開発チームが実際に使っているRecallMateの活用法をお教えします。様々な場面での活用例をご紹介します。" = "Learn how our development team actually uses RecallMate. We'll introduce various real-world usage examples.";
+"ヒントとコツ" = "Tips and Tricks";
+"タグの上手な使い方" = "Smart Use of Tags";
+"タグ機能を使って学習内容をスマートに整理する方法をご紹介します。" = "Learn how to organize your study materials smartly using the tag feature.";
+
+// EffectiveStudyMethodsView関連
+"学習の基礎知識" = "Fundamentals of Learning";
+"勉強って何だろう？" = "What is Studying?";
+"効果的な学習とは何か、その本質についてわかりやすく解説します。" = "We'll explain what effective learning is and its essence in an easy-to-understand way.";
+"あまり効果がない勉強法" = "Less Effective Study Methods";
+"時間をかけているのに効果が出にくい勉強法について解説します。時間を無駄にしないためにチェックしておきましょう。" = "We'll explain study methods that don't yield good results despite time invested. Check to avoid wasting time.";
+"「わかった気」になる落とし穴" = "The Trap of 'Feeling Like You Understand'";
+"「理解した気になる」という認知バイアスと、それを避ける方法について解説します。この落とし穴にハマっていませんか？" = "We'll explain the cognitive bias of 'feeling like you understand' and how to avoid it. Are you falling into this trap?";
+"脳はどう学ぶ？" = "How Does the Brain Learn?";
+"脳がどのように情報を処理し、記憶に定着させるかについてやさしく解説します。脳の仕組みを知って賢く学びましょう。" = "We'll gently explain how the brain processes information and consolidates memory. Learn smartly by understanding how your brain works.";
+"科学的に効果が証明された学習法" = "Scientifically Proven Learning Methods";
+"本当に効く勉強法" = "Truly Effective Study Methods";
+"科学的研究により効果が実証されている学習方法をご紹介します。これらの方法を取り入れて、学習効率をアップさせましょう。" = "We'll introduce learning methods with scientifically proven effectiveness. Incorporate these to improve your learning efficiency.";
+"アクティブリコールって何？" = "What is Active Recall?";
+"能動的に情報を思い出すことでより強い記憶を作る「アクティブリコール」について詳しく解説します。RecallMateの核となる学習法です。" = "We'll explain in detail about 'Active Recall' which creates stronger memories by actively retrieving information. This is the core learning method of RecallMate.";
+"分散学習のすすめ" = "The Benefits of Spaced Learning";
+"学習を時間的に分散させることで記憶の定着率を高める方法について解説します。一度にやるより分散させた方が効果的な理由とは？" = "We'll explain how to improve memory retention by spacing out your learning over time. Why is spacing more effective than cramming?";
+"声に出すと覚えやすい理由" = "Why Speaking Out Loud Helps Memory";
+"学んだ内容を声に出したり書き出したりすることで記憶が強化される「プロダクション効果」について解説します。" = "We'll explain the 'Production Effect' where memory is enhanced by speaking out loud or writing what you've learned.";
+"人に教えると自分も学べる理由" = "Why Teaching Others Helps You Learn";
+"誰かに教えることを意識して学ぶことで理解が深まる効果について解説します。「教えることは二度学ぶこと」の秘密とは？" = "We'll explain how learning with the intention of teaching someone else deepens understanding. What's the secret behind 'to teach is to learn twice'?";
+"効果的な勉強法" = "Effective Study Methods";
+
+// MotivationTipsView関連
+"モチベーション" = "Motivation";
+"自分に関連づけて覚えよう" = "Remember by Making it Relevant to Yourself";
+"学習内容を自分自身の経験や知識と関連づけることで理解と定着を促進する効果について解説します。身近な例で考えると記憶に残りやすくなりますよ。" = "We'll explain how relating learning material to your own experiences and knowledge promotes understanding and retention. Thinking in terms of familiar examples makes it easier to remember.";
+
+// DetailContentView関連
+"誰でも自分に関係することには興味が湧き、記憶に残りやすいものです。この「自分に関連付ける」を学習に活かすことで、効果が格段にアップします！" = "Everyone finds things related to themselves interesting and easier to remember. By applying this 'self-reference effect' to learning, the effectiveness dramatically increases!";
+"なぜ自分に関連付けると効果があるの？" = "Why is making it relevant to yourself effective?";
+"脳が熱心に処理するから" = "Because the brain processes it more eagerly";
+"自分に関係する情報は、脳が特別に注意深く処理します。これは生まれつき持っている自然な特性なんです。" = "Information related to yourself is processed with special attention by your brain. This is a natural characteristic we're born with.";
+"既存の知識と結びつけやすいから" = "Because it's easier to connect with existing knowledge";
+"自分の経験や知識と関連付けると、新しい情報が記憶のネットワークにしっかり組み込まれます。" = "When related to your experiences and knowledge, new information gets firmly integrated into your memory network.";
+"学ぶ意欲が自然と高まるから" = "Because learning motivation naturally increases";
+"「これは自分に関係ある！」と感じると、自然とやる気が出てきて、集中力も高まります。" = "When you feel 'This is relevant to me!', motivation naturally emerges and concentration improves.";
+"学校で「これ何の役に立つの？」と思った経験、ありませんか？" = "Have you ever thought 'What's the use of this?' in school?";
+"学校の授業で「これ将来使わないよね」と思ったことがある人は多いはず。実はこれ、その内容を自分と関連付けられていないサインなんです。何かを学ぶとき、それが自分の生活や将来にどう役立つのかわからないと、やる気も出ないし覚えることもできません。" = "Many people have thought 'I'll never use this in the future' during school lessons. This is actually a sign that you haven't related the content to yourself. When learning something, if you don't understand how it will be useful in your life or future, you won't be motivated or able to remember it.";
+"イーロン・マスクも推奨する方法" = "A method recommended by Elon Musk";
+"イーロン・マスクはこう言っています：" = "Elon Musk says:";
+"「何かを覚えるためには、それに意味を与えなければなりません。なぜこれが自分に関連があるのかを言ってください。なぜ、自分に関連があるのかを言えれば、おそらくそれを覚えるでしょう」" = "'To remember something, you must give it meaning. Tell me why this is relevant to you. If you can say why it's relevant to you, then you'll probably remember it.'";
+"今日から試せる実践法" = "Practical methods you can try today";
+"勉強を始める前に「これが自分の何に役立つか」を1分書き出してみる" = "Before starting to study, take 1 minute to write down 'how this will be useful to me'";
+"「これを友達に説明するとしたら？」と想像してみる" = "Imagine 'How would I explain this to a friend?'";
+"勉強する内容と自分の趣味や好きなことを結びつけてみる" = "Try connecting the study material with your hobbies or things you like";
+"「これがわかると、自分にどんな可能性が広がるか」を考えてみる" = "Think about 'What possibilities would open up for me if I understood this?'";
+"これを「利用価値介入」とも呼びます。特に苦手な科目や内容に取り組むときに効果的です。一度立ち止まって「これは自分にとってどんな意味があるのか」を問いかけてみましょう。学ぶ理由がはっきりすると、不思議とやる気も記憶力も高まりますよ！" = "This is also called 'utility value intervention.' It's especially effective when tackling subjects or content you're not good at. Take a moment to ask yourself 'What meaning does this have for me?' When the reason for learning becomes clear, mysteriously, both motivation and memory improve!";
+"このセクションでは「%@」について詳しく解説します。実際のアプリでは、ここに詳細な説明文、図解、例示などを追加してください。" = "This section explains in detail about '%@'. In the actual app, please add detailed explanations, diagrams, examples, etc. here.";
+
+// appUsageTipsContent
+"RecallMateは科学的に効果が高いとされる学習法を誰でも簡単に実践できるように設計されたアプリです。特にアクティブリコールと分散学習という2つの強力な学習法を上手に組み合わせています。" = "RecallMate is an app designed to allow anyone to easily practice scientifically proven effective learning methods. It cleverly combines two powerful learning techniques: active recall and spaced repetition.";
+"アクティブリコールを実践する方法" = "How to Practice Active Recall";
+"新規メモを作成する" = "Create a New Memo";
+"ホーム画面右下の🧠ボタンからメモを作成します" = "Create a memo from the 🧠 button at the bottom right of the home screen";
+"内容欄を活用する" = "Use the Content Field";
+"教材を見ずに、覚えている内容をまず書き出してみましょう" = "Try writing down what you remember without looking at your materials";
+"記憶度の振り返りをする" = "Reflect on Your Memory Retention";
+"どのくらい覚えていたかをスライダーで評価します" = "Rate how much you remembered using the slider";
+"分散学習を実践する方法" = "How to Practice Spaced Repetition";
+"アプリが次の復習タイミングを自動計算し、通知してくれます" = "The app automatically calculates the next review timing and notifies you";
+"記憶度に応じて、次の復習日が最適化されます" = "The next review date is optimized based on your memory retention";
+"徐々に間隔を広げることで、長期記憶への定着を促進します" = "Gradually increasing intervals promotes long-term memory retention";
+"より効果を高めるコツ：タグ機能を活用する、問題カードを作成する、スキマ時間に復習する、声に出して読む、などがあります。詳しくは他の記事もぜひ読んでみてくださいね！RecallMateを使えば、科学的に効果の高い学習法を自然と実践できるようになっています。" = "Tips to enhance effectiveness: utilize tags, create question cards, review during spare time, read aloud, and more. Please check out other articles for details! With RecallMate, you can naturally practice scientifically effective learning methods.";
+
+// developerUsageContent
+"RecallMateの開発者も実際に日々の生活でアプリを活用しています。単なる勉強だけでなく、様々なシーンで記憶の定着に役立てています。ここではその実例をご紹介します。" = "The RecallMate developers also use the app in their daily lives. They use it not just for studying, but for memory retention in various situations. Here are some real examples.";
+"ビジネスシーンでの活用例" = "Examples in Business Settings";
+"人脈の記憶" = "Remembering People";
+"一度会った方の名前、特徴、話した内容などを記録しておくと次に会ったときに役立ちます" = "Recording the names, characteristics, and conversation details of people you've met helps when you meet them again";
+"アイデアの発展" = "Developing Ideas";
+"思いついたアイデアをメモしておき、復習タイミングでさらに発展させていきます" = "Note down ideas as they come to you, then develop them further during review sessions";
+"日常生活での活用例" = "Examples in Daily Life";
+"スポーツのコツや技術をメモして定着させる" = "Memorize sports tips and techniques";
+"気に入った言葉や名言をコレクションする" = "Collect quotes and sayings you like";
+"読んだ本やマンガのポイントをメモして忘れない" = "Take notes on books and manga to remember key points";
+"趣味の知識（植物の育て方、料理のコツなど）を記録する" = "Record hobby knowledge (plant care, cooking tips, etc.)";
+"私たちは「長期記憶に定着したものが、その人を形作っていく」と考えています。覚えたことは、考え方や行動の基盤になります。RecallMateを使って、学校や仕事だけでなく、人生を豊かにする様々な記憶を大切に育ててみてください。あなただけの「知の宝庫」を一緒に作っていきましょう！" = "We believe that 'what becomes fixed in long-term memory shapes who you are.' What you remember becomes the foundation of your thinking and behavior. Use RecallMate to nurture various memories that enrich your life, not just for school or work. Let's create your own 'treasury of knowledge' together!";
+
+// tagUsageContent
+"タグ機能を使うと、メモを効率よく整理したり、必要なときにすぐに見つけたりできるようになります。上手に活用して、自分だけの学習システムを作りましょう！" = "Using the tag feature allows you to efficiently organize memos and find them quickly when needed. Use it skillfully to create your own personalized learning system!";
+"タグの付け方のコツ" = "Tips for Tagging";
+"複数の視点でタグ付けする" = "Tag from Multiple Perspectives";
+"例：「数学」という科目タグと「高校」という学校段階のタグを両方つける" = "Example: Add both 'Math' subject tag and 'High School' education level tag";
+"大きな範囲と小さな範囲の両方でタグ付け" = "Tag with Both Broad and Narrow Scopes";
+"例：「科学」と「化学」「有機化学」など階層的につける" = "Example: Tag hierarchically with 'Science', 'Chemistry', 'Organic Chemistry', etc.";
+"タグの活用例" = "Examples of Tag Usage";
+"科目別：「数学」「英語」「歴史」など" = "By Subject: 'Math', 'English', 'History', etc.";
+"学校/レベル別：「中学」「高校」「大学」「資格」など" = "By School/Level: 'Middle School', 'High School', 'University', 'Certification', etc.";
+"テスト時期別：「中間テスト」「期末テスト」「入試」など" = "By Exam Period: 'Midterm', 'Final Exam', 'Entrance Exam', etc.";
+"重要度別：「重要」「基礎」「発展」など" = "By Importance: 'Essential', 'Basic', 'Advanced', etc.";
+"タグ検索のコツ：ホーム画面でタグをタップすると、そのタグがついたメモだけを表示できます。複数のタグを選ぶと、それらすべてのタグがついたメモだけが表示されるので、効率的に絞り込みができます。テスト前には「数学」「重要」などの組み合わせで重要な数学のメモだけをピックアップするなど、状況に応じた使い方ができますよ！" = "Tips for tag search: Tap a tag on the home screen to display only memos with that tag. Select multiple tags to show only memos with all those tags, enabling efficient filtering. Before tests, you can use combinations like 'Math' and 'Essential' to pick up only important math memos - adapt usage to your situation!";
+
+// studyBasicsContent
+"勉強は単なる暗記じゃないんです。新しい知識を理解して、長く覚えておくための脳の活動なんですよ。" = "Studying isn't just memorization. It's a brain activity for understanding new knowledge and remembering it long-term.";
+"本当の「学び」って何だと思いますか？" = "What do you think real 'learning' is?";
+"新しい情報を取り入れること" = "Taking in new information";
+"その情報の意味を理解すること" = "Understanding the meaning of that information";
+"長期的に記憶に残すこと" = "Retaining it in long-term memory";
+"必要な時に思い出して使えること" = "Being able to recall and use it when needed";
+"良い勉強法は、ただ覚えるだけでなく、実際に使えるようになることを目指しています。RecallMateは、この過程をより効果的にするためのアプリなんです。" = "Good study methods aim not just to memorize, but to make information usable. RecallMate is an app designed to make this process more effective.";
+
+// ineffectiveMethodsContent
+"多くの人が「繰り返し読む」という勉強法を使っていますが、実はあまり効果的じゃないんです。アメリカのある大学調査では、84%の学生がこの方法を使っていたそうです。" = "Many people use 're-reading' as a study method, but it's actually not very effective. According to a US university survey, 84% of students used this method.";
+"なぜ「繰り返し読む」だけでは効果が低いの？" = "Why is 're-reading' alone not effective?";
+"受動的な活動のため、脳が深く処理しない" = "It's a passive activity, so the brain doesn't process deeply";
+"「わかった気」になりやすく、理解が浅くなる" = "It's easy to feel like you understand, resulting in shallow comprehension";
+"長期記憶への定着率が低い" = "Low retention rate in long-term memory";
+"効果を高めるなら、間隔を空けて読み直す" = "To increase effectiveness, re-read with time intervals";
+"他にもあまり効果が高くない勉強法：" = "Other less effective study methods:";
+"• ハイライトやマーカーだけで終わらせる" = "• Just highlighting or marking text";
+"• 一夜漬けの詰め込み勉強" = "• Last-minute cramming";
+"• 受動的な講義視聴だけ" = "• Just passively watching lectures";
+"• ノートを写すだけで終わる" = "• Just copying notes";
+"これらの方法に共通しているのは、頭を積極的に使っていないこと。効果的な学習には、脳が能動的に情報を処理する必要があるんです。" = "What these methods have in common is that they don't actively engage your brain. Effective learning requires the brain to actively process information.";
+
+// fluencyIllusionContent
+"「わかった気」になる現象を「流暢性の錯覚」といいます。2回目に教科書を読むとスラスラ読めるから「理解できた！」と思ってしまうんです。でも、実は深く理解できていないことが多いんですよ。" = "The phenomenon of 'feeling like you understand' is called the 'fluency illusion.' When reading a textbook for the second time, it feels smooth, making you think 'I get it!' But often, you haven't actually understood it deeply.";
+"こんな経験ありませんか？" = "Have you experienced this?";
+"教科書を読み返したら「簡単だな」と思ったけど、テストでは思い出せなかった" = "You re-read a textbook and thought 'this is easy,' but couldn't recall it during the test";
+"解答例を見て「なるほど、自分でも解けたはず」と思ったけど、似た問題が出たら解けなかった" = "You saw the answer and thought 'ah, I could have solved this,' but couldn't solve a similar problem";
+"授業中は「わかった」と思っていたけど、後で誰かに説明しようとしたらうまくできなかった" = "You thought you understood during class, but couldn't explain it to someone later";
+"この落とし穴を避けるコツ：" = "Tips to avoid this trap:";
+"情報を見るだけでなく、自分で思い出してみる" = "Don't just look at information, try to recall it yourself";
+"自分の言葉で説明してみる" = "Try explaining it in your own words";
+"教科書を閉じて書き出してみる" = "Close the textbook and try writing it out";
+"他の人に教えるつもりで話してみる" = "Try explaining it as if teaching someone else";
+"実は、賢い人ほどこの錯覚にハマりやすいんです。理解が早いため「わかった」と思いがちですが、実際に試してみることで本当の理解度がわかります。RecallMateはそのプロセスをサポートします。" = "Actually, the smarter you are, the more susceptible you are to this illusion. Because you understand quickly, you tend to think 'I get it,' but by actually testing yourself, you can gauge your true level of understanding. RecallMate supports this process.";
+
+// 学習プロセス関連
+"学習には、ただ暗記するだけではなく、さまざまな段階があります。これを教育学では「教育目標の分類」と呼んでいます。" = "Learning involves various stages beyond just memorization. In educational theory, this is called the 'taxonomy of educational objectives'.";
+"学習の6つの段階：" = "6 Stages of Learning:";
+"記憶する" = "Remember";
+"事実や情報を覚える" = "Memorize facts and information";
+"理解する" = "Understand";
+"意味を把握し、説明できる" = "Grasp meaning and explain concepts";
+"応用する" = "Apply";
+"学んだことを新しい状況で使える" = "Use what you've learned in new situations";
+"分析する" = "Analyze";
+"情報を分解し、関係性を見つける" = "Break down information and find relationships";
+"評価する" = "Evaluate";
+"判断基準に基づいて価値を決める" = "Make judgments based on criteria";
+"創造する" = "Create";
+"新しいアイデアや視点を生み出す" = "Generate new ideas and perspectives";
+"記憶だけでは不十分で、理解し、応用できることが大切です。でも、記憶は土台。理解や応用をするには、まず基本情報を覚えている必要があります。RecallMateは記憶の定着をサポートすることで、より高度な学習の土台を作ります。" = "Memory alone is not enough; understanding and application are crucial. However, memory is the foundation. To understand and apply concepts, you first need to remember basic information. RecallMate helps build this foundation by supporting memory retention, enabling higher-level learning.";
+
+// 効果的な学習法関連
+"科学的な研究によって、本当に効果があると証明されている勉強法をご紹介します。これらを取り入れるだけで、同じ時間でもぐんと学習効果が上がりますよ。" = "Let me introduce study methods that have been scientifically proven to be effective. Just by incorporating these, you can significantly increase your learning efficiency in the same amount of time.";
+"アクティブリコール（能動的な思い出し）" = "Active Recall";
+"教科書を閉じて、学んだ内容を自分の力で思い出す方法です。単に読み返すより、自ら思い出そうとする行為自体が記憶を強化します。研究によると、この方法は通常の再読より50〜100%も記憶定着率が高いんです。" = "This method involves closing your textbook and trying to recall the content on your own. The act of trying to remember strengthens memory more than simply rereading. Research shows this method improves memory retention by 50-100% compared to regular rereading.";
+"分散学習" = "Spaced Learning";
+"一度にガッと勉強するより、適切な間隔を空けて複数回に分けて学ぶ方法です。例えば6時間連続で勉強するより、1時間ずつ6日間に分けた方が記憶に残りやすいことがわかっています。" = "This method involves studying in multiple sessions with appropriate intervals rather than all at once. For example, studying for 1 hour each day for 6 days is more effective for memory retention than studying for 6 hours straight.";
+"その他の効果的な方法：" = "Other Effective Methods:";
+"インターリービング（交互学習）" = "Interleaving";
+"関連する複数の内容を交互に学ぶ" = "Study related topics alternately";
+"精緻化（エラボレーション）" = "Elaboration";
+"学んだ内容を詳しく説明したり関連づけたりする" = "Explain what you've learned in detail and make connections";
+"自己説明" = "Self-Explanation";
+"学習内容を自分自身や他者に説明する" = "Explain the learning material to yourself or others";
+"RecallMateはこれらの効果的な学習方法（特にアクティブリコールと分散学習）をもとに設計されています。科学的な学習法を簡単に実践できるようサポートします。" = "RecallMate is designed based on these effective learning methods (especially active recall and spaced learning). It supports you in easily implementing scientifically proven learning techniques.";
+
+// アクティブリコール関連
+"アクティブリコールとは、「能動的に思い出す」学習法のこと。教科書や参考書を見直すんじゃなくて、一度閉じてから「さて、何が書いてあったっけ？」と自分の力で思い出す方法です。" = "Active recall is a learning method where you actively remember information. Instead of reviewing your textbook, you close it and try to recall what you've learned using your own ability.";
+"なぜ効果があるの？" = "Why is it effective?";
+"情報を見たり聞いたりするだけだと、脳は「受動モード」。でも、自分で思い出そうとすると脳が「能動モード」になって、記憶を引き出す神経回路が強化されるんです。まるで脳の筋トレのようなものですね。" = "When you just see or hear information, your brain is in 'passive mode.' But when you try to recall information on your own, your brain enters 'active mode,' strengthening the neural pathways that retrieve memories. It's like a workout for your brain.";
+"やり方はカンタン！" = "The method is simple!";
+"教材を一通り学習する" = "Study the material once";
+"教材を閉じる" = "Close the material";
+"思い出せる内容をすべて書き出す（または口に出す）" = "Write down (or say aloud) everything you can remember";
+"思い出せなかった部分を確認する" = "Check the parts you couldn't remember";
+"再度思い出す作業を繰り返す" = "Repeat the recall process again";
+"研究によると、アクティブリコールを実践した学生は、単に教科書を読み返した学生より50〜100%もテストの成績が良かったそうです。しかも、最初に間違えた問題でも、アクティブリコールをすると次回のテストで正解できる確率が上がるんですよ。" = "Research shows that students who practiced active recall performed 50-100% better on tests than students who simply reread their textbooks. Moreover, even for questions they initially got wrong, active recall increased the probability of getting them right on subsequent tests.";
+
+// 分散学習関連
+"分散学習とは、学習を一度にまとめてやるんじゃなくて、時間を空けて複数回に分けてやる方法です。例えば、6時間連続で勉強するより、1時間ずつ6日間に分けた方が効果的なんです。" = "Spaced learning is a method where you divide your study time into multiple sessions with breaks in between, rather than studying everything at once. For example, studying for 1 hour each day for 6 days is more effective than studying for 6 hours continuously.";
+"人間の脳は、新しい情報を時間をかけて処理し、長期記憶に変換します。エビングハウスの「忘却曲線」によれば、人は学習直後から急速に情報を忘れていきますが、適切なタイミングで復習することで忘却を防げるんです。" = "The human brain processes new information over time and converts it to long-term memory. According to Ebbinghaus's 'forgetting curve,' people rapidly forget information right after learning, but reviewing at appropriate intervals can prevent this forgetting.";
+"おすすめの復習間隔：" = "Recommended review intervals:";
+"1回目の復習：1日後" = "First review: 1 day later";
+"2回目の復習：1週間後" = "Second review: 1 week later";
+"3回目の復習：2週間後" = "Third review: 2 weeks later";
+"4回目の復習：1ヶ月後" = "Fourth review: 1 month later";
+"実は睡眠も大切なポイント！脳は睡眠中に学んだ情報を整理して長期記憶に変換します。分散学習では複数の睡眠サイクルを挟むので、このプロセスがより効果的に働くんです。RecallMateは、あなたの記憶度に合わせて最適な復習タイミングを自動的に計算してくれますよ。" = "Sleep is actually a crucial factor! During sleep, the brain organizes learned information and converts it to long-term memory. Spaced learning includes multiple sleep cycles, making this process more effective. RecallMate automatically calculates the optimal review timing based on your memory retention.";
+
+// スキマ時間の活用法関連
+"「まとまった時間がないから…」って学習をあきらめていませんか？実は、日常のちょっとした隙間時間を上手に使うだけで、驚くほど学習が進むんです！" = "Have you been giving up on learning because 'you don't have enough time'? Actually, just by utilizing small gaps of time in your daily life, you can make surprising progress!";
+"スキマ時間はこんなところに！" = "Where to find spare time!";
+"通勤・通学の電車やバスの中で" = "On the train or bus during commute";
+"休憩時間や待ち時間に" = "During break times or while waiting";
+"家事の合間や育児の隙間時間に" = "Between household chores or childcare duties";
+"寝る前の10分間" = "10 minutes before bedtime";
+"スキマ時間活用のメリット" = "Benefits of using spare time";
+"平日だけでも1日1時間使えば、年間240時間以上の学習時間に！" = "Just 1 hour per weekday adds up to over 240 hours of learning time per year!";
+"30分ずつ2回に分けて学ぶ方が、1時間まとめてやるより記憶に残りやすい" = "Studying twice for 30 minutes each is more memorable than studying for one continuous hour";
+"気分転換になって、集中力アップ！" = "It refreshes your mind and improves concentration!";
+"「学ぶに暇あらずという者は、暇ありといえどもまた学ぶ能わず」（時間がないと言う人は、時間があっても学べない）という中国の古典の言葉があります。時間がないことを言い訳にせず、スキマ時間を活用して一歩ずつ前に進みましょう！RecallMateはスキマ時間での学習にぴったりです。" = "There's a Chinese proverb that says, 'He who says he has no time to learn will not be able to learn even when he has time.' Don't use lack of time as an excuse; utilize spare moments to move forward step by step! RecallMate is perfect for learning in these spare moments.";
+
+// プロダクション効果関連
+"「声に出して読むと覚えられる」という経験、ありませんか？実はこれには科学的な根拠があるんです。「プロダクション効果」と呼ばれるこの現象、どうして効果があるのでしょうか？" = "Have you ever noticed that reading aloud helps you remember better? There's actually scientific evidence for this. Why is this phenomenon, called the 'production effect,' so effective?";
+"声に出すとなぜ覚えやすいの？" = "Why is it easier to remember when you say it aloud?";
+"複数の感覚を使うから" = "Because you use multiple senses";
+"目で見るだけでなく、声に出して耳でも聞くので、複数の経路で脳に情報が入ります" = "Information enters your brain through multiple pathways because you're not just seeing it, but also speaking and hearing it";
+"能動的な処理が起きるから" = "Because active processing occurs";
+"声に出すには、ただ見るよりも脳が積極的に情報を処理する必要があります" = "Speaking out loud requires your brain to process information more actively than just looking at it";
+"情報の「区別性」が高まるから" = "Because it increases information 'distinctiveness'";
+"声に出した情報は「特別」として記憶に残りやすくなります" = "Information that you speak aloud becomes more memorable because it's marked as 'special'";
+"研究でわかったこと：" = "Research findings:";
+"声に出して読んだ単語は、黙読した単語よりも10〜20%記憶テストの成績が良かった" = "Words read aloud scored 10-20% better on memory tests than words read silently";
+"書いて覚える方法も同様に効果的" = "Writing to remember is similarly effective";
+"効果は長期間（1週間以上）持続する" = "The effect lasts for a long time (more than a week)";
+"実践のコツ：重要なポイントだけ声に出す、自分で説明してみる、RecallMateのメモ機能を使って書き出してみる。これらを日常に取り入れるだけで、記憶力がぐんとアップしますよ！" = "Practical tips: Say important points aloud, try explaining in your own words, use RecallMate's memo feature to write things down. Just by incorporating these into your daily routine, your memory will significantly improve!";
+
+// 教えることで学ぶ効果関連
+"「教えることで学ぶ」という言葉を聞いたことがありますか？実は、誰かに教えることは、自分自身の学びを深める最も効果的な方法の一つなんです。これは「プロテジェ効果」と呼ばれています。" = "Have you heard the phrase 'learning by teaching'? Actually, teaching someone else is one of the most effective ways to deepen your own understanding. This is called the 'protégé effect.'";
+"なぜ教えると自分も学べるの？" = "Why do you learn by teaching?";
+"深い理解が必要になるから" = "Because deeper understanding is required";
+"他の人にわかりやすく説明するには、自分自身がより深く理解する必要があります" = "To explain clearly to others, you need to understand the material more deeply yourself";
+"知識の再構成が起きるから" = "Because knowledge restructuring occurs";
+"頭の中の知識を整理し直して説明しやすい形に組み立て直します" = "You reorganize knowledge in your mind and restructure it into a form that's easier to explain";
+"知識のギャップに気づくから" = "Because you notice knowledge gaps";
+"説明しようとして初めて「ここがわかってなかった」と気づくことがあります" = "When trying to explain, you sometimes realize 'I didn't understand this part' for the first time";
+"驚きの研究結果：" = "Surprising research results:";
+"「後で誰かに教える予定」と思って勉強した人は、「テストを受ける予定」と思って勉強した人よりも理解度が高かった" = "People who studied with the expectation of teaching someone later had better comprehension than those who studied expecting to take a test";
+"実際に教えなくても、「教えるつもり」で学ぶだけで効果がある" = "Even without actually teaching, just learning with the intention to teach has an effect";
+"学校で「成績のいい子が他の子に教えている」場面、実は最も学んでいるのは教えている側" = "In school, when 'good students teach other students,' it's actually the ones doing the teaching who are learning the most";
+"試してみよう：RecallMateで学習する内容を「誰かに説明するつもりで」メモしてみましょう。もし可能なら、実際に友達や家族に学んだことを教えてみてください。驚くほど理解が深まり、記憶に残りますよ！" = "Let's try it: When learning with RecallMate, try taking notes 'as if you're going to explain it to someone.' If possible, actually teach what you've learned to friends or family. You'll be amazed at how much deeper your understanding becomes and how well you remember it!";
+
+// CarouselHeaderView
+"%d / %d" = "%d / %d";
+
+// 記憶度の簡潔な説明
+"完璧に覚えた！" = "Perfectly remembered!";
+"十分に理解できる" = "Understand well";
+"だいたい理解している" = "Mostly understood";
+"要点は覚えている" = "Remember key points";
+"基本概念を思い出せる" = "Can recall basic concepts";
+"断片的に覚えている" = "Fragmentary recall";
+"うっすらと覚えている" = "Vaguely remember";
+"ほとんど忘れている" = "Almost forgotten";
+"ほぼ完全に忘れている" = "Nearly completely forgotten";
+"全く覚えていない" = "Don't remember at all";
+
+// 記憶度の詳細説明
+"試験でも即答できる状態です。この記憶は長期間保持される可能性が高いです。" = "You can answer immediately even in an exam. This memory is likely to be retained for a long time.";
+"概念をしっかり把握し、自分の言葉で説明できます。細部に不安はありますが、基本的な理解は定着しています。" = "You've grasped the concept well and can explain it in your own words. Though some details may be unclear, the basic understanding has been established.";
+"主要な部分は説明できますが、一部詳細が曖昧です。より定着させるには、アクティブリコールを続けることが効果的です。" = "You can explain the main parts, but some details are vague. To strengthen retention, continuing with active recall is effective.";
+"要点は覚えていますが、説明するとき少し詰まることがあります。復習間隔を少し短くすると効果的です。" = "You remember the key points, but might stumble when explaining. Shortening the review interval slightly would be effective.";
+"基本的な概念は思い出せますが、詳細を思い出すのに時間がかかります。より頻繁な復習が必要です。" = "You can recall basic concepts, but it takes time to remember details. More frequent review is needed.";
+"断片的に覚えていますが、全体像が不明確です。短い間隔での復習と、関連付けを強化する学習が有効です。" = "You remember fragments, but the overall picture is unclear. Short-interval reviews and learning that strengthens associations are effective.";
+"うっすらと覚えていますが、思い出すのに大きなヒントが必要です。基礎から再確認することをお勧めします。" = "You vaguely remember, but need significant hints to recall. We recommend reviewing from the basics.";
+"ほとんど忘れており、わずかな記憶の断片しか残っていません。より基本的な部分から学び直す必要があります。" = "You've mostly forgotten, with only small fragments of memory remaining. You need to relearn from more basic parts.";
+"ほぼ完全に忘れています。学習したことを認識できる程度です。もう一度基礎から学び直しましょう。" = "You've almost completely forgotten. You can only recognize that you've learned it. Let's relearn from the basics again.";
+"全く覚えていません。まったく新しい情報のように感じるでしょう。初めから学習し直す必要があります。" = "You don't remember at all. It will feel like completely new information. You need to learn from the beginning again.";
+
+// その他の文字列
+"次回の推奨復習日: %@" = "Next recommended review date: %@";
+
+// ComparisonCreatorView関連
+"選択された単語" = "Selected Terms";
+"比較問題" = "Comparison Question";
+"例: 「%@」と「%@」の違いを比較して説明してください。" = "Example: Compare and explain the differences between '%@' and '%@'.";
+"メモ（オプション）" = "Notes (Optional)";
+"この比較に関するメモやヒントを入力できます" = "Enter notes or hints about this comparison";
+"比較問題を保存" = "Save Question";
+"比較問題の作成" = "Create Comparison Question";
+"キャンセル" = "Cancel";
+"「%@」と「%@」の違いを比較して説明してください。それぞれの特徴、共通点、相違点について詳細に述べてください。" = "Compare and explain the differences between '%@' and '%@'. Please describe their characteristics, similarities, and differences in detail.";
+
+// 復習セッション関連
+"復習セッション: %@" = "Review Session: %@";
+"無題" = "Untitled";
+
+// ModernRecallSection関連
+"0%" = "0%";
+"100%" = "100%";
+"次回の推奨復習日:" = "Next Review Date:";
+
+// 記憶度説明テキスト
+"完璧に覚えた！" = "Perfectly Remembered!";
+"十分に理解できる" = "Well Understood";
+"だいたい理解している" = "Mostly Understood";
+"要点は覚えている" = "Key Points Remembered";
+"基本概念を思い出せる" = "Can Recall Basic Concepts";
+"断片的に覚えている" = "Fragmented Memory";
+"うっすらと覚えている" = "Vaguely Remember";
+"ほとんど忘れている" = "Mostly Forgotten";
+"ほぼ完全に忘れている" = "Almost Completely Forgotten";
+"全く覚えていない" = "Not Remembered At All";
+
+// 記憶度の短い説明
+"長期記憶に定着しています" = "Stored in long-term memory";
+"基本的な理解は定着しています" = "Basic understanding is established";
+"より頻繁な復習が必要です" = "More frequent review needed";
+"基礎から再確認しましょう" = "Review the basics again";
+"もう一度学び直しましょう" = "Time to relearn from scratch";
+
+// 問題カード関連
+"%d / %d" = "%d / %d";
+"問題を追加してみましょう！" = "Let's Add Some Questions!";
+"単語を入力するか、編集ボタンから問題を作成できます" = "Enter keywords or create questions from the edit button";
+"問題を追加" = "Add Question";
+"説明問題" = "Explanation";
+"比較問題" = "Comparison";
+"問題を表示" = "Show Question";
+"回答を表示" = "Show Answer";
+"問題" = "Question";
+"回答" = "Answer";
+"まだ回答がありません" = "No answer yet";
+
+// ContentView一般
+"戻る" = "Back";
+"記録" = "Record";
+"学習" = "Learn";
+"メモ完了！" = "Complete!";
+
+// タイトルとページ範囲セクション
+"タイトル" = "Title";
+"(必須)" = "(Required)";
+"学習内容のタイトルを入力" = "Enter the title of your note";
+"ページ範囲" = "Page Range";
+"例: p.24-38" = "Example: p.24-38";
+
+// タグセクション
+"タグ" = "Tags";
+"新規タグ" = "New Tag";
+"選択中: なし" = "Selected: None";
+"選択中:" = "Selected:";
+"タグを選択" = "Select Tags";
+"完了" = "Done";
+
+// 学習セクション
+"記憶定着度振り返り" = "Memory Retention Review";
+"メモ内容" = "Note Content";
+"アクティブリコール学習法" = "Active Recall Method";
+"教科書を見ないで覚えている内容を書き出してみましょう" = "Try to write down what you remember without looking at your textbook";
+"まずは自分の力で思い出してみる" = "First, try to recall on your own";
+"思い出せなかった部分は教科書で確認" = "Check the textbook for parts you couldn't remember";
+"再度思い出す練習を繰り返す" = "Repeat the recall practice again";
+"問題カード" = "Question Cards";
+"編集" = "Edit";
+
+// アラートやダイアログ
+"タイトルが必要です" = "Title Required";
+"続行するにはメモのタイトルを入力してください。" = "Please enter a title for your note to continue.";
+"内容をリセット" = "Reset Content";
+"キャンセル" = "Cancel";
+"リセット" = "Reset";
+"メモの内容をクリアしますか？この操作は元に戻せません。" = "Do you want to clear the content of this note? This action cannot be undone.";
+"変更が保存されていません" = "Unsaved Changes";
+"保存" = "Save";
+"保存せずに戻る" = "Discard Changes";
+"メモの変更内容を保存しますか？" = "Do you want to save your changes?";
+
+// CustomQuestionCreatorView関連
+"カスタム問題文" = "Custom Question";
+"例: この章で学んだ内容を要約してください。" = "Example: Summarize what you learned in this chapter.";
+"メモ（オプション）" = "Notes (Optional)";
+"この問題に関するメモやヒントを入力できます" = "You can enter notes or hints related to this question";
+"問題を保存" = "Save Question";
+"カスタム問題作成" = "Create Custom Question";
+"キャンセル" = "Cancel";
+// キャンバスページ関連
+"ページ %d/%d" = "Page %d/%d";
+
+// 習慣化チャレンジ関連
+"習慣化チャレンジ" = "Habit Challenge";
+"毎日5分以上学習して習慣化しよう！" = "Study at least 5 minutes a day to build a habit!";
+"%d/66日" = "%d/66 days";
+"最初の1週間を達成！" = "First Week Achieved!";
+"ありがとう！" = "Thank you!";
+"おめでとうございます！最初の1週間が最も大変な時期です。あなたはそれを乗り越えました！この調子で続けていきましょう！" = "Congratulations! The first week is the most difficult period. You've overcome it! Let's keep it up!";
+"3週間達成！" = "3 Weeks Achieved!";
+"素晴らしいです！3週間の継続は大きな達成です。あなたは習慣化の中間地点に到達しました。このままあと45日続ければ、完全な習慣になります！" = "Wonderful! 3 weeks of consistency is a major achievement. You've reached the midpoint of habit formation. Just 45 more days to make it a complete habit!";
+"66日間達成！" = "66 Days Achieved!";
+"おめでとうございます！研究によると、66日間の継続で行動は無意識の習慣になります。あなたは学習を習慣化することに成功しました！今後も継続することで、その効果はさらに大きくなります。" = "Congratulations! Research shows that 66 days of consistency turns an action into an unconscious habit. You've successfully made learning a habit! Continuing further will make the effect even greater.";
+
+// ステータスメッセージ
+"始めたばかり！続けていきましょう！" = "Just started! Let's keep going!";
+"最初の1週間が肝心です！あと%d日！" = "The first week is crucial! %d days to go!";
+"順調です！3週間まであと%d日！" = "Going well! %d days until 3 weeks!";
+"素晴らしい！習慣化まであと%d日！" = "Excellent! %d days until habit formation!";
+"習慣化達成おめでとうございます！" = "Congratulations on achieving habit formation!";
+
+// メダル関連
+"7日" = "7d";
+"21日" = "21d";
+"66日" = "66d";
+
+// 習慣化チャレンジ情報画面
+"習慣化チャレンジについて" = "About the Habit Challenge";
+"習慣化チャレンジは、学習を日常的な習慣にするためのプログラムです。研究によると、新しい習慣が定着するのに約66日かかると言われています。" = "The Habit Challenge is a program to make learning a daily habit. Research shows that it takes about 66 days for a new habit to become established.";
+"チャレンジのルール:" = "Challenge Rules:";
+"毎日最低5分以上学習する" = "Study at least 5 minutes every day";
+"1日でも記録がないとカウンターはリセットされます" = "Missing even one day will reset the counter";
+"7日達成で銅メダル獲得" = "Earn bronze medal after 7 days";
+"21日達成で銀メダル獲得" = "Earn silver medal after 21 days";
+"66日達成で金メダル獲得！習慣化の目標達成" = "Earn gold medal after 66 days! Habit formation goal achieved";
+"習慣化の3つのステージ:" = "Three Stages of Habit Formation:";
+"最初の3日～1週間" = "First 3 days to 1 week";
+"最も意志力が必要な期間。ここを乗り越えることが重要です。" = "The period requiring the most willpower. Getting through this is crucial.";
+"2～3週間目" = "Weeks 2-3";
+"少しずつ慣れ始める時期ですが、まだ意識的に続ける必要があります。" = "You start to get used to it gradually, but still need to consciously continue.";
+"約2ヶ月後（66日前後）" = "Around 2 months (about 66 days)";
+"無意識で続けられる状態に近づいています。この時点で学習が習慣化したと言えます。" = "You're approaching a state where you can continue unconsciously. At this point, learning has become a habit.";
+"ヒント:" = "Tips:";
+"毎日同じ時間に学習すると習慣化しやすくなります" = "Studying at the same time every day makes habit formation easier";
+"小さく始めて、徐々に時間を増やしていくのが効果的です" = "Starting small and gradually increasing your time is effective";
+"「学習のきっかけ」を決めておくと継続しやすくなります（例：夕食後に5分）" = "Deciding on a 'learning trigger' makes it easier to continue (e.g., 5 minutes after dinner)";
+"習慣化チャレンジ" = "Habit Challenge";
+"閉じる" = "Close";
+
+// HomeView関連
+"すべて" = "All";
+"フィルター:" = "Filter:";
+"フィルター（すべてを含む）:" = "Filter (includes all):";
+"条件に一致するメモがありません" = "No notes match these criteria";
+"フィルターをクリア" = "Clear Filter";
+"メモはまだありません" = "No notes yet";
+"右下のボタンからメモを追加できます" = "You can add notes using the button in the bottom right";
+
+// KeywordInputView関連
+"重要単語リスト" = "Important Keywords List";
+"新しい単語を入力して改行で追加\n(スペースで区切った2つの単語は比較問題になります)" = "Enter new keywords and press return to add\n(Two words separated by space will create a comparison question)";
+"「%@」と「%@」の違いを比較して説明してください。それぞれの特徴、共通点、相違点について詳細に述べてください。" = "Compare and explain the differences between '%@' and '%@'. Describe their characteristics, similarities, and differences in detail.";
+
+// NotificationPermissionView関連
+"通知を有効にしませんか？" = "Enable Notifications?";
+"習慣化をサポート" = "Support Habit Formation";
+"継続学習のリマインダーで習慣化をサポートします" = "Reminders help you maintain consistent study habits";
+"集中タイマー通知" = "Focus Timer Alerts";
+"集中時間と休憩時間の切り替えを通知します" = "Notifications for switching between focus and break times";
+"復習リマインダー" = "Review Reminders";
+"最適なタイミングで復習通知を受け取れます" = "Receive review notifications at optimal timing";
+"設定を開く" = "Open Settings";
+"後で" = "Later";
+
+// OnboardingView関連
+"スキップ" = "Skip";
+"次へ" = "Next";
+"RecallMateを始める" = "Get Started with RecallMate";
+
+// チュートリアルページ
+"新規メモを作成" = "Create New Memo";
+"ホーム画面右下の「🧠」ボタンから学習内容のメモを作成できます。" = "Create study notes using the brain button at the bottom right of the home screen.";
+"アクティブリコール" = "Active Recall";
+"メモを閉じて学んだ内容を思い出し、記憶を強化しましょう。" = "Close your notes and try to recall what you've learned to strengthen your memory.";
+"分散学習" = "Spaced Repetition";
+"最適な間隔で復習することで、長期記憶への定着率が向上します。" = "Review at optimal intervals to improve long-term retention of information.";
+"記憶度の評価" = "Memory Evaluation";
+"記憶度を評価すると、次回の復習タイミングが自動的に最適化されます。" = "Rate your memory strength to automatically optimize the timing of your next review.";
+"集中タイマー" = "Focus Timer";
+"集中力を最大化するテクニックを活用しましょう。" = "Use techniques to maximize your concentration and productivity.";
+"メモを作成してみましょう" = "Create Your First Memo";
+"ホーム画面に戻ったら、右下の脳アイコンをタップして最初のメモを作成してみましょう！" = "Once you return to the home screen, tap the brain icon in the bottom right to create your first memo!";
+
+// OnboardingView関連
+"スキップ" = "Skip";
+"次へ" = "Next";
+"RecallMateを始める" = "Get Started with RecallMate";
+
+// チュートリアルページ
+"新規メモを作成" = "Create New Memo";
+"ホーム画面右下の「🧠」ボタンから学習内容のメモを作成できます。" = "Create study notes using the brain button at the bottom right of the home screen.";
+"アクティブリコール" = "Active Recall";
+"メモを閉じて学んだ内容を思い出し、記憶を強化しましょう。" = "Close your notes and try to recall what you've learned to strengthen your memory.";
+"分散学習" = "Spaced Repetition";
+"最適な間隔で復習することで、長期記憶への定着率が向上します。" = "Review at optimal intervals to improve long-term retention of information.";
+"記憶度の評価" = "Memory Evaluation";
+"記憶度を評価すると、次回の復習タイミングが自動的に最適化されます。" = "Rate your memory strength to automatically optimize the timing of your next review.";
+"集中タイマー" = "Focus Timer";
+"集中力を最大化するテクニックを活用しましょう。" = "Use techniques to maximize your concentration and productivity.";
+"メモを作成してみましょう" = "Create Your First Memo";
+"ホーム画面に戻ったら、右下の脳アイコンをタップして最初のメモを作成してみましょう！" = "Once you return to the home screen, tap the brain icon in the bottom right to create your first memo!";
+// PlaceholderCardContent関連
+"問題を追加してみましょう！" = "Let's add some questions!";
+"単語を入力するか、編集ボタンから\n問題を作成できます" = "Enter keywords or create questions\nusing the edit button";
+"問題を追加" = "Add Question";
+
+// PomodoroUsageModalView関連
+"ポモドーロテクニック" = "Pomodoro Technique";
+"ポモドーロテクニックとは？" = "What is the Pomodoro Technique?";
+"集中して作業をする時間と短い休憩を交互に繰り返すことで、生産性を高める時間管理法です。通常、25分の作業と5分の休憩を1セットとして行います。" = "A time management method that increases productivity by alternating focused work periods with short breaks. Typically one set consists of 25 minutes of work followed by a 5-minute break.";
+
+"基本的な使い方" = "Basic Usage";
+"タイマーをスタート" = "Start the Timer";
+"中央の再生ボタンを押して、作業セッションをスタートします。" = "Press the play button in the center to start your work session.";
+"集中して作業" = "Focus on Your Task";
+"タイマーが終了するまで、集中して作業に取り組みます。途中で一時停止することもできます。" = "Work with focus until the timer ends. You can pause if needed.";
+"休憩を取る" = "Take a Break";
+"作業時間が終わると自動的に休憩モードに切り替わります。リフレッシュしましょう。" = "The app will automatically switch to break mode when work time ends. Take time to refresh.";
+"サイクルを繰り返す" = "Repeat the Cycle";
+"4セッション終了すると、より長い休憩が取れます。ポモドーロテクニックを続けてみましょう。" = "After 4 sessions, you can take a longer break. Keep practicing the Pomodoro Technique.";
+
+"効果的に使うコツ" = "Tips for Effective Use";
+"作業開始前に、何をするか明確にしておきましょう" = "Before starting, clearly define what you want to accomplish";
+"作業中は通知をオフにして、集中環境を作りましょう" = "Turn off notifications during work periods to create a focused environment";
+"休憩時間はしっかり休み、画面から離れましょう" = "During breaks, rest properly and step away from the screen";
+"長時間の作業は複数のポモドーロに分けると効果的です" = "Divide longer tasks into multiple Pomodoros for better effectiveness";
+"実績を記録して、モチベーションを維持しましょう" = "Keep track of your accomplishments to maintain motivation";
+
+"アプリの操作方法" = "How to Use the App";
+"再生ボタン - タイマーをスタート" = "Play button - Start the timer";
+"一時停止ボタン - 作業を中断" = "Pause button - Pause your work";
+"リセットボタン - タイマーをリセット" = "Reset button - Reset the timer";
+"設定ボタン - 作業時間や休憩時間をカスタマイズ" = "Settings button - Customize work and break times";
+
+"ポモドーロテクニックの効果" = "Benefits of the Pomodoro Technique";
+"集中力の向上、作業効率のアップ、疲労の軽減、時間管理スキルの向上などの効果があります。続けることでさらに効果が高まります。" = "Improves concentration, increases productivity, reduces fatigue, and enhances time management skills. The benefits increase as you continue to practice.";
+
+// PomodoroView関連
+"セッション: %d" = "Session: %d";
+"通知が許可されていません。設定アプリで許可してください。" = "Notifications are not enabled. Please allow them in Settings.";
+"セッションをリセット" = "Reset Sessions";
+"🧠 集中して作業しましょう" = "🧠 Focus on your work";
+"☕️ 短い休憩でリフレッシュ" = "☕️ Take a short break to refresh";
+"🌿 長い休憩でしっかり回復" = "🌿 Take a long break to recover";
+
+// ポモドーロ設定画面
+"作業時間" = "Work Duration";
+"作業時間: %d分" = "Work duration: %d min";
+"%d分" = "%d min";
+"短い休憩" = "Short Break";
+"短い休憩: %d分" = "Short break: %d min";
+"長い休憩" = "Long Break";
+"長い休憩: %d分" = "Long break: %d min";
+"長い休憩の頻度" = "Long Break Frequency";
+"%dセッションごと" = "Every %d sessions";
+"%dセッションごとに長い休憩" = "Long break after %d sessions";
+"通知音" = "Notification Sound";
+"デフォルト" = "Default";
+"なし" = "None";
+"通知設定を開く" = "Open Notification Settings";
+"タイマー終了通知を受け取るには通知を許可してください" = "Allow notifications to receive timer completion alerts";
+"ポモドーロ設定" = "Pomodoro Settings";
+"保存" = "Save";
+
+// セッションタイプ名（PomodoroTimer.SessionTypeのtitleプロパティ）
+"作業時間" = "Work Time";
+"短い休憩" = "Short Break";
+"長い休憩" = "Long Break";
+
+// QuestionCard関連
+"説明問題" = "Explanation Question";
+"比較問題" = "Comparison Question";
+
+// QuestionCarouselView related
+"問題を追加してみましょう！" = "Let's add some questions!";
+"単語を入力するか、編集ボタンから\n問題を作成できます" = "Enter keywords or create questions\nfrom the edit button";
+"問題を追加" = "Add Question";
+"説明問題" = "Explanation Question";
+"比較問題" = "Comparison Question";
+"まだ回答がありません" = "No answer yet";
+
+// QuestionEditorUsageModalView related
+"問題編集の使い方" = "How to Use Question Editor";
+"問題をコピー機能" = "Copy Questions Feature";
+"登録されている問題をクリップボードにコピーし、AIツールで回答を作成できます。" = "Copy registered questions to clipboard and create answers using AI tools.";
+"使い方：" = "How to use:";
+"右上の「...」メニューから「問題をコピー」を選択" = "Select \"Copy Questions\" from the \"...\" menu in the top right";
+"問題がクリップボードにコピーされます" = "Questions will be copied to clipboard";
+"AIツールに貼り付けて回答を依頼" = "Paste into an AI tool and request answers";
+"コピーされる形式：" = "Copied format:";
+"以下の問題に対する回答を作成してください。各回答の前には「問題X回答:」というタグをつけてください。\n\n問題1: 「記憶定着」について説明してください。\n補足情報: この概念、特徴、重要性について詳しく述べてください。..." = "Please create answers for the following questions. Add a \"Question X Answer:\" tag before each answer.\n\nQuestion 1: Explain \"memory retention\".\nAdditional info: Please describe this concept, its features, and importance in detail...";
+"回答をインポート機能" = "Import Answers Feature";
+"AIツールなどで作成された回答を問題と自動的に紐づけて一括インポートします。" = "Automatically import and link answers created by AI tools with their corresponding questions.";
+"AIからの回答テキスト全体をコピー" = "Copy the entire answer text from AI";
+"「...」メニューから「回答をインポート」を選択" = "Select \"Import Answers\" from the \"...\" menu";
+"表示される画面に回答を貼り付け" = "Paste the answers into the displayed screen";
+"システムが自動的に「問題X回答:」の形式を認識" = "The system automatically recognizes the \"Question X Answer:\" format";
+"「回答を適用」ボタンを押して取り込み完了" = "Press the \"Apply Answers\" button to complete the import";
+"インポート可能な回答形式：" = "Importable answer format:";
+"問題1回答: 記憶定着とは、学習した内容を長期記憶として保持する過程を指します。...\n\n問題2回答: アクティブリコールと分散学習の主な違いは次の通りです..." = "Question 1 Answer: Memory retention refers to the process of maintaining learned content in long-term memory...\n\nQuestion 2 Answer: The main differences between active recall and spaced learning are as follows...";
+
+// QuestionEditorView related
+"編集モード" = "Edit Mode";
+"問題編集" = "Edit Questions";
+"回答編集" = "Edit Answers";
+"キャンセル" = "Cancel";
+"保存" = "Save";
+"エラー" = "Error";
+"不明なエラーが発生しました" = "An unknown error occurred";
+"重要単語" = "Important Terms";
+"新しいキーワード" = "New Keyword";
+"キーワード問題の回答" = "Keyword Question Answers";
+"比較問題の回答" = "Comparison Question Answers";
+"未回答" = "No Answer";
+"削除" = "Delete";
+"問題をコピー" = "Copy Questions";
+"回答をインポート" = "Import Answers";
+"編集" = "Edit";
+"比較問題の更新に失敗しました: %@" = "Failed to update comparison question: %@";
+"キーワード編集" = "Edit Keyword";
+"キーワード" = "Keyword";
+"キーワードの編集" = "Edit Keyword";
+"確認" = "Confirmation";
+"はい" = "Yes";
+"キーワードを変更すると、関連する回答の関連付けが変わる可能性があります。続行しますか？" = "Changing a keyword may affect the association with related answers. Continue?";
+"問題内容" = "Question Content";
+"補足情報" = "Additional Information";
+"問題の編集" = "Edit Question";
+"回答" = "Answer";
+"クリア" = "Clear";
+"回答編集" = "Edit Answer";
+"「%@」について説明してください。" = "Please explain \"%@\".";
+
+// QuestionEditorView related
+"編集モード" = "Edit Mode";
+"問題編集" = "Edit Questions";
+"回答編集" = "Edit Answers";
+"キャンセル" = "Cancel";
+"保存" = "Save";
+"エラー" = "Error";
+"不明なエラーが発生しました" = "An unknown error occurred";
+"重要単語" = "Important Terms";
+"新しいキーワード" = "New Keyword";
+"キーワード問題の回答" = "Keyword Question Answers";
+"比較問題の回答" = "Comparison Question Answers";
+"未回答" = "No Answer";
+"削除" = "Delete";
+"問題をコピー" = "Copy Questions";
+"回答をインポート" = "Import Answers";
+"編集" = "Edit";
+"比較問題の更新に失敗しました: %@" = "Failed to update comparison question: %@";
+"キーワード編集" = "Edit Keyword";
+"キーワード" = "Keyword";
+"キーワードの編集" = "Edit Keyword";
+"確認" = "Confirmation";
+"はい" = "Yes";
+"キーワードを変更すると、関連する回答の関連付けが変わる可能性があります。続行しますか？" = "Changing a keyword may affect the association with related answers. Continue?";
+"問題内容" = "Question Content";
+"補足情報" = "Additional Information";
+"問題の編集" = "Edit Question";
+"回答" = "Answer";
+"クリア" = "Clear";
+"回答編集" = "Edit Answer";
+"「%@」について説明してください。" = "Please explain \"%@\".";
+
+// QuestionListView related
+"「%@」について説明してください。" = "Please explain \"%@\".";
+"概念、特徴、重要性について詳しく述べてください。" = "Please describe its concept, features, and importance in detail.";
+"説明問題 (%d)" = "Explanation Questions (%d)";
+"保存された問題はありません" = "There are no saved questions";
+"メモ: %@" = "Note: %@";
+"保存された問題 (%d)" = "Saved Questions (%d)";
+
+// QuestionService related
+"「%@」について説明してください。" = "Please explain \"%@\".";
+"この概念、特徴、重要性について詳しく述べてください。" = "Please describe this concept, its features, and importance in detail.";
+"以下の問題に対する回答を作成してください。各回答の前には「問題X回答:」(Xは問題番号)というタグをつけてください。\n\n" = "Please create answers for the following questions. Add a \"Question X Answer:\" tag before each answer (where X is the question number).\n\n";
+"問題%d: %@\n" = "Question %d: %@\n";
+"補足情報: %@\n" = "Additional info: %@\n";
+"回答は「問題X回答:」の形式で始め、次の問題の回答までの間に空行を入れないでください。" = "Start each answer with \"Question X Answer:\" format, and don't add empty lines between answers.";
+
+// RetentionMultiTagPickerView関連
+"すべてクリア" = "Clear All";
+"すべて選択" = "Select All";
+"利用可能なタグ" = "Available Tags";
+"タグを選択" = "Select Tags";
+"キャンセル" = "Cancel";
+"適用" = "Apply";
+
+"タグ名なし" = "No Tag Name";
+
+// Tag filtering
+"すべて" = "All";
+"フィルター条件:" = "Filter criteria:";
+"すべて含む (AND)" = "Contains all (AND)";
+"いずれか含む (OR)" = "Contains any (OR)";
+
+// Section headers and empty state
+"メモの記憶定着度" = "Memory Retention";
+"条件に一致するメモがありません" = "No memos match the criteria";
+"メモがありません" = "No memos yet";
+"「ホーム」タブから新しいメモを追加して\n学習を記録しましょう" = "Add new memos from the 'Home' tab\nto record your learning";
+
+// Memo related
+"無題" = "Untitled";
+"最終復習: %@" = "Last review: %@";
+"未定" = "Not set";
+"(%@)" = "(%@)";
+"%@%%" = "%@%%";
+
+"タグ名なし" = "No tag name"; // 英語
+
+"+%d" = "+%d"; // 複数形のサポートが必要な場合は別途対応が必要
+
+// ReviewDateSection related
+"復習日" = "Review Date";
+"未設定" = "Not set";
+"復習日を選択" = "Select review date";
+
+// ReviewListItem related
+"無題" = "Untitled";
+"復習予定日: %@" = "Scheduled review: %@";
+"今日が復習日" = "Review today";
+"復習日: %@" = "Review date: %@";
+"(%d日経過)" = "(%d days overdue)";
+"未定" = "Not set";
+
+// ReviewRequestView related
+"RecallMateをお使いいただきありがとうございます" = "Thank you for using RecallMate";
+"アプリは気に入っていただけましたか？" = "Are you enjoying the app?";
+"いいえ" = "No";
+"はい" = "Yes";
+"開発者(tenten)の励みになります。良かったらレビューをお願いします！" = "Your feedback encourages the developer (tenten). Please consider leaving a review!";
+"レビューを書く" = "Write a Review";
+"また今度" = "Maybe Later";
+
+// SettingsView related
+"アプリ情報" = "App Information";
+"このアプリについて" = "About This App";
+"開発者に言いたいことを言おう！" = "Reach Out to the Developer!";
+"アプリを共有" = "Share App";
+"RecallMateを友達に紹介する" = "Recommend RecallMate to Friends";
+"効率的な学習方法を友達にも教えてあげましょう" = "Share effective learning methods with your friends";
+"一般設定" = "General Settings";
+"通知を有効にする" = "Enable Notifications";
+"通知設定" = "Notification Settings";
+"現在の通知時間:" = "Current notification time:";
+"現在時刻を通知時間に設定" = "Set current time as notification time";
+
+// Alert related
+"%@がインストールされていません" = "%@ is not installed";
+"共有するには%@アプリをインストールしてください。" = "Please install %@ app to share.";
+"OK" = "OK";
+
+// Share text
+"RecallMateアプリを使って科学的に記憶力を強化しています。長期記憶の定着に最適なアプリです！ https://apps.apple.com/app/recallmate/id6744206597" = "I'm enhancing my memory scientifically with RecallMate app. It's perfect for establishing long-term memory! https://apps.apple.com/app/recallmate/id6744206597";
+
+// SocialShareView related
+"アプリを共有" = "Share App";
+"キャンセル" = "Cancel";
+"%@がインストールされていません" = "%@ is not installed";
+"共有するには%@アプリをインストールしてください。" = "Please install %@ app to share.";
+"OK" = "OK";
+
+// Social platform names
+// Note: These are guesses as the SocialPlatform enum definition is not visible
+"LINE" = "LINE";
+"WhatsApp" = "WhatsApp";
+"Facebook" = "Facebook";
+"Instagram" = "Instagram";
+"Twitter" = "Twitter";
+"その他" = "Other";
+
+// PomodoroView関連
+"セッション: %d" = "Session: %d";
+"通知が許可されていません。設定アプリで許可してください。" = "Notifications are not enabled. Please enable them in Settings.";
+"セッションをリセット" = "Reset Sessions";
+"🧠 集中して作業しましょう" = "🧠 Focus on your task";
+"☕️ 短い休憩でリフレッシュ" = "☕️ Take a short break to refresh";
+"🌿 長い休憩でしっかり回復" = "🌿 Take a longer break to recharge";
+"作業時間" = "Work Time";
+"作業時間: %d分" = "Work time: %d min";
+"%d分" = "%d min";
+"短い休憩" = "Short Break";
+"短い休憩: %d分" = "Short break: %d min";
+"長い休憩" = "Long Break";
+"長い休憩: %d分" = "Long break: %d min";
+"長い休憩の頻度" = "Long Break Frequency";
+"%dセッションごと" = "Every %d sessions";
+"%dセッションごとに長い休憩" = "Long break after %d sessions";
+"通知音" = "Notification Sound";
+"デフォルト" = "Default";
+"なし" = "None";
+"通知設定を開く" = "Open Notification Settings";
+"タイマー終了通知を受け取るには通知を許可してください" = "Enable notifications to receive timer alerts";
+"ポモドーロ設定" = "Pomodoro Settings";
+"保存" = "Save";
+
+// PomodoroTimer関連
+"作業" = "Work";
+"短い休憩" = "Short Break";
+"長い休憩" = "Long Break";
+"次のセッションを開始" = "Start Next Session";
+"作業時間が終了します" = "Work session ending";
+"次は休憩時間です" = "Break time coming up";
+"休憩時間が終了します" = "Break time ending";
+"次は作業時間です" = "Work session coming up";
+"作業時間が終了しました" = "Work session completed";
+"休憩をとりましょう" = "Time to take a break";
+"休憩時間が終了しました" = "Break time completed";
+"作業を再開しましょう" = "Time to get back to work";
+
+// StreakCardView関連
+"%d 日連続" = "%d Day Streak";
+"最長記録: %d 日" = "Best Streak: %d days";
+
+// StudyTimeChartView関連
+"%d時間%d分" = "%d hr %d min";
+"%d分" = "%d min";
+"学習時間推移" = "Study Time Trends";
+"平均:" = "Avg:";
+"平均: %@" = "Avg: %@";
+"この期間のデータはありません" = "No data for this period";
+"%d日" = "Day %d";
+"データがありません" = "No data available";
+"%d分" = "%d min";
+"0分" = "0 min";
+"平均: %d分" = "Avg: %d min";
+// TagChip関連
+"選択中のタグ:" = "Selected Tags:";
+"すべてクリア" = "Clear All";
+"すべて選択" = "Select All";
+"タグが見つかりません" = "No tags found";
+"利用可能なタグ" = "Available Tags";
+"タグを選択" = "Select Tags";
+"キャンセル" = "Cancel";
+"適用" = "Apply";
+"タグを検索" = "Search tags";
+
+// TagGuideView関連
+"これはメモを検索したり\n分析したりするときに便利なタグ機能だよ！\n今回は試しに新規タグから追加してみよう！" = "This is a handy tag feature for searching\nand analyzing your notes!\nLet's try adding a new tag!";
+
+// TagSelectionView
+"新しいタグを作成" = "Create New Tag";
+"タグ名" = "Tag Name";
+"選択中のタグ" = "Selected Tags";
+"利用可能なタグ" = "Available Tags";
+"タグがありません" = "No Tags Available";
+"完了" = "Done";
+"エラー" = "Error";
+"不明なエラーが発生しました" = "An unknown error occurred";
+"タグの編集に失敗しました。同じ名前のタグが既に存在する可能性があります。" = "Failed to edit tag. A tag with the same name may already exist.";
+"タグを削除" = "Delete Tag";
+"キャンセル" = "Cancel";
+"削除" = "Delete";
+"タグ「%@」を削除しますか？このタグが付いているメモからも削除されます。" = "Delete tag '%@'? It will be removed from all memos as well.";
+"タグの削除に失敗しました" = "Failed to delete tag";
+"タグの作成に失敗しました" = "Failed to create tag";
+
+// TagEditView
+"タグの色" = "Tag Color";
+"選択中の色:" = "Selected color:";
+"タグを編集" = "Edit Tag";
+"保存" = "Save";
+"タグ名を入力してください" = "Please enter a tag name";
+"選択された色が無効です" = "The selected color is invalid";
+
+// ColorGridView
+"色を選択" = "Select Color";
+"OK" = "OK";
+
+// UsageModalView
+"アクティブリコール・メソッド" = "Active Recall Method";
+"3つの記憶術のしくみ" = "How These 3 Memory Techniques Work";
+"アクティブリコール" = "Active Recall";
+"情報を思い出そうとすることで、記憶が強くなります。ただ読み返すよりも、自分で思い出す方が記憶に残ります！" = "Actively trying to remember information strengthens your memory. Recalling by yourself is more effective than simply rereading!";
+"プロダクション効果" = "Production Effect";
+"声に出しながら情報を書き出すことで、記憶に定着しやすくなります。" = "Writing information while saying it out loud helps make it stick in your memory.";
+"自己説明効果" = "Self-Explanation Effect";
+"学んだことを自分で説明すると理解が深まります。誰かに教えるつもりで説明すると記憶に残ります！" = "Explaining what you've learned deepens your understanding. Try explaining as if you're teaching someone else!";
+"やり方はカンタン4ステップ" = "Simple 4-Step Method";
+"覚えたいことを教科書を見ないで書き出す" = "Write down what you want to remember without looking at your textbook";
+"まずは自分の力で思い出してみましょう。わからなくても大丈夫！" = "First try to recall on your own. It's okay if you don't remember everything!";
+"わからない点は教科書で確認する" = "Check your textbook for parts you couldn't remember";
+"思い出せなかった部分を確認して、知識を補いましょう。" = "Verify the parts you couldn't recall to fill in the gaps in your knowledge.";
+"①と②を繰り返す" = "Repeat steps 1 and 2";
+"再度挑戦して、どれだけ覚えているか試してみましょう。" = "Try again to test how much you can remember now.";
+"時間をおいてまた、①〜③を繰り返す" = "After some time, repeat steps 1-3 again";
+"翌日など時間をあけると、より記憶に残りやすくなります。RecallMateが自動的に最適な復習タイミングを計算してお知らせしてくれます。" = "Reviewing after a day or so helps strengthen your memory. RecallMate automatically calculates the optimal timing for review and notifies you.";
+"RecallMateでの活用法" = "How to Use RecallMate";
+"新規メモの使い方" = "How to Use New Memos";
+"勉強したあと、教科書を閉じてアプリを開きます" = "After studying, close your textbook and open the app";
+"思い出せることを「新規メモ」に書きます" = "Write what you can recall in a \"New Memo\"";
+"わからない部分は確認して追加します" = "Check and add parts you couldn't remember";
+"自分の言葉で書くのがポイントです！" = "The key is to write in your own words!";
+"問題カードの使い方" = "How to Use Question Cards";
+"重要な概念を問題カードにします" = "Create question cards for important concepts";
+"自分で答えを説明してみます（自己説明）" = "Try explaining the answers yourself (self-explanation)";
+"複数の概念を比較する問題も作れます" = "You can also create questions that compare multiple concepts";
+"定期的に問題カードを見直すと効果的！" = "Reviewing question cards regularly is effective!";
+"おすすめのポイント" = "Recommended Tips";
+"勉強したあとすぐにRecallMateで内容を思い出して書いてみましょう。図や表も自分で書き直すと、より記憶に残ります。" = "Try to recall and write down content with RecallMate right after studying. Redrawing diagrams and tables also helps reinforce your memory.";
+
+// アプリのタブ名
+"振り返り" = "Review";
+"記憶定着度" = "Memory Retention";
+
+"設定" = "Settings";

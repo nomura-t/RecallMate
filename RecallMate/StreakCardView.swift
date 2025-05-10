@@ -25,12 +25,12 @@ struct StreakCardView: View {
                     .foregroundColor(.orange)
                     .font(.system(size: 22)) // サイズを小さく
                 
-                Text("\(currentStreak) 日連続")
+                Text("%d 日連続".localizedWithInt(currentStreak))
                     .font(.subheadline) // フォントサイズを小さく
                     .foregroundColor(.primary)
             }
             
-            Text("最長記録: \(longestStreak) 日")
+            Text("%d 日連続".localizedWithInt(currentStreak))
                 .font(.caption) // より小さいフォント
                 .foregroundColor(.gray)
         }

@@ -11,7 +11,7 @@ struct KeywordInputView: View {
     @State private var newKeyword = ""
     
     var body: some View {
-        Section(header: Text("重要単語リスト")) {
+        Section(header: Text("重要単語リスト".localized)) {
             VStack {
                 TextEditor(text: $newKeyword)
                     .frame(height: 40) // 高さを40に縮小（元の60から縮小）
@@ -36,7 +36,7 @@ struct KeywordInputView: View {
                     .overlay(
                         Group {
                             if newKeyword.isEmpty {
-                                Text("新しい単語を入力して改行で追加\n(スペースで区切った2つの単語は比較問題になります)")
+                                Text("新しい単語を入力して改行で追加\n(スペースで区切った2つの単語は比較問題になります)".localized)
                                     .foregroundColor(.gray)
                                     .padding(6)  // パディングを縮小
                                     .font(.caption2) // フォントサイズを縮小
@@ -143,7 +143,8 @@ struct KeywordInputView: View {
             // UIに仮表示用の比較問題を追加（非永続的）
             let tempQuestion = ComparisonQuestion(context: viewContext)
             tempQuestion.id = UUID()
-            tempQuestion.question = "「\(trimmedWord1)」と「\(trimmedWord2)」の違いを比較して説明してください。それぞれの特徴、共通点、相違点について詳細に述べてください。"
+            let questionTemplate = "「%@」と「%@」の違いを比較して説明してください。それぞれの特徴、共通点、相違点について詳細に述べてください。".localizedFormat(trimmedWord1, trimmedWord2)
+            tempQuestion.question = questionTemplate
             tempQuestion.createdAt = Date()
             
             // viewContextに追加せず、一時リストに追加
@@ -157,7 +158,7 @@ struct KeywordInputView: View {
         // 既存のメモがある場合は通常通り保存
         let newQuestion = ComparisonQuestion(context: viewContext)
         newQuestion.id = UUID()
-        newQuestion.question = "「\(trimmedWord1)」と「\(trimmedWord2)」の違いを比較して説明してください。それぞれの特徴、共通点、相違点について詳細に述べてください。"
+        newQuestion.question = "「%@」と「%@」の違いを比較して説明してください。それぞれの特徴、共通点、相違点について詳細に述べてください。".localizedFormat(trimmedWord1, trimmedWord2)
         newQuestion.createdAt = Date()
         newQuestion.memo = memo
         

@@ -31,7 +31,7 @@ struct SocialShareView: View {
             // シェアオプションパネル
             VStack(spacing: 20) {
                 // タイトル
-                Text("アプリを共有")
+                Text("アプリを共有".localized)
                     .font(.headline)
                     .padding(.top)
                 
@@ -58,7 +58,7 @@ struct SocialShareView: View {
                 .padding(.horizontal)
                 
                 // 閉じるボタン
-                Button("キャンセル") {
+                Button("キャンセル".localized) {
                     withAnimation {
                         isPresented = false
                     }
@@ -74,9 +74,9 @@ struct SocialShareView: View {
         }
         .alert(isPresented: $showMissingAppAlert) {
             Alert(
-                title: Text("\(missingAppName)がインストールされていません"),
-                message: Text("共有するには\(missingAppName)アプリをインストールしてください。"),
-                dismissButton: .default(Text("OK"))
+                title: Text("%@がインストールされていません".localizedFormat(missingAppName)),
+                message: Text("共有するには%@アプリをインストールしてください。".localizedFormat(missingAppName)),
+                dismissButton: .default(Text("OK".localized))
             )
         }
         .sheet(isPresented: $showShareSheet) {

@@ -20,9 +20,9 @@ class PomodoroTimer: ObservableObject {
         
         var title: String {
             switch self {
-            case .work: return "作業"
-            case .shortBreak: return "短い休憩"
-            case .longBreak: return "長い休憩"
+            case .work: return "作業".localized
+            case .shortBreak: return "短い休憩".localized
+            case .longBreak: return "長い休憩".localized
             }
         }
     }
@@ -78,7 +78,7 @@ class PomodoroTimer: ObservableObject {
     }
     // 通知カテゴリの設定
     private func setupNotificationCategories() {
-        let startAction = UNNotificationAction(identifier: "START_ACTION", title: "次のセッションを開始", options: .foreground)
+        let startAction = UNNotificationAction(identifier: "START_ACTION", title: "次のセッションを開始".localized, options: .foreground)
         let category = UNNotificationCategory(identifier: "pomodoroTimer", actions: [startAction], intentIdentifiers: [], options: [])
         UNUserNotificationCenter.current().setNotificationCategories([category])
     }
@@ -127,11 +127,11 @@ class PomodoroTimer: ObservableObject {
         
         switch currentSession {
         case .work:
-            content.title = "作業時間が終了します"
-            content.body = "次は休憩時間です"
+            content.title = "作業時間が終了します".localized
+            content.body = "次は休憩時間です".localized
         case .shortBreak, .longBreak:
-            content.title = "休憩時間が終了します"
-            content.body = "次は作業時間です"
+            content.title = "休憩時間が終了します".localized
+            content.body = "次は作業時間です".localized
         }
         
         content.sound = .default
@@ -309,11 +309,11 @@ class PomodoroTimer: ObservableObject {
         
         switch currentSession {
         case .work:
-            content.title = "作業時間が終了しました"
-            content.body = "休憩をとりましょう"
+            content.title = "作業時間が終了しました".localized
+            content.body = "休憩をとりましょう".localized
         case .shortBreak, .longBreak:
-            content.title = "休憩時間が終了しました"
-            content.body = "作業を再開しましょう"
+            content.title = "休憩時間が終了しました".localized
+            content.body = "作業を再開しましょう".localized
         }
         
         // 通知音を設定

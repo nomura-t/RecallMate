@@ -8,7 +8,7 @@ struct HabitChallengeCardView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("習慣化チャレンジ")
+                Text("習慣化チャレンジ".localized)
                     .font(.headline)
                     .foregroundColor(.primary)
                 
@@ -41,7 +41,7 @@ struct HabitChallengeCardView: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("\(challengeManager.currentStreak)/66日")
+                    Text("%d/66日".localizedWithInt(challengeManager.currentStreak))
                         .font(.subheadline)
                         .fontWeight(.semibold)
                     
@@ -50,7 +50,7 @@ struct HabitChallengeCardView: View {
                             .font(.caption)
                             .foregroundColor(.secondary)
                     } else {
-                        Text("毎日5分以上学習して習慣化しよう！")
+                        Text("毎日5分以上学習して習慣化しよう！".localized)
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -74,20 +74,20 @@ struct HabitChallengeCardView: View {
         .sheet(isPresented: $showInfoModal) {
             HabitChallengeInfoView()
         }
-        .alert("最初の1週間を達成！", isPresented: $challengeManager.showBronzeModal) {
-            Button("ありがとう！", role: .cancel) { }
+        .alert("最初の1週間を達成！".localized, isPresented: $challengeManager.showBronzeModal) {
+            Button("ありがとう！".localized, role: .cancel) { }
         } message: {
-            Text("おめでとうございます！最初の1週間が最も大変な時期です。あなたはそれを乗り越えました！この調子で続けていきましょう！")
+            Text("おめでとうございます！最初の1週間が最も大変な時期です。あなたはそれを乗り越えました！この調子で続けていきましょう！".localized)
         }
-        .alert("3週間達成！", isPresented: $challengeManager.showSilverModal) {
-            Button("ありがとう！", role: .cancel) { }
+        .alert("3週間達成！".localized, isPresented: $challengeManager.showSilverModal) {
+            Button("ありがとう！".localized, role: .cancel) { }
         } message: {
-            Text("素晴らしいです！3週間の継続は大きな達成です。あなたは習慣化の中間地点に到達しました。このままあと45日続ければ、完全な習慣になります！")
+            Text("素晴らしいです！3週間の継続は大きな達成です。あなたは習慣化の中間地点に到達しました。このままあと45日続ければ、完全な習慣になります！".localized)
         }
-        .alert("66日間達成！", isPresented: $challengeManager.showGoldModal) {
-            Button("ありがとう！", role: .cancel) { }
+        .alert("66日間達成！".localized, isPresented: $challengeManager.showGoldModal) {
+            Button("ありがとう！".localized, role: .cancel) { }
         } message: {
-            Text("おめでとうございます！研究によると、66日間の継続で行動は無意識の習慣になります。あなたは学習を習慣化することに成功しました！今後も継続することで、その効果はさらに大きくなります。")
+            Text("おめでとうございます！研究によると、66日間の継続で行動は無意識の習慣になります。あなたは学習を習慣化することに成功しました！今後も継続することで、その効果はさらに大きくなります。".localized)
         }
     }
     
@@ -109,15 +109,15 @@ struct HabitChallengeCardView: View {
         let streak = challengeManager.currentStreak
         
         if streak < 3 {
-            return "始めたばかり！続けていきましょう！"
+            return "始めたばかり！続けていきましょう！".localized
         } else if streak < 7 {
-            return "最初の1週間が肝心です！あと\(7-streak)日！"
+            return "最初の1週間が肝心です！あと\(7-streak)日！".localized
         } else if streak < 21 {
-            return "順調です！3週間まであと\(21-streak)日！"
+            return "順調です！3週間まであと\(21-streak)日！".localized
         } else if streak < 66 {
-            return "素晴らしい！習慣化まであと\(66-streak)日！"
+            return "素晴らしい！習慣化まであと\(66-streak)日！".localized
         } else {
-            return "習慣化達成おめでとうございます！"
+            return "習慣化達成おめでとうございます！".localized
         }
     }
 }
@@ -142,9 +142,9 @@ struct MedalView: View {
         
         var requirement: String {
             switch self {
-            case .bronze: return "7日"
-            case .silver: return "21日"
-            case .gold: return "66日"
+            case .bronze: return "7日".localized
+            case .silver: return "21日".localized
+            case .gold: return "66日".localized
             }
         }
     }
@@ -171,70 +171,70 @@ struct HabitChallengeInfoView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     // タイトル
-                    Text("習慣化チャレンジについて")
+                    Text("習慣化チャレンジについて".localized)
                         .font(.title2)
                         .fontWeight(.bold)
                         .padding(.top)
                     
                     // 説明テキスト
-                    Text("習慣化チャレンジは、学習を日常的な習慣にするためのプログラムです。研究によると、新しい習慣が定着するのに約66日かかると言われています。")
+                    Text("習慣化チャレンジは、学習を日常的な習慣にするためのプログラムです。研究によると、新しい習慣が定着するのに約66日かかると言われています。".localized)
                         .padding(.bottom, 8)
                     
-                    Text("チャレンジのルール:")
+                    Text("チャレンジのルール:".localized)
                         .font(.headline)
                     
                     VStack(alignment: .leading, spacing: 8) {
-                        HabitBulletPoint(text: "毎日最低5分以上学習する")
-                        HabitBulletPoint(text: "1日でも記録がないとカウンターはリセットされます")
-                        HabitBulletPoint(text: "7日達成で銅メダル獲得")
-                        HabitBulletPoint(text: "21日達成で銀メダル獲得")
-                        HabitBulletPoint(text: "66日達成で金メダル獲得！習慣化の目標達成")
+                        HabitBulletPoint(text: "毎日最低5分以上学習する".localized)
+                        HabitBulletPoint(text: "1日でも記録がないとカウンターはリセットされます".localized)
+                        HabitBulletPoint(text: "7日達成で銅メダル獲得".localized)
+                        HabitBulletPoint(text: "21日達成で銀メダル獲得".localized)
+                        HabitBulletPoint(text: "66日達成で金メダル獲得！習慣化の目標達成".localized)
                     }
                     .padding(.bottom, 16)
                     
-                    Text("習慣化の3つのステージ:")
+                    Text("習慣化の3つのステージ:".localized)
                         .font(.headline)
                     
                     VStack(alignment: .leading, spacing: 16) {
                         StageDescriptionView(
-                            title: "最初の3日～1週間",
-                            description: "最も意志力が必要な期間。ここを乗り越えることが重要です。",
+                            title: "最初の3日～1週間".localized,
+                            description: "最も意志力が必要な期間。ここを乗り越えることが重要です。".localized,
                             image: "person.and.arrow.left.and.arrow.right",
                             color: .orange
                         )
                         
                         StageDescriptionView(
-                            title: "2～3週間目",
-                            description: "少しずつ慣れ始める時期ですが、まだ意識的に続ける必要があります。",
+                            title: "2～3週間目".localized,
+                            description: "少しずつ慣れ始める時期ですが、まだ意識的に続ける必要があります。".localized,
                             image: "arrow.up.forward",
                             color: .blue
                         )
                         
                         StageDescriptionView(
-                            title: "約2ヶ月後（66日前後）",
-                            description: "無意識で続けられる状態に近づいています。この時点で学習が習慣化したと言えます。",
+                            title: "約2ヶ月後（66日前後）".localized,
+                            description: "無意識で続けられる状態に近づいています。この時点で学習が習慣化したと言えます。".localized,
                             image: "checkmark.circle",
                             color: .green
                         )
                     }
                     .padding(.bottom, 16)
                     
-                    Text("ヒント:")
+                    Text("ヒント:".localized)
                         .font(.headline)
                     
                     VStack(alignment: .leading, spacing: 8) {
-                        HabitBulletPoint(text: "毎日同じ時間に学習すると習慣化しやすくなります")
-                        HabitBulletPoint(text: "小さく始めて、徐々に時間を増やしていくのが効果的です")
-                        HabitBulletPoint(text: "「学習のきっかけ」を決めておくと継続しやすくなります（例：夕食後に5分）")
+                        HabitBulletPoint(text: "毎日同じ時間に学習すると習慣化しやすくなります".localized)
+                        HabitBulletPoint(text: "小さく始めて、徐々に時間を増やしていくのが効果的です".localized)
+                        HabitBulletPoint(text: "「学習のきっかけ」を決めておくと継続しやすくなります（例：夕食後に5分）".localized)
                     }
                 }
                 .padding()
             }
-            .navigationTitle("習慣化チャレンジ")
+            .navigationTitle("習慣化チャレンジ".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("閉じる") {
+                    Button("閉じる".localized) {
                         dismiss()
                     }
                 }
