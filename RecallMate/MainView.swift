@@ -27,9 +27,6 @@ struct MainView: View {
                 ActivityProgressView()
                     .tabItem { Label("振り返り", systemImage: "list.bullet.rectangle") }
                     .tag(1)
-                RetentionView()
-                    .tabItem { Label("記憶定着度", systemImage: "chart.line.uptrend.xyaxis") }
-                    .tag(3)
                 PomodoroView()
                     .tabItem { Label("集中タイマー", systemImage: "timer") }
                     .tag(2)
