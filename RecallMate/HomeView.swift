@@ -159,9 +159,6 @@ struct HomeView: View {
                 }
                 
                 HStack(spacing: 8) {
-                    StreakCardView()
-                        .frame(maxWidth: .infinity)
-                        .frame(width: 100)
                     HabitChallengeCardView()
                         .frame(maxWidth: .infinity)
                 }

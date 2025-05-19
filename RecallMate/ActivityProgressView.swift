@@ -160,27 +160,11 @@ struct ActivityProgressView: View {
                             selectedTag: selectedTag
                         )
                         
-                        // ヒートマップ
-                        VStack(alignment: .leading, spacing: 8) {
-                            ActivityHeatmapView()
-                                .frame(height: 220)
-                        }
-                        .padding(.vertical)
-                        .background(Color(.systemBackground))
-                        .cornerRadius(12)
-                        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
-                        
                         // 学習時間グラフを追加
                         StudyTimeChartView(
                             dateRange: dateRange,
                             periodText: periodText,
                             selectedTab: selectedTab,
-                            selectedTag: selectedTag
-                        )
-                        
-                        // アクティビティリスト - 期間とタグフィルターを渡す
-                        ActivityListWithPeriod(
-                            dateRange: dateRange,
                             selectedTag: selectedTag
                         )
                     }
