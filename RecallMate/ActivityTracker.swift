@@ -16,7 +16,7 @@ class ActivityTracker {
         let sessionId = UUID()
         let startTime = Date()
         
-        // セッションをメモリに保持（UserDefaultsを使わない）
+        // セッションを記録リに保持（UserDefaultsを使わない）
         activeSessions[sessionId] = startTime
         return sessionId
     }
@@ -27,7 +27,7 @@ class ActivityTracker {
             return
         }
         
-        // 開始時間をメモリから削除
+        // 開始時間を記録リから削除
         activeSessions.removeValue(forKey: sessionId)
         
         // 実時間を計算（分単位）

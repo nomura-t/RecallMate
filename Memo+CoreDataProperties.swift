@@ -86,7 +86,7 @@ extension Memo {
         return set.sorted { ($0.name ?? "") < ($1.name ?? "") }
     }
     
-    // 指定されたタグがこのメモに関連づけられているかをチェック（既存のメソッドはそのまま）
+    // 指定されたタグがこの記録に関連づけられているかをチェック（既存のメソッドはそのまま）
     func hasTag(with id: UUID) -> Bool {
         return tagsArray.contains { $0.id == id }
     }

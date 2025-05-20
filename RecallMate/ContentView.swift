@@ -88,6 +88,7 @@ struct ContentView: View {
                     Spacer()
                     
                     // タブインジケーターを削除
+                    TodayStudyTimeCard()
                     
                     Spacer()
                     
@@ -134,7 +135,7 @@ struct ContentView: View {
                     HStack {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 18))
-                        Text("メモ完了！".localized)
+                        Text("記録完了！".localized)
                             .font(.headline)
                     }
                     .foregroundColor(.white)
@@ -196,7 +197,7 @@ struct ContentView: View {
         .alert("タイトルが必要です".localized, isPresented: $viewModel.showTitleAlert) {
             Button("OK") { viewModel.showTitleAlert = false }
         } message: {
-            Text("続行するにはメモのタイトルを入力してください。".localized)
+            Text("続行するには記録のタイトルを入力してください。".localized)
         }
         .alert("内容をリセット".localized, isPresented: $showContentResetAlert) {
             Button("キャンセル".localized, role: .cancel) {}
@@ -207,7 +208,7 @@ struct ContentView: View {
                 }
             }
         } message: {
-            Text("メモの内容をクリアしますか？この操作は元に戻せません。".localized)
+            Text("記録の内容をクリアしますか？この操作は元に戻せません。".localized)
         }
         .alert("変更が保存されていません".localized, isPresented: $showUnsavedChangesAlert) {
             Button("キャンセル".localized, role: .cancel) {}
@@ -223,7 +224,7 @@ struct ContentView: View {
                 dismiss()
             }
         } message: {
-            Text("メモの変更内容を保存しますか？".localized)
+            Text("記録の変更内容を保存しますか？".localized)
         }
         // ここに「使い方」モーダルのオーバーレイを追加
         .overlay(

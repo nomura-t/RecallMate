@@ -29,13 +29,13 @@ struct CustomQuestionCreatorView: View {
                         .ignoresSafeArea(.keyboard, edges: .bottom)
                 }
                 
-                Section(header: Text("メモ（オプション）".localized)) {
+                Section(header: Text("記録（オプション）".localized)) {
                     TextEditor(text: $questionNote)
                         .frame(height: 100)
                         .overlay(
                             Group {
                                 if questionNote.isEmpty {
-                                    Text("この問題に関するメモやヒントを入力できます".localized)
+                                    Text("この問題に関する記録やヒントを入力できます".localized)
                                         .foregroundColor(.gray)
                                         .padding(8)
                                         .allowsHitTesting(false)
@@ -71,7 +71,7 @@ struct CustomQuestionCreatorView: View {
             return
         }
         
-        // 既存のメモがある場合は通常通り保存
+        // 既存の記録がある場合は通常通り保存
         let newQuestion = ComparisonQuestion(context: viewContext)
         newQuestion.id = UUID()
         newQuestion.question = questionText

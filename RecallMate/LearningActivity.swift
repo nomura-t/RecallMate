@@ -21,7 +21,7 @@ enum ActivityType: String, CaseIterable, Identifiable {
     var iconName: String {
         switch self {
         case .reading: return "book.fill"
-        case .exercise: return "doc.badge.plus" // 新規メモ作成用アイコンに変更
+        case .exercise: return "doc.badge.plus" // 新規記録作成用アイコンに変更
         case .lecture: return "tv.fill"
         case .test: return "checkmark.square.fill"
         case .project: return "folder.fill"

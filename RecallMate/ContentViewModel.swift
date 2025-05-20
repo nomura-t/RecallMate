@@ -47,7 +47,7 @@ class ContentViewModel: ObservableObject {
             contentChanged = false
             recordActivityOnSave = false
         } else {
-            // 新規メモの場合
+            // 新規記録の場合
             resetForm()
             contentChanged = false
             recordActivityOnSave = true
@@ -492,7 +492,7 @@ class ContentViewModel: ObservableObject {
             func refreshTags() {
                 guard let memoToRefresh = memo else { return }
                 
-                // メモを再読み込みしてタグを更新
+                // 記録を再読み込みしてタグを更新
                 viewContext.refresh(memoToRefresh, mergeChanges: true)
                 
                 // 選択されたタグを更新
@@ -505,7 +505,7 @@ class ContentViewModel: ObservableObject {
             // 初期化時に呼び出して時間計測を開始する
             func startLearningSession() {
                 if let existingMemo = memo {
-                    // 既存メモの場合のみセッション開始
+                    // 既存記録の場合のみセッション開始
                     currentSessionId = ActivityTracker.shared.startTimingSession(for: existingMemo)
                     
                     // 内容変更フラグを初期化
@@ -513,17 +513,17 @@ class ContentViewModel: ObservableObject {
                 }
             }
             
-            // メモの保存時に自動記録を行う - 実時間測定版
+            // 記録の保存時に自動記録を行う - 実時間測定版
             func saveMemoWithTracking(completion: @escaping () -> Void) {
                 let isNewMemo = memo == nil
                 
-                // 新規メモの場合は強制的に記録フラグをON
+                // 新規記録の場合は強制的に記録フラグをON
                 if isNewMemo {
                     contentChanged = true
                     recordActivityOnSave = true
                 }
                 
-                // 内容が変更されたか、新規メモの場合のみアクティビティ記録対象
+                // 内容が変更されたか、新規記録の場合のみアクティビティ記録対象
                 let shouldRecordActivity = contentChanged || isNewMemo
                 
                 saveMemo { [weak self] in
@@ -542,11 +542,11 @@ class ContentViewModel: ObservableObject {
                             
                             if isNewMemo {
                                 // 新規作成用の明示的な注釈
-                                let noteText = "新規メモ作成: \(memo.title ?? "無題")"
+                                let noteText = "新規記録作成: \(memo.title ?? "無題")"
                                 
-                                // 新規メモ作成アクティビティを記録
+                                // 新規記録作成アクティビティを記録
                                 LearningActivity.recordActivityWithHabitChallenge(
-                                    type: .exercise, // 新規メモ作成は exercise タイプ
+                                    type: .exercise, // 新規記録作成は exercise タイプ
                                     durationMinutes: 5, // 最小時間（適宜調整）
                                     memo: memo,
                                     note: noteText,

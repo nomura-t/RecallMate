@@ -16,7 +16,7 @@ extension Tag {
     @NSManaged public var createdAt: Date?
     @NSManaged public var memos: NSSet?
     
-    // タグに関連付けられたメモの配列
+    // タグに関連付けられた記録の配列
     var memosArray: [Memo] {
         let set = memos as? Set<Memo> ?? []
         return Array(set).sorted { ($0.title ?? "") < ($1.title ?? "") }

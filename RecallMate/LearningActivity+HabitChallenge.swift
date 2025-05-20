@@ -22,6 +22,13 @@ extension LearningActivity {
         
         // 習慣化チャレンジを更新
         HabitChallengeManager.shared.checkLearningActivity(minutes: durationMinutes, in: context)
+        // リアルタイム更新のための通知を送信
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(
+                name: NSNotification.Name("RefreshActivityData"),
+                object: nil
+            )
+        }
         
         return activity
     }

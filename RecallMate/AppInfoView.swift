@@ -429,9 +429,9 @@ struct DetailContentView: View {
                     }
                     
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("新規メモを作成する".localized)
+                        Text("新規記録を作成する".localized)
                             .fontWeight(.semibold)
-                        Text("ホーム画面右下の🧠ボタンからメモを作成します".localized)
+                        Text("ホーム画面右下の🧠ボタンから記録を作成します".localized)
                             .font(.subheadline)
                             .foregroundColor(.gray)
                     }
@@ -550,7 +550,7 @@ struct DetailContentView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("アイデアの発展".localized)
                             .fontWeight(.semibold)
-                        Text("思いついたアイデアをメモしておき、復習タイミングでさらに発展させていきます".localized)
+                        Text("思いついたアイデアを記録しておき、復習タイミングでさらに発展させていきます".localized)
                             .font(.subheadline)
                             .foregroundColor(.gray)
                     }
@@ -567,7 +567,7 @@ struct DetailContentView: View {
                     Image(systemName: "figure.run")
                         .foregroundColor(.green)
                         .frame(width: 24)
-                    Text("スポーツのコツや技術をメモして定着させる".localized)
+                    Text("スポーツのコツや技術を記録して定着させる".localized)
                 }
                 
                 HStack(alignment: .top, spacing: 12) {
@@ -581,7 +581,7 @@ struct DetailContentView: View {
                     Image(systemName: "book.fill")
                         .foregroundColor(.orange)
                         .frame(width: 24)
-                    Text("読んだ本やマンガのポイントをメモして忘れない".localized)
+                    Text("読んだ本やマンガのポイントを記録して忘れない".localized)
                 }
                 
                 HStack(alignment: .top, spacing: 12) {
@@ -604,7 +604,7 @@ struct DetailContentView: View {
     // 新しく追加したタグの上手な使い方のコンテンツ
     private var tagUsageContent: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("タグ機能を使うと、メモを効率よく整理したり、必要なときにすぐに見つけたりできるようになります。上手に活用して、自分だけの学習システムを作りましょう！".localized)
+            Text("タグ機能を使うと、記録を効率よく整理したり、必要なときにすぐに見つけたりできるようになります。上手に活用して、自分だけの学習システムを作りましょう！".localized)
                 .padding()
             
             Image(systemName: "tag.circle.fill")
@@ -681,7 +681,7 @@ struct DetailContentView: View {
             }
             .padding()
             
-            Text("タグ検索のコツ：ホーム画面でタグをタップすると、そのタグがついたメモだけを表示できます。複数のタグを選ぶと、それらすべてのタグがついたメモだけが表示されるので、効率的に絞り込みができます。テスト前には「数学」「重要」などの組み合わせで重要な数学のメモだけをピックアップするなど、状況に応じた使い方ができますよ！".localized)
+            Text("タグ検索のコツ：ホーム画面でタグをタップすると、そのタグがついた記録だけを表示できます。複数のタグを選ぶと、それらすべてのタグがついた記録だけが表示されるので、効率的に絞り込みができます。テスト前には「数学」「重要」などの組み合わせで重要な数学の記録だけをピックアップするなど、状況に応じた使い方ができますよ！".localized)
                 .padding()
                 .background(Color(.systemGray6))
                 .cornerRadius(8)
@@ -1403,7 +1403,7 @@ struct DetailContentView: View {
             }
             .padding()
             
-            Text("実践のコツ：重要なポイントだけ声に出す、自分で説明してみる、RecallMateのメモ機能を使って書き出してみる。これらを日常に取り入れるだけで、記憶力がぐんとアップしますよ！".localized)
+            Text("実践のコツ：重要なポイントだけ声に出す、自分で説明してみる、RecallMateの記録機能を使って書き出してみる。これらを日常に取り入れるだけで、記憶力がぐんとアップしますよ！".localized)
                 .padding()
                 .background(Color(.systemGray6))
                 .cornerRadius(8)
@@ -1497,7 +1497,7 @@ struct DetailContentView: View {
             }
             .padding()
             
-            Text("試してみよう：RecallMateで学習する内容を「誰かに説明するつもりで」メモしてみましょう。もし可能なら、実際に友達や家族に学んだことを教えてみてください。驚くほど理解が深まり、記憶に残りますよ！".localized)
+            Text("試してみよう：RecallMateで学習する内容を「誰かに説明するつもりで」記録してみましょう。もし可能なら、実際に友達や家族に学んだことを教えてみてください。驚くほど理解が深まり、記憶に残りますよ！".localized)
                 .padding()
                 .background(Color(.systemGray6))
                 .cornerRadius(8)

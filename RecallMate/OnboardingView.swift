@@ -9,13 +9,13 @@ struct OnboardingView: View {
     private let pages: [(image: String, title: String, description: String)] = [
         (
             image: "doc.text",
-            title: "新規メモを作成".localized,
-            description: "ホーム画面右下の「🧠」ボタンから学習内容のメモを作成できます。".localized
+            title: "新規記録を作成".localized,
+            description: "ホーム画面右下の「🧠」ボタンから学習内容の記録を作成できます。".localized
         ),
         (
             image: "arrow.clockwise",
             title: "アクティブリコール".localized,
-            description: "メモを閉じて学んだ内容を思い出し、記憶を強化しましょう。".localized
+            description: "記録を閉じて学んだ内容を思い出し、記憶を強化しましょう。".localized
         ),
         (
             image: "calendar",
@@ -35,8 +35,8 @@ struct OnboardingView: View {
         // 最後に脳アイコン誘導を追加
         (
             image: "brain.head.profile",
-            title: "メモを作成してみましょう".localized,
-            description: "ホーム画面に戻ったら、右下の脳アイコンをタップして最初のメモを作成してみましょう！".localized
+            title: "記録を作成してみましょう".localized,
+            description: "ホーム画面に戻ったら、右下の脳アイコンをタップして最初の記録を作成してみましょう！".localized
         )
     ]
     

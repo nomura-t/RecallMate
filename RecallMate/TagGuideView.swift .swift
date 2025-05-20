@@ -30,7 +30,7 @@ struct TagGuideView: View {
                             .frame(width: geometry.size.width * 0.9, height: 160)
                         
                         // ガイドテキスト
-                        Text("これはメモを検索したり\n分析したりするときに便利なタグ機能だよ！\n今回は試しに新規タグから追加してみよう！".localized)
+                        Text("これは記録を検索したり\n分析したりするときに便利なタグ機能だよ！\n今回は試しに新規タグから追加してみよう！".localized)
                             .font(.headline)
                             .foregroundColor(.white)
                             .shadow(color: .black, radius: 2)

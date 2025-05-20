@@ -524,7 +524,7 @@ struct ActivityRow: View {
             VStack(alignment: .leading, spacing: 3) {
                 // アクティビティのタイトル
                 HStack(spacing: 4) {
-                    // メモのタイトル
+                    // 記録のタイトル
                     Text(activity.memo?.title ?? "無題".localized)
                         .font(.subheadline)
                         .fontWeight(.medium)
@@ -596,7 +596,7 @@ struct ActivityRow: View {
         case "読書", "reading":
             return "book.fill"
         case "問題演習", "exercise":
-            // 新規メモ作成用の明確に異なるアイコン
+            // 新規記録作成用の明確に異なるアイコン
             return "doc.badge.plus"
         case "講義視聴", "lecture":
             return "tv.fill"
@@ -610,9 +610,9 @@ struct ActivityRow: View {
             // 復習用のアイコンを確認
             return "arrow.counterclockwise"
         default:
-            // 新規メモと復習を特定できる場合（注釈を活用）
+            // 新規記録と復習を特定できる場合（注釈を活用）
             if let note = activity.note {
-                if note.contains("新規メモ作成".localized) {
+                if note.contains("新規記録作成".localized) {
                     return "doc.badge.plus"
                 } else if note.contains("復習".localized) {
                     return "arrow.counterclockwise"
@@ -640,7 +640,7 @@ struct ActivityRow: View {
     private func activityTypeString(_ type: String) -> String {
         switch type {
         case "reading": return "読書".localized
-        case "exercise": return "新規メモ作成".localized // 表示名を変更
+        case "exercise": return "新規記録作成".localized // 表示名を変更
         case "lecture": return "講義視聴".localized
         case "test": return "テスト".localized
         case "project": return "プロジェクト".localized

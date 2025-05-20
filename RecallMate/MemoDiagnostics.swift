@@ -2,7 +2,7 @@ import Foundation
 import CoreData
 import SwiftUI
 
-/// メモのデータ状態を診断するためのユーティリティクラス
+/// 記録のデータ状態を診断するためのユーティリティクラス
 class MemoDiagnostics {
     static let shared = MemoDiagnostics()
     
@@ -16,7 +16,7 @@ class MemoDiagnostics {
         return formatter
     }()
     
-    /// メモの全状態をログ出力
+    /// 記録の全状態をログ出力
     func logMemoState(_ memo: Memo, prefix: String = "") {
         // 履歴エントリの詳細
         if !memo.historyEntriesArray.isEmpty {
@@ -29,9 +29,9 @@ class MemoDiagnostics {
         }
     }
     
-    /// メモのリストを診断
+    /// 記録のリストを診断
     func diagnoseMemoList(_ memos: [Memo]) {
-        // メモを復習日でソート
+        // 記録を復習日でソート
         let sortedMemos = memos.sorted {
             ($0.nextReviewDate ?? Date.distantFuture) < ($1.nextReviewDate ?? Date.distantFuture)
         }
@@ -39,13 +39,13 @@ class MemoDiagnostics {
         // 今日の日付
         let today = Calendar.current.startOfDay(for: Date())
         
-        // 復習期限切れのメモをカウント
+        // 復習期限切れの記録をカウント
         let overdueCount = sortedMemos.filter { memo in
             guard let reviewDate = memo.nextReviewDate else { return false }
             return Calendar.current.startOfDay(for: reviewDate) < today
         }.count
         
-        // 今日が復習日のメモをカウント
+        // 今日が復習日の記録をカウント
         let todayCount = sortedMemos.filter { memo in
             guard let reviewDate = memo.nextReviewDate else { return false }
             return Calendar.current.isDateInToday(reviewDate)
