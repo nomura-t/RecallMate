@@ -512,7 +512,7 @@ struct ContentView: View {
                 let context = PersistenceController.shared.container.viewContext
                 LearningActivity.recordActivityWithPrecision(
                     type: ActivityType.review,  // 完全修飾名を使用
-                    durationSeconds: ActivityTracker.shared.getCurrentSessionDuration(sessionId: sessionId) * 60,  // 分から秒に変換
+                    durationSeconds: ActivityTracker.shared.getCurrentSessionDuration(sessionId: sessionId),  // 分から秒に変換
                     memo: memo,
                     note: noteText,
                     in: context
