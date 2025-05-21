@@ -35,13 +35,13 @@ struct ComparisonCreatorView: View {
                         )
                 }
                 
-                Section(header: Text("メモ（オプション）".localized)) {
+                Section(header: Text("記録（オプション）".localized)) {
                     TextEditor(text: $comparisonNote)
                         .frame(height: 100)
                         .overlay(
                             Group {
                                 if comparisonNote.isEmpty {
-                                    Text("この比較に関するメモやヒントを入力できます".localized)
+                                    Text("この比較に関する記録やヒントを入力できます".localized)
                                         .foregroundColor(.gray)
                                         .padding(8)
                                         .allowsHitTesting(false)

@@ -221,15 +221,15 @@ struct UsageModalView: View {
                                 .font(.headline)
                                 .foregroundColor(.primary)
                             
-                            // 新規メモの使い方
+                            // 新規記録の使い方
                             VStack(alignment: .leading, spacing: 6) {
-                                Text("新規メモの使い方".localized)
+                                Text("新規記録の使い方".localized)
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
                                 
                                 VStack(alignment: .leading, spacing: 4) {
                                     BulletPoint(text: "勉強したあと、教科書を閉じてアプリを開きます".localized)
-                                    BulletPoint(text: "思い出せることを「新規メモ」に書きます".localized)
+                                    BulletPoint(text: "思い出せることを「新規記録」に書きます".localized)
                                     BulletPoint(text: "わからない部分は確認して追加します".localized)
                                     BulletPoint(text: "自分の言葉で書くのがポイントです！".localized)
                                 }

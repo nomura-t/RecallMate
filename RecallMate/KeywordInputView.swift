@@ -129,9 +129,9 @@ struct KeywordInputView: View {
             keywords.append(trimmedWord2)
         }
         
-        // メモがない場合（新規作成中の場合）は、一時的なメモを作成
+        // 記録がない場合（新規作成中の場合）は、一時的な記録を作成
         if memo == nil {
-            // キーワードは既に追加済み。実際の比較問題保存は、メモ保存時に行われる
+            // キーワードは既に追加済み。実際の比較問題保存は、記録保存時に行われる
             
             // 何らかの形で比較問題情報を保存する必要がある場合は、
             // UserDefaultsやアプリ内の一時データ構造を使用することも検討できます
@@ -155,7 +155,7 @@ struct KeywordInputView: View {
             return
         }
         
-        // 既存のメモがある場合は通常通り保存
+        // 既存の記録がある場合は通常通り保存
         let newQuestion = ComparisonQuestion(context: viewContext)
         newQuestion.id = UUID()
         newQuestion.question = "「%@」と「%@」の違いを比較して説明してください。それぞれの特徴、共通点、相違点について詳細に述べてください。".localizedFormat(trimmedWord1, trimmedWord2)

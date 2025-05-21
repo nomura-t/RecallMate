@@ -28,7 +28,7 @@ struct RecallMateApp: App {
         // 習慣化チャレンジの状態をチェック
         HabitChallengeManager.shared.checkDailyProgress()
         
-        // サンプルメモの作成（初回起動時のみ）
+        // サンプル記録の作成（初回起動時のみ）
         createSampleMemoIfNeeded(in: persistenceController.container.viewContext)
     }
 
@@ -46,14 +46,14 @@ struct RecallMateApp: App {
         }
     }
     
-    // サンプルメモを作成する関数（初回起動時のみ）
+    // サンプル記録を作成する関数（初回起動時のみ）
     private func createSampleMemoIfNeeded(in context: NSManagedObjectContext) {
-        // サンプルメモがすでに作成されているかチェック
+        // サンプル記録がすでに作成されているかチェック
         if UserDefaults.standard.bool(forKey: "hasSampleMemo") {
             return
         }
         
-        // サンプルメモを作成
+        // サンプル記録を作成
         let sampleMemo = Memo(context: context)
         sampleMemo.id = UUID()
         sampleMemo.title = "(sample)効果的な学習法：アクティブリコールと分散学習"
@@ -79,7 +79,7 @@ struct RecallMateApp: App {
 
         これらを組み合わせることで、最小限の時間で最大限の記憶定着効果が得られます。RecallMateはこの最適な間隔を自動的に計算し、通知してくれます。
         """
-        sampleMemo.pageRange = "参考書 p.24-32"
+//        sampleMemo.pageRange = "参考書 p.24-32"
         sampleMemo.recallScore = 80
         sampleMemo.createdAt = Date()
         sampleMemo.lastReviewedDate = Date()
@@ -180,7 +180,7 @@ struct RecallMateApp: App {
         do {
             try context.save()
             
-            // サンプルメモが作成されたことをマーク
+            // サンプル記録が作成されたことをマーク
             UserDefaults.standard.set(true, forKey: "hasSampleMemo")
         } catch {
         }

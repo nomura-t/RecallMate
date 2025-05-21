@@ -6,7 +6,7 @@ class AppSettings: ObservableObject {
     // 回答テキストのフォントサイズ設定
     @AppStorage("answerFontSize") var answerFontSize: Double = 16.0
     
-    // メモ入力欄のフォントサイズ設定 - 新規追加
+    // 記録入力欄のフォントサイズ設定 - 新規追加
     @AppStorage("memoFontSize") var memoFontSize: Double = 16.0
     
     // 最小/最大フォントサイズ（参照用に保持）

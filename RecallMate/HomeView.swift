@@ -18,7 +18,7 @@ struct HomeView: View {
     // UIの更新を強制するためのトリガー
     @State private var refreshTrigger = UUID()
     
-    // メモの取得リクエスト
+    // 記録の取得リクエスト
     @FetchRequest(
         entity: Memo.entity(),
         sortDescriptors: [NSSortDescriptor(keyPath: \Memo.nextReviewDate, ascending: true)],
@@ -34,17 +34,17 @@ struct HomeView: View {
 
     @Binding var isAddingMemo: Bool
 
-    // 表示するメモのリスト（タグによるフィルタリング適用）
+    // 表示する記録のリスト（タグによるフィルタリング適用）
     private var displayedMemos: [Memo] {
         if selectedTags.isEmpty {
             return Array(memos)
         } else {
-            // 「かつ」条件 - 選択したすべてのタグを持つメモだけを表示
+            // 「かつ」条件 - 選択したすべてのタグを持つ記録だけを表示
             return Array(memos).filter { memo in
                 // すべての選択されたタグを含むかチェック
                 for tag in selectedTags {
                     if !memo.tagsArray.contains(where: { $0.id == tag.id }) {
-                        return false  // 1つでも含まれていないタグがあればこのメモは除外
+                        return false  // 1つでも含まれていないタグがあればこの記録は除外
                     }
                 }
                 return true  // すべての選択タグを含む場合のみtrue
@@ -166,10 +166,10 @@ struct HomeView: View {
                 .padding(.vertical, 5)
                 
                 if displayedMemos.isEmpty {
-                    // フィルター適用後メモがない場合の表示
+                    // フィルター適用後記録がない場合の表示
                     if !selectedTags.isEmpty {
                         VStack(spacing: 20) {
-                            Text("条件に一致するメモがありません".localized)
+                            Text("条件に一致する記録がありません".localized)
                                 .font(.headline)
                                 .foregroundColor(.gray)
                                 .multilineTextAlignment(.center)
@@ -184,17 +184,17 @@ struct HomeView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .padding()
                     } else {
-                        // そもそもメモがない場合
+                        // そもそも記録がない場合
                         VStack(spacing: 20) {
                             Image(systemName: "doc.text")
                                 .font(.system(size: 50))
                                 .foregroundColor(.gray)
                             
-                            Text("メモはまだありません".localized)
+                            Text("記録はまだありません".localized)
                                 .font(.headline)
                                 .foregroundColor(.gray)
                             
-                            Text("右下のボタンからメモを追加できます".localized)
+                            Text("右下のボタンから記録を追加できます".localized)
                                 .font(.subheadline)
                                 .foregroundColor(.gray)
                                 .multilineTextAlignment(.center)
@@ -203,7 +203,7 @@ struct HomeView: View {
                         .padding()
                     }
                 } else {
-                    // メモリスト
+                    // 記録リスト
                     List {
                         ForEach(displayedMemos, id: \.id) { memo in
                             NavigationLink(destination: ContentView(memo: memo)) {

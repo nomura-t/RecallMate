@@ -12,7 +12,7 @@ struct PersistenceController {
         for i in 0..<3 {
             let newMemo = Memo(context: viewContext)
             newMemo.id = UUID()
-            newMemo.title = "サンプルメモ \(i + 1)"
+            newMemo.title = "サンプル記録 \(i + 1)"
             newMemo.pageRange = "10-20"
             newMemo.content = "これはサンプルデータです。"
             newMemo.recallScore = Int16(arc4random_uniform(100))

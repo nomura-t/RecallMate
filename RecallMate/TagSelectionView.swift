@@ -229,7 +229,7 @@ struct TagSelectionView: View {
                     }
                 }
             } message: {
-                Text("タグ「%@」を削除しますか？このタグが付いているメモからも削除されます。".localizedFormat(tagToDelete?.name ?? ""))            }
+                Text("タグ「%@」を削除しますか？このタグが付いている記録からも削除されます。".localizedFormat(tagToDelete?.name ?? ""))            }
         }
     }
     
