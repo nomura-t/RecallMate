@@ -510,9 +510,9 @@ struct ContentView: View {
                 let noteText = "復習セッション: %@".localizedFormat(memo.title ?? "無題".localized)
                 
                 let context = PersistenceController.shared.container.viewContext
-                LearningActivity.recordActivityWithHabitChallenge(
-                    type: .review,
-                    durationMinutes: ActivityTracker.shared.getCurrentSessionDuration(sessionId: sessionId),
+                LearningActivity.recordActivityWithPrecision(
+                    type: ActivityType.review,  // 完全修飾名を使用
+                    durationSeconds: ActivityTracker.shared.getCurrentSessionDuration(sessionId: sessionId) * 60,  // 分から秒に変換
                     memo: memo,
                     note: noteText,
                     in: context

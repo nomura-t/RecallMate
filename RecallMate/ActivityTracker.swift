@@ -27,30 +27,27 @@ class ActivityTracker {
             return
         }
         
-        // 開始時間を記録リから削除
+        // 開始時間をメモリから削除
         activeSessions.removeValue(forKey: sessionId)
         
-        // 実時間を計算（分単位）
+        // 実時間を秒単位で計算
         let endTime = Date()
-        let durationSeconds = endTime.timeIntervalSince(startTime)
-        let durationMinutes = Int(durationSeconds / 60.0)
+        let durationSeconds = Int(endTime.timeIntervalSince(startTime))
         
-        // 0分の場合は最低1分として扱う、最大は120分
-        let cappedDuration = min(max(durationMinutes, 1), 120)
-        // 内容が変更された場合のみ記録
-        // この条件チェックは呼び出し側に任せる
+        // 最小制約を緩和：0秒の場合のみ1秒にする
+        let adjustedDuration = max(durationSeconds, 1)
         
-        // コンテキストを内部で取得
+        // 秒を直接使用して記録
         let context = PersistenceController.shared.container.viewContext
-        
-        // 習慣化チャレンジと連携するメソッドを使用
-        LearningActivity.recordActivityWithHabitChallenge(
+        LearningActivity.recordActivityWithPrecision(
             type: .review,
-            durationMinutes: cappedDuration,
+            durationSeconds: adjustedDuration, // 秒単位をそのまま使用
             memo: memo,
             note: note ?? "学習セッション: \(memo.title ?? "無題")",
             in: context
         )
+        
+        print("DEBUG: Recorded activity with actual seconds: \(adjustedDuration)")
     }
     
     // 現在のセッション時間を取得（記録はしない）
@@ -61,7 +58,10 @@ class ActivityTracker {
         
         let currentTime = Date()
         let durationSeconds = currentTime.timeIntervalSince(startTime)
-        return Int(durationSeconds / 60.0)
+        
+        // ここで分に変換していると問題になる可能性がある
+        // 修正: 秒単位で返す
+        return Int(durationSeconds)
     }
     
     // 指定されたIDのセッションが存在するか確認

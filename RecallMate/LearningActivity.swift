@@ -47,54 +47,7 @@ enum ActivityType: String, CaseIterable, Identifiable {
 }
 
 // CoreDataの拡張：学習活動を記録するエンティティ
-extension LearningActivity {
-    // 現在の活動を保存
-    static func recordActivity(
-        type: ActivityType,
-        durationMinutes: Int,
-        memo: Memo?,
-        note: String? = nil,
-        in context: NSManagedObjectContext
-    ) -> LearningActivity {
-        let activity = LearningActivity(context: context)
-        activity.id = UUID()
-        activity.date = Date()
-        activity.type = type.rawValue
-        activity.durationMinutes = Int16(durationMinutes)
-        activity.memo = memo
-        activity.note = note
-        activity.color = type.color
-        
-        do {
-            // アクティビティ数を記録前に確認
-            let fetchRequest: NSFetchRequest<LearningActivity> = LearningActivity.fetchRequest()
-            let beforeCount = try context.count(for: fetchRequest)
-            
-            // 変更を即時保存
-            try context.save()
-            
-            // アクティビティ数を記録後に確認
-            let afterCount = try context.count(for: fetchRequest)
-            // ストリークを更新
-            StreakTracker.shared.checkAndUpdateStreak(in: context)
-            
-            // 通知を発行して自動的にUIを更新
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                // 遅延を入れることで確実にデータベースの変更が反映される
-                NotificationCenter.default.post(
-                    name: NSNotification.Name("RefreshActivityData"),
-                    object: nil
-                )
-            }
-            
-            return activity
-        } catch {
-            context.delete(activity)
-            return activity
-        }
-    }
-
-    
+extension LearningActivity {    
     // 指定期間の活動を取得
     static func fetchActivities(
         from startDate: Date,

@@ -545,9 +545,9 @@ class ContentViewModel: ObservableObject {
                                 let noteText = "新規記録作成: \(memo.title ?? "無題")"
                                 
                                 // 新規記録作成アクティビティを記録
-                                LearningActivity.recordActivityWithHabitChallenge(
-                                    type: .exercise, // 新規記録作成は exercise タイプ
-                                    durationMinutes: 5, // 最小時間（適宜調整）
+                                LearningActivity.recordActivityWithPrecision(
+                                    type: activityType,  // 既に定義されている変数を使用
+                                    durationSeconds: 5 * 60,
                                     memo: memo,
                                     note: noteText,
                                     in: context

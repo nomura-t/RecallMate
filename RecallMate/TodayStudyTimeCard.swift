@@ -44,21 +44,17 @@ struct TodayStudyTimeCard: View {
                 .shadow(color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.1), radius: 2, x: 0, y: 1)
         )
         .onAppear {
-            // アプリ表示時に基本時間を取得し、ストップウォッチを開始
             fetchTodaysStudyData()
             startStopwatch()
         }
         .onDisappear {
-            // 非表示時にストップウォッチを停止
             stopStopwatch()
         }
-        // データ更新通知の監視（新しい学習活動が記録された時）
+        // データ更新通知の監視
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("RefreshActivityData"))) { _ in
-            // 基本時間を更新するが、セッション時間は継続
             updateBaseTime()
         }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ForceRefreshMemoData"))) { _ in
-            // 基本時間を更新するが、セッション時間は継続
             updateBaseTime()
         }
     }
@@ -82,7 +78,7 @@ struct TodayStudyTimeCard: View {
         }
     }
     
-    // CoreDataから今日の学習データを取得（基本時間として設定）
+    // CoreDataから今日の学習データを取得（秒単位で直接取得）
     private func fetchTodaysStudyData() {
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: Date())
@@ -98,11 +94,12 @@ struct TodayStudyTimeCard: View {
         do {
             let activities = try viewContext.fetch(fetchRequest)
             
-            // 合計学習時間を秒で計算（分から秒へ変換）
-            baseStudySeconds = activities.reduce(0) { $0 + Int($1.durationMinutes) * 60 }
+            // 秒単位で直接合計（変換なし）
+            baseStudySeconds = activities.reduce(0) { $0 + Int($1.durationSeconds) }
             
             // 更新時刻を記録
             lastRefreshed = Date()
+            print("Fetched base study time: \(baseStudySeconds) seconds")
         } catch {
             print("Error fetching today's study data: \(error)")
         }
@@ -124,8 +121,8 @@ struct TodayStudyTimeCard: View {
         do {
             let activities = try viewContext.fetch(fetchRequest)
             
-            // 新しい基本時間を計算
-            let newBaseSeconds = activities.reduce(0) { $0 + Int($1.durationMinutes) * 60 }
+            // 秒単位で直接合計（変換なし）
+            let newBaseSeconds = activities.reduce(0) { $0 + Int($1.durationSeconds) }
             
             // セッション時間をリセットするかどうかを判断
             if newBaseSeconds > baseStudySeconds {
@@ -140,6 +137,7 @@ struct TodayStudyTimeCard: View {
             
             // 更新時刻を記録
             lastRefreshed = Date()
+            print("Updated base study time: \(baseStudySeconds) seconds")
         } catch {
             print("Error updating base time: \(error)")
         }

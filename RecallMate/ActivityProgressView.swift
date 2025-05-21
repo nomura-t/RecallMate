@@ -224,7 +224,6 @@ struct ActivityProgressView: View {
     }
 }
 
-// 統計サマリーカード（期間指定対応版）
 struct StatisticsCardWithPeriod: View {
     @Environment(\.managedObjectContext) private var viewContext
     
@@ -290,27 +289,44 @@ struct StatisticsCardWithPeriod: View {
                 Spacer()
             }
             
+            // 修正：時:分:秒 形式で学習時間を表示
             HStack(spacing: 20) {
-                StatItem(
-                    value: "\(periodActivities.count)",
-                    label: "学習セッション".localized,
-                    icon: "book.fill",
-                    color: .blue
-                )
+                // 学習時間（時:分:秒）
+                VStack(spacing: 4) {
+                    HStack(alignment: .center) {
+                        Image(systemName: "clock.fill")
+                            .foregroundColor(.blue)
+                            .font(.system(size: 18))
+                            .frame(width: 24, height: 24)
+                        
+                        Text(formattedTotalStudyTime)
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundColor(.primary)
+                    }
+                    
+                    Text("学習時間")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity)
                 
-                StatItem(
-                    value: "\(totalDuration)分".localized,
-                    label: "合計学習時間".localized,
-                    icon: "clock.fill",
-                    color: .green
-                )
-                
-                StatItem(
-                    value: "\(streakDays)日".localized,
-                    label: "連続学習".localized,
-                    icon: "flame.fill",
-                    color: .orange
-                )
+                // 連続学習（スペースを調整するため残す）
+                VStack(spacing: 4) {
+                    HStack(alignment: .firstTextBaseline, spacing: 2) {
+                        Text("\(streakDays)")
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundColor(.primary)
+                        
+                        Text("日")
+                            .font(.system(size: 14))
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Text("連続学習")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity)
             }
         }
         .padding()
@@ -319,14 +335,33 @@ struct StatisticsCardWithPeriod: View {
         .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
     }
     
-    // 合計学習時間（分）
-    private var totalDuration: Int {
-        periodActivities.reduce(0) { $0 + Int($1.durationMinutes) }
+    // 合計学習時間（秒）
+    private var totalDurationSeconds: Int {
+        // CoreDataから秒単位データを取得
+        return periodActivities.reduce(0) { total, activity in
+            // durationSecondsプロパティが存在するか確認（デバッグ用）
+            let seconds = Int(activity.durationSeconds)
+            print("Activity: \(activity.id?.uuidString ?? "unknown"), Seconds: \(seconds)")
+            return total + seconds
+        }
     }
     
-    // 学習ストリーク（日数）- 簡易実装
+    // 時間のフォーマット（時:分:秒）
+    private var formattedTotalStudyTime: String {
+        let totalSeconds = totalDurationSeconds
+        let hours = totalSeconds / 3600
+        let minutes = (totalSeconds % 3600) / 60
+        let seconds = totalSeconds % 60
+        
+        // 明示的に時:分:秒であることを示す（デバッグ用）
+        let timeString = String(format: "%d:%02d:%02d", hours, minutes, seconds)
+        print("Total seconds: \(totalSeconds), Formatted: \(timeString) (hours:minutes:seconds)")
+        return timeString
+    }
+    
+    // 学習ストリーク（日数）
     private var streakDays: Int {
-        // 実際の実装ではStreakTrackerを使用
+        // 実装はそのまま
         let calendar = Calendar.current
         var currentDate = Date()
         var streakCount = 0

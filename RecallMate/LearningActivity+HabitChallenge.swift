@@ -4,35 +4,30 @@ import CoreData
 // LearningActivityに習慣化チャレンジ関連の拡張を追加
 extension LearningActivity {
     // 既存のrecordActivity静的メソッドを拡張
-    static func recordActivityWithHabitChallenge(
+    static func recordActivityWithHabitChallengeInSeconds(
         type: ActivityType,
-        durationMinutes: Int,
+        durationSeconds: Int,
         memo: Memo?,
         note: String? = nil,
         in context: NSManagedObjectContext
     ) -> LearningActivity {
-        // 既存の実装を呼び出す
-        let activity = recordActivity(
+        // 秒単位のメソッドを直接使用
+        let activity = LearningActivity.recordActivityWithPrecision(
             type: type,
-            durationMinutes: durationMinutes,
+            durationSeconds: durationSeconds,
             memo: memo,
             note: note,
             in: context
         )
         
-        // 習慣化チャレンジを更新
-        HabitChallengeManager.shared.checkLearningActivity(minutes: durationMinutes, in: context)
-        // リアルタイム更新のための通知を送信
-        DispatchQueue.main.async {
-            NotificationCenter.default.post(
-                name: NSNotification.Name("RefreshActivityData"),
-                object: nil
-            )
-        }
+        // 習慣化チャレンジを更新（秒から分に変換して既存機能を使用）
+        HabitChallengeManager.shared.checkLearningActivity(
+            minutes: Int(ceil(Double(durationSeconds) / 60.0)),
+            in: context
+        )
         
         return activity
     }
-    
     // 指定した日付に最低5分の学習があったかをチェック
     static func hasMinimumLearningForDate(_ date: Date, in context: NSManagedObjectContext) -> Bool {
         let calendar = Calendar.current
