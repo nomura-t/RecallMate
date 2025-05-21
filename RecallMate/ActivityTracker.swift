@@ -45,9 +45,7 @@ class ActivityTracker {
             memo: memo,
             note: note ?? "学習セッション: \(memo.title ?? "無題")",
             in: context
-        )
-        
-        print("DEBUG: Recorded activity with actual seconds: \(adjustedDuration)")
+        )        
     }
     
     // 現在のセッション時間を取得（記録はしない）

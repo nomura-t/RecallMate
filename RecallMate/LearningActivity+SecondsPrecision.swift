@@ -18,7 +18,7 @@ extension LearningActivity {
             // 秒を直接設定
             setPrimitiveValue(newValue, forKey: "durationSeconds")
             // 分も一緒に更新（後方互換性のため）
-            let minutes = Int16(ceil(Double(newValue) / 60.0))
+            let minutes = Int16(newValue / 60)
             setPrimitiveValue(minutes, forKey: "durationMinutes")
         }
     }

@@ -1,5 +1,3 @@
-// ActivityProgressView.swift のローカライズ対応版
-
 import SwiftUI
 import CoreData
 
@@ -12,9 +10,13 @@ struct ActivityProgressView: View {
     // タグフィルタリング用
     @State private var selectedTag: Tag? = nil
     
+    // データの更新を明示的に追跡する状態変数を追加
+    @State private var refreshTrigger = UUID()
+    
     // 年の選択
     @State private var selectedYear: Int
     @State private var selectedMonth: Int
+
     
     // タグのFetchRequest
     @FetchRequest(
@@ -337,14 +339,13 @@ struct StatisticsCardWithPeriod: View {
     
     // 合計学習時間（秒）
     private var totalDurationSeconds: Int {
-        // CoreDataから秒単位データを取得
         return periodActivities.reduce(0) { total, activity in
-            // durationSecondsプロパティが存在するか確認（デバッグ用）
-            let seconds = Int(activity.durationSeconds)
-            print("Activity: \(activity.id?.uuidString ?? "unknown"), Seconds: \(seconds)")
+            // activity.durationSeconds ではなく activity.durationInSeconds を使用
+            let seconds = Int(activity.durationInSeconds)
             return total + seconds
         }
     }
+
     
     // 時間のフォーマット（時:分:秒）
     private var formattedTotalStudyTime: String {
@@ -353,12 +354,8 @@ struct StatisticsCardWithPeriod: View {
         let minutes = (totalSeconds % 3600) / 60
         let seconds = totalSeconds % 60
         
-        // 明示的に時:分:秒であることを示す（デバッグ用）
-        let timeString = String(format: "%d:%02d:%02d", hours, minutes, seconds)
-        print("Total seconds: \(totalSeconds), Formatted: \(timeString) (hours:minutes:seconds)")
-        return timeString
+        return String(format: "%d:%02d:%02d", hours, minutes, seconds)
     }
-    
     // 学習ストリーク（日数）
     private var streakDays: Int {
         // 実装はそのまま

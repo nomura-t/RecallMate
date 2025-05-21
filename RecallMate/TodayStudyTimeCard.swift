@@ -71,11 +71,8 @@ struct TodayStudyTimeCard: View {
         let minutes = (totalSeconds % 3600) / 60
         let seconds = totalSeconds % 60
         
-        if hours > 0 {
-            return String(format: "%d:%02d:%02d", hours, minutes, seconds)
-        } else {
-            return String(format: "%d:%02d", minutes, seconds)
-        }
+        // 常に時:分:秒の形式で表示（条件分岐を削除）
+        return String(format: "%d:%02d:%02d", hours, minutes, seconds)
     }
     
     // CoreDataから今日の学習データを取得（秒単位で直接取得）
@@ -99,7 +96,6 @@ struct TodayStudyTimeCard: View {
             
             // 更新時刻を記録
             lastRefreshed = Date()
-            print("Fetched base study time: \(baseStudySeconds) seconds")
         } catch {
             print("Error fetching today's study data: \(error)")
         }
@@ -137,7 +133,6 @@ struct TodayStudyTimeCard: View {
             
             // 更新時刻を記録
             lastRefreshed = Date()
-            print("Updated base study time: \(baseStudySeconds) seconds")
         } catch {
             print("Error updating base time: \(error)")
         }

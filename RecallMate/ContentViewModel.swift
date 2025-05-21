@@ -35,12 +35,16 @@ class ContentViewModel: ObservableObject {
     @Published var contentFieldFocused: Bool = false
     @Published var triggerBottomScroll: Bool = false
 
+    @State private var memoCreationStartTime: Date? = nil
 
     // 初期化メソッドでの設定
     init(viewContext: NSManagedObjectContext, memo: Memo?) {
         self.viewContext = viewContext
         self.memo = memo
         self.savedMemo = memo
+        if memo == nil {
+            self.memoCreationStartTime = Date()
+        }
         
         if let memo = memo {
             loadMemoData(memo: memo)
@@ -540,14 +544,17 @@ class ContentViewModel: ObservableObject {
                             let activityType: ActivityType = isNewMemo ? .exercise : .review
                             let context = PersistenceController.shared.container.viewContext
                             
-                            if isNewMemo {
-                                // 新規作成用の明示的な注釈
-                                let noteText = "新規記録作成: \(memo.title ?? "無題")"
+                            if isNewMemo, let startTime = self.memoCreationStartTime {
+                                // 実際の操作時間を計算（秒単位）
+                                let durationSeconds = Int(Date().timeIntervalSince(startTime))
+                                // 最低1秒は保証する
+                                let adjustedDuration = max(durationSeconds, 1)
                                 
                                 // 新規記録作成アクティビティを記録
+                                let noteText = "新規記録作成: \(memo.title ?? "無題")"
                                 LearningActivity.recordActivityWithPrecision(
-                                    type: activityType,  // 既に定義されている変数を使用
-                                    durationSeconds: 5 * 60,
+                                    type: activityType,
+                                    durationSeconds: adjustedDuration, // 固定値ではなく実時間を使用
                                     memo: memo,
                                     note: noteText,
                                     in: context
