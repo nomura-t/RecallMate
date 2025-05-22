@@ -481,7 +481,7 @@ struct HomeView: View {
         }
     }
     
-    // ステップ2：完了ビュー
+    // ステップ2：完了ビュー（修正版）
     @ViewBuilder
     private func completionStepView() -> some View {
         VStack(spacing: 32) {
@@ -532,45 +532,68 @@ struct HomeView: View {
             
             Spacer()
             
-            // 復習完了ボタン（実際の処理を実行）
-            Button(action: {
-                print("🎯 復習完了ボタンがタップされました")
-                executeReviewCompletion()
-            }) {
-                HStack {
-                    if isSavingReview {
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                            .scaleEffect(0.8)
-                    } else if reviewSaveSuccess {
+            // ★★★ ボタンの動作を修正 ★★★
+            if !reviewSaveSuccess {
+                // まだ保存処理が完了していない場合は保存ボタンを表示
+                Button(action: {
+                    print("🎯 復習完了ボタンがタップされました")
+                    executeReviewCompletion()
+                }) {
+                    HStack {
+                        if isSavingReview {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                .scaleEffect(0.8)
+                        } else {
+                            Image(systemName: "sparkles")
+                                .font(.system(size: 18))
+                        }
+                        
+                        Text(isSavingReview ? "保存中..." : "復習を完了する")
+                            .font(.headline)
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
+                            startPoint: UnitPoint.leading,
+                            endPoint: UnitPoint.trailing
+                        )
+                    )
+                    .cornerRadius(25)
+                    .disabled(isSavingReview)
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 40)
+            } else {
+                // 保存完了後は手動で閉じるボタンを表示
+                Button(action: {
+                    print("📱 ユーザーが手動で復習フローを閉じました")
+                    closeReviewFlow()
+                }) {
+                    HStack {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 18))
-                    } else {
-                        Image(systemName: "sparkles")
-                            .font(.system(size: 18))
+                        Text("確認完了")
+                            .font(.headline)
                     }
-                    
-                    Text(isSavingReview ? "保存中..." : (reviewSaveSuccess ? "完了" : "復習を完了する"))
-                        .font(.headline)
-                }
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(
-                    LinearGradient(
-                        gradient: Gradient(colors: [
-                            reviewSaveSuccess ? Color.green : Color.blue,
-                            (reviewSaveSuccess ? Color.green : Color.blue).opacity(0.8)
-                        ]),
-                        startPoint: UnitPoint.leading,
-                        endPoint: UnitPoint.trailing
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.green, Color.green.opacity(0.8)]),
+                            startPoint: UnitPoint.leading,
+                            endPoint: UnitPoint.trailing
+                        )
                     )
-                )
-                .cornerRadius(25)
-                .disabled(isSavingReview)
+                    .cornerRadius(25)
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 40)
             }
-            .padding(.horizontal, 20)
-            .padding(.bottom, 40)
         }
     }
     
@@ -659,114 +682,58 @@ struct HomeView: View {
         }
     }
     
-    // CoreDataの更新処理（メインスレッドで実行）
+    // CoreDataの更新処理（統合システム対応版）
+    // CoreDataの更新処理（段階的システム対応版）
     private func performReviewDataUpdate(memo: Memo, sessionDuration: Int) {
         do {
-            print("💾 CoreDataの更新を開始")
+            print("💾 段階的システムによる復習データ更新を開始")
             
-            // 1. 記録の基本情報を更新
-            let oldRecallScore = memo.recallScore
+            // 基本情報の更新
             memo.recallScore = recallScore
             memo.lastReviewedDate = Date()
             
-            print("📊 記憶度を更新: \(oldRecallScore)% → \(recallScore)%")
-            
-            // 2. 次回復習日を科学的アルゴリズムで計算
-            let nextReviewDate = ReviewCalculator.calculateNextReviewDate(
-                recallScore: recallScore,
-                lastReviewedDate: Date(),
-                perfectRecallCount: memo.perfectRecallCount
-            )
-            
-            let oldNextReviewDate = memo.nextReviewDate
-            memo.nextReviewDate = nextReviewDate
-            
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateStyle = .medium
-            
-            print("📅 次回復習日を更新:")
-            print("   旧: \(oldNextReviewDate != nil ? dateFormatter.string(from: oldNextReviewDate!) : "未設定")")
-            print("   新: \(dateFormatter.string(from: nextReviewDate))")
-            
-            // 3. 復習履歴エントリを作成（記憶定着度の詳細な記録）
+            // 履歴エントリの作成
             let historyEntry = MemoHistoryEntry(context: viewContext)
             historyEntry.id = UUID()
             historyEntry.date = Date()
             historyEntry.recallScore = recallScore
-            
-            // 高度な記憶定着度計算（既存の履歴を考慮）
-            let previousEntries = memo.historyEntriesArray
-            let reviewCount = previousEntries.count
-            let highScoreCount = MemoryRetentionCalculator.countHighScores(historyEntries: previousEntries)
-            let lastReviewDate = previousEntries.first?.date
-            let daysSinceLastReview = MemoryRetentionCalculator.daysSinceLastReview(lastReviewDate: lastReviewDate)
-            
-            let retentionScore = MemoryRetentionCalculator.calculateEnhancedRetentionScore(
-                recallScore: recallScore,
-                daysSinceLastReview: daysSinceLastReview,
-                reviewCount: reviewCount,
-                highScoreCount: highScoreCount
-            )
-            
-            historyEntry.retentionScore = retentionScore
             historyEntry.memo = memo
             
-            print("🧠 記憶定着度を計算: \(retentionScore)%")
-            print("📈 復習履歴を記録: 復習回数\(reviewCount + 1)回目")
+            // 既存の履歴を取得（新しいエントリを含む）
+            let existingEntries = memo.historyEntriesArray
+            let allEntries = [historyEntry] + existingEntries
             
-            // 4. 学習アクティビティを記録
+            // 新しい段階的システムで次回復習日を計算
+            let nextReviewDate = ReviewCalculator.calculateProgressiveNextReviewDate(
+                recallScore: recallScore,
+                lastReviewedDate: Date(),
+                historyEntries: allEntries
+            )
+            
+            memo.nextReviewDate = nextReviewDate
+            
+            // 学習アクティビティの記録
             let activity = LearningActivity.recordActivityWithPrecision(
                 type: .review,
-                durationSeconds: max(sessionDuration, 60), // 最低1分間として記録
+                durationSeconds: max(sessionDuration, 60),
                 memo: memo,
-                note: "復習完了: \(memo.title ?? "無題") (記憶度: \(recallScore)%)",
+                note: "段階的システム復習: \(memo.title ?? "無題") (記憶度: \(recallScore)%)",
                 in: viewContext
             )
             
-            print("📝 学習アクティビティを記録: \(max(sessionDuration, 60))秒")
-            
-            // 5. 変更を保存
             try viewContext.save()
             
-            print("✅ 復習データの保存が完了しました")
-            
-            // 6. 成功時の処理
-            let generator = UINotificationFeedbackGenerator()
-            generator.notificationOccurred(.success)
-            
-            // 音声フィードバック（もし実装されている場合）
-            SoundManager.shared.playMemoryCompletedSound()
-            
-            // ストリーク更新
-            StreakTracker.shared.checkAndUpdateStreak(in: viewContext)
-            
-            // データ更新通知
-            NotificationCenter.default.post(
-                name: NSNotification.Name("ForceRefreshMemoData"),
-                object: nil
-            )
-            
-            // UI状態の更新
+            // 成功処理
             isSavingReview = false
             reviewSaveSuccess = true
             
-            print("🎉 復習完了処理がすべて正常に終了しました")
-            
-            // 1秒後にモーダルを閉じる（ユーザーに成功を伝える時間を確保）
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                closeReviewFlow()
-            }
+            print("✅ 段階的システムによる復習完了")
             
         } catch {
-            print("❌ 復習データの保存に失敗しました: \(error)")
+            print("❌ エラー: \(error)")
             isSavingReview = false
-            
-            // エラーフィードバック
-            let generator = UINotificationFeedbackGenerator()
-            generator.notificationOccurred(.error)
         }
     }
-    
     // 記憶度に応じた色計算（既存のメソッド）
     private func getRetentionColor(for score: Int16) -> Color {
         switch score {
