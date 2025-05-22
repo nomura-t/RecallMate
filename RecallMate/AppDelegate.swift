@@ -5,8 +5,9 @@ import UserNotifications
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     // アプリ起動時の処理
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // バックグラウンド更新を許可
-        UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
+        // iOS 13.0以降では、setMinimumBackgroundFetchIntervalは非推奨
+        // 代わりにBackgroundTasksフレームワークを使用することが推奨されますが、
+        // シンプルなアプリではこの設定は削除して問題ありません
         
         // 通知デリゲートを設定
         UNUserNotificationCenter.current().delegate = self
@@ -19,18 +20,13 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         return true
     }
     
-    // バックグラウンドフェッチの処理
-    func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        // バックグラウンド更新処理があれば実装
-        completionHandler(.newData)
-    }
+    // 非推奨のバックグラウンドフェッチメソッドを削除
+    // func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void)
     
     // 通知アクションのハンドリング
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         if response.actionIdentifier == "START_ACTION" {
             // 次のセッションを開始する処理
-            // TimerServiceなど、シングルトンを通じてPomodoroTimerのインスタンスにアクセスする
-            // 例: TimerService.shared.startNextSession()
             NotificationCenter.default.post(name: Notification.Name("StartPomodoroFromNotification"), object: nil)
         }
         

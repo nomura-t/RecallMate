@@ -94,25 +94,17 @@ extension Memo {
     // タグを追加（ログ機能を追加）
     func addTag(_ tag: Tag) {
         let currentTags = self.tags?.mutableCopy() as? NSMutableSet ?? NSMutableSet()
-        let oldCount = currentTags.count
         
         currentTags.add(tag)
         self.tags = currentTags
-        
-        // 追加後の検証
-        let newCount = (self.tags as? Set<Tag> ?? Set<Tag>()).count
     }
     
     // タグを削除（ログ機能を追加）
     func removeTag(_ tag: Tag) {
         let currentTags = self.tags?.mutableCopy() as? NSMutableSet ?? NSMutableSet()
-        let oldCount = currentTags.count
         
         currentTags.remove(tag)
         self.tags = currentTags
-        
-        // 削除後の検証
-        let newCount = (self.tags as? Set<Tag> ?? Set<Tag>()).count
     }
 }
 
