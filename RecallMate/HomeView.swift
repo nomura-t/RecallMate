@@ -158,12 +158,6 @@ struct HomeView: View {
                     .padding(.bottom, 4)
                 }
                 
-                HStack(spacing: 8) {
-                    HabitChallengeCardView()
-                        .frame(maxWidth: .infinity)
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 5)
                 
                 if displayedMemos.isEmpty {
                     // フィルター適用後記録がない場合の表示

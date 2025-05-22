@@ -20,11 +20,6 @@ extension LearningActivity {
             in: context
         )
         
-        // 習慣化チャレンジを更新（秒から分に変換して既存機能を使用）
-        HabitChallengeManager.shared.checkLearningActivity(
-            minutes: Int(ceil(Double(durationSeconds) / 60.0)),
-            in: context
-        )
         
         return activity
     }

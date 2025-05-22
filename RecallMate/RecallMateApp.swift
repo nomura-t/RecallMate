@@ -25,8 +25,6 @@ struct RecallMateApp: App {
         // ストリーク維持のための通知をスケジュール
         StreakNotificationManager.shared.scheduleStreakReminder()
         
-        // 習慣化チャレンジの状態をチェック
-        HabitChallengeManager.shared.checkDailyProgress()
         
         // サンプル記録の作成（初回起動時のみ）
         createSampleMemoIfNeeded(in: persistenceController.container.viewContext)
