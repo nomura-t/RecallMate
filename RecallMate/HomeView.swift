@@ -249,8 +249,6 @@ struct HomeView: View {
     
     // データを強制的に更新するメソッド
     private func forceRefreshData() {
-        // 習慣化チャレンジの進捗をチェック
-        HabitChallengeManager.shared.checkDailyProgress()
         
         // 進行中のタスクがあれば明示的にキャンセル
         viewContext.rollback()

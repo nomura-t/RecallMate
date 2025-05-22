@@ -14,7 +14,6 @@ struct MainView: View {
     
     // ReviewManagerなど
     @StateObject private var reviewManager = ReviewManager.shared
-    @StateObject private var habitChallengeManager = HabitChallengeManager.shared
     @State private var showingReviewRequest = false
 
     var body: some View {
