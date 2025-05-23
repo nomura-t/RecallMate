@@ -647,24 +647,12 @@ struct HomeView: View {
     private func activeRecallGuidanceStepView() -> some View {
         VStack(spacing: 24) {
             // リアルタイムタイマー表示
-            VStack(spacing: 12) {
-                Text("学習時間")
-                    .font(.headline)
-                    .foregroundColor(.secondary)
-                
-                // リアルタイム更新される経過時間表示
-                Text(formatElapsedTime(learningElapsedTime))
-                    .font(.system(size: 48, weight: .bold, design: .rounded))
-                    .foregroundColor(selectedLearningMethod.color)
-                    .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
-                        // 1秒ごとに経過時間を更新
-                        if showingNewLearningFlow && newLearningStep == 2 {
-                            learningElapsedTime = Date().timeIntervalSince(activeRecallStartTime)
-                        }
-                    }
-            }
+            LearningTimer(
+                startTime: activeRecallStartTime,
+                color: selectedLearningMethod.color,
+                isActive: showingNewLearningFlow && newLearningStep == 2
+            )
             .padding(.top, 20)
-            
             // アクティブリコール指導コンテンツ
             ScrollView {
                 VStack(spacing: 20) {
