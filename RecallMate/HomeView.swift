@@ -1,4 +1,4 @@
-// HomeView.swift - 新規学習フロー統合版（アクティブリコール指導対応版）
+// HomeView.swift - 新規学習フロー統合版（ステップ分離対応版）
 import SwiftUI
 import CoreData
 
@@ -21,7 +21,7 @@ struct HomeView: View {
     @State private var isSavingReview = false
     @State private var reviewSaveSuccess = false
     
-    // 新規学習フロー用の状態管理（拡張版）
+    // 新規学習フロー用の状態管理（5ステップに拡張）
     @State private var showingNewLearningFlow = false
     @State private var newLearningStep: Int = 0
     @State private var newLearningTitle = ""
@@ -295,7 +295,7 @@ struct HomeView: View {
                 setupReviewSession()
             }
         }
-        // 新規学習フローのシートモーダル（完全改良版）
+        // 新規学習フローのシートモーダル（5ステップに変更）
         .sheet(isPresented: $showingNewLearningFlow) {
             VStack(spacing: 0) {
                 // ヘッダー部分
@@ -315,11 +315,11 @@ struct HomeView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 20)
                 
-                // プログレスバー（4つに変更）
+                // プログレスバー（5つに変更）
                 HStack(spacing: 8) {
-                    ForEach(0..<4) { index in
+                    ForEach(0..<5) { index in
                         Circle()
-                            .fill(index <= newLearningStep ? selectedLearningMethod.color : Color.gray.opacity(0.3))
+                            .fill(index <= newLearningStep ? getStepColor(step: index) : Color.gray.opacity(0.3))
                             .frame(width: index == newLearningStep ? 12 : 8, height: index == newLearningStep ? 12 : 8)
                             .animation(.easeInOut(duration: 0.3), value: newLearningStep)
                     }
@@ -329,16 +329,18 @@ struct HomeView: View {
                 // メインコンテンツ
                 Group {
                     if newLearningStep == 0 {
-                        learningMethodSelectionStepView()
+                        learningTitleInputStepView()
                     } else if newLearningStep == 1 {
+                        learningMethodSelectionStepView()
+                    } else if newLearningStep == 2 {
                         if selectedLearningMethod == .recordOnly {
                             newLearningInitialAssessmentStepView()
                         } else {
                             activeRecallGuidanceStepView()
                         }
-                    } else if newLearningStep == 2 {
-                        newLearningInitialAssessmentStepView()
                     } else if newLearningStep == 3 {
+                        newLearningInitialAssessmentStepView()
+                    } else if newLearningStep == 4 {
                         newLearningCompletionStepView()
                     }
                 }
@@ -377,42 +379,70 @@ struct HomeView: View {
         }
     }
     
-    // MARK: - 新規学習フロー用ビューメソッド（完全改良版）
+    // MARK: - 新規学習フロー用ビューメソッド（5ステップに拡張）
     
     private func getNewLearningStepTitle() -> String {
         switch newLearningStep {
-        case 0: return "学習方法を選択"
-        case 1:
+        case 0: return "学習内容を入力"
+        case 1: return "学習方法を選択"
+        case 2:
             if selectedLearningMethod == .recordOnly {
                 return "理解度の評価"
             } else {
                 return "アクティブリコール学習"
             }
-        case 2: return "理解度の評価"
-        case 3: return "学習記録完了"
+        case 3: return "理解度の評価"
+        case 4: return "学習記録完了"
         default: return "新規学習フロー"
         }
     }
     
-    // Step 0: 学習方法選択画面（カード型UI）
+    private func getStepColor(step: Int) -> Color {
+        switch step {
+        case 0: return .blue  // 入力
+        case 1: return .purple  // 選択
+        case 2: return selectedLearningMethod.color  // 学習/評価
+        case 3: return .orange  // 評価
+        case 4: return .green  // 完了
+        default: return .gray
+        }
+    }
+    
+    // Step 0: 学習タイトル入力画面（新規分離）
     @ViewBuilder
-    private func learningMethodSelectionStepView() -> some View {
+    private func learningTitleInputStepView() -> some View {
         ScrollView {
-            VStack(spacing: 24) {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("今日は何を学習しますか？")
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.primary)
+            VStack(spacing: 32) {
+                Spacer()
+                
+                VStack(spacing: 24) {
+                    // アイコンと説明
+                    VStack(spacing: 16) {
+                        Image(systemName: "brain.head.profile")
+                            .font(.system(size: 80))
+                            .foregroundColor(.blue)
+                        
+                        Text("今日は何を学習しますか？")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.primary)
+                            .multilineTextAlignment(.center)
+                        
+                        Text("学習内容のタイトルを入力してください")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
                     
+                    // 入力フィールド
                     VStack(alignment: .leading, spacing: 16) {
-                        // タイトル入力
                         VStack(alignment: .leading, spacing: 8) {
                             Text("学習タイトル（必須）")
                                 .font(.subheadline)
                                 .fontWeight(.medium)
+                                .foregroundColor(.primary)
                             
-                            TextField("今日学習する内容のタイトルを入力", text: $newLearningTitle)
+                            TextField("例: 英単語の暗記、数学の微分積分", text: $newLearningTitle)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .font(.body)
                         }
@@ -423,6 +453,7 @@ struct HomeView: View {
                                 Text("タグ（任意）")
                                     .font(.subheadline)
                                     .fontWeight(.medium)
+                                    .foregroundColor(.primary)
                                 
                                 ScrollView(.horizontal, showsIndicators: false) {
                                     HStack(spacing: 8) {
@@ -456,50 +487,130 @@ struct HomeView: View {
                                     }
                                     .padding(.vertical, 4)
                                 }
+                                
+                                // 選択されたタグの表示
+                                if !newLearningTags.isEmpty {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("選択中のタグ:")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                        
+                                        ScrollView(.horizontal, showsIndicators: false) {
+                                            HStack(spacing: 8) {
+                                                ForEach(newLearningTags) { tag in
+                                                    HStack(spacing: 4) {
+                                                        Circle()
+                                                            .fill(tag.swiftUIColor())
+                                                            .frame(width: 6, height: 6)
+                                                        
+                                                        Text(tag.name ?? "")
+                                                            .font(.caption)
+                                                        
+                                                        Button(action: {
+                                                            removeNewLearningTag(tag)
+                                                        }) {
+                                                            Image(systemName: "xmark.circle.fill")
+                                                                .font(.system(size: 12))
+                                                                .foregroundColor(.gray)
+                                                        }
+                                                        .buttonStyle(PlainButtonStyle())
+                                                    }
+                                                    .padding(.horizontal, 8)
+                                                    .padding(.vertical, 4)
+                                                    .background(tag.swiftUIColor().opacity(0.1))
+                                                    .cornerRadius(10)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
+                    .padding(24)
+                    .background(Color(.systemBackground))
+                    .cornerRadius(16)
+                    .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                 }
-                .padding(20)
-                .background(Color(.systemBackground))
-                .cornerRadius(16)
-                .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                
+                Spacer()
+                
+                Button(action: {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        newLearningStep = 1
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.right.circle.fill")
+                            .font(.system(size: 18))
+                        Text("学習方法を選択する")
+                            .font(.headline)
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .cornerRadius(25)
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 40)
+                .disabled(newLearningTitle.isEmpty)
+            }
+            .padding(.top, 20)
+        }
+    }
+    
+    // Step 1: 学習方法選択画面（分離して整理）
+    @ViewBuilder
+    private func learningMethodSelectionStepView() -> some View {
+        ScrollView {
+            VStack(spacing: 32) {
+                // ヘッダー情報
+                VStack(spacing: 16) {
+                    Text("「\(newLearningTitle)」")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                    
+                    Text("どのように学習しますか？")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                }
                 
                 // 学習方法選択カード
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("学習方法を選択してください")
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                    
-                    VStack(spacing: 12) {
-                        ForEach(LearningMethod.allCases, id: \.self) { method in
-                            LearningMethodCard(
-                                method: method,
-                                isSelected: selectedLearningMethod == method,
-                                onSelect: {
-                                    selectedLearningMethod = method
-                                }
-                            )
-                        }
+                VStack(spacing: 16) {
+                    ForEach(LearningMethod.allCases, id: \.self) { method in
+                        LearningMethodCard(
+                            method: method,
+                            isSelected: selectedLearningMethod == method,
+                            onSelect: {
+                                selectedLearningMethod = method
+                            }
+                        )
                     }
                 }
-                .padding(20)
-                .background(Color(.systemBackground))
-                .cornerRadius(16)
-                .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                .padding(.horizontal, 20)
                 
                 Spacer(minLength: 40)
                 
                 Button(action: {
                     withAnimation(.easeInOut(duration: 0.3)) {
                         if selectedLearningMethod == .recordOnly {
-                            // 記録のみコースの場合は評価画面に直接進む
-                            newLearningStep = 2
+                            // 記録のみコースの場合は評価画面に直接進む（ステップ3）
+                            newLearningStep = 3
                         } else {
-                            // その他の場合はアクティブリコール指導に進む
+                            // その他の場合はアクティブリコール指導に進む（ステップ2）
                             activeRecallStep = 0
                             activeRecallStartTime = Date()
-                            newLearningStep = 1
+                            newLearningStep = 2
                         }
                     }
                 }) {
@@ -522,13 +633,13 @@ struct HomeView: View {
                     .cornerRadius(25)
                 }
                 .padding(.horizontal, 20)
-                .disabled(newLearningTitle.isEmpty)
+                .padding(.bottom, 40)
             }
             .padding(.top, 20)
         }
     }
     
-    // Step 1: アクティブリコール指導画面
+    // Step 2: アクティブリコール指導画面
     @ViewBuilder
     private func activeRecallGuidanceStepView() -> some View {
         VStack(spacing: 24) {
@@ -595,7 +706,7 @@ struct HomeView: View {
                 } else {
                     Button(action: {
                         withAnimation(.easeInOut(duration: 0.3)) {
-                            newLearningStep = 2
+                            newLearningStep = 3  // 理解度評価ステップへ
                         }
                     }) {
                         HStack {
@@ -620,7 +731,7 @@ struct HomeView: View {
                 
                 Button(action: {
                     withAnimation(.easeInOut(duration: 0.3)) {
-                        newLearningStep = 2
+                        newLearningStep = 3  // 理解度評価ステップへ
                     }
                 }) {
                     Text("学習をスキップして評価に進む")
@@ -634,7 +745,7 @@ struct HomeView: View {
         }
     }
     
-    // Step 2: 理解度評価画面
+    // Step 3: 理解度評価画面
     @ViewBuilder
     private func newLearningInitialAssessmentStepView() -> some View {
         VStack(spacing: 32) {
@@ -705,7 +816,7 @@ struct HomeView: View {
             
             Button(action: {
                 withAnimation(.easeInOut(duration: 0.3)) {
-                    newLearningStep = 3
+                    newLearningStep = 4  // 完了ステップへ
                 }
             }) {
                 HStack {
@@ -734,7 +845,7 @@ struct HomeView: View {
         }
     }
     
-    // Step 3: 完了画面
+    // Step 4: 完了画面
     @ViewBuilder
     private func newLearningCompletionStepView() -> some View {
         VStack(spacing: 32) {
@@ -833,7 +944,7 @@ struct HomeView: View {
         }
     }
     
-    // MARK: - 復習フロー用ビューメソッド（既存）
+    // MARK: - 復習フロー用ビューメソッド（既存のまま）
     
     private func getReviewStepTitle() -> String {
         switch reviewStep {
