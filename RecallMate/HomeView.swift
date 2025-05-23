@@ -1,9 +1,7 @@
-// HomeView.swift
+// HomeView.swift - 新規学習フロー統合版（完全修正版）
 import SwiftUI
 import CoreData
 
-// HomeView.swift - モーダル管理を上位に移動
-// HomeView.swift - 安全で確実な復習完了処理の実装
 struct HomeView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.colorScheme) var colorScheme
@@ -14,16 +12,26 @@ struct HomeView: View {
     @State private var selectedTags: [Tag] = []
     @State private var refreshTrigger = UUID()
     
-    // 復習フロー用の状態管理（TabViewを使わない安全な設計）
+    // 復習フロー用の状態管理
     @State private var showingReviewFlow = false
     @State private var selectedMemoForReview: Memo? = nil
     @State private var reviewStep: Int = 0
     @State private var recallScore: Int16 = 50
     @State private var sessionStartTime = Date()
-    
-    // 処理中状態の管理（ユーザーフィードバック用）
     @State private var isSavingReview = false
     @State private var reviewSaveSuccess = false
+    
+    // 新規学習フロー用の状態管理
+    @State private var showingNewLearningFlow = false
+    @State private var newLearningStep: Int = 0
+    @State private var newLearningTitle = ""
+    @State private var newLearningContent = ""
+    @State private var newLearningPageRange = ""
+    @State private var newLearningTags: [Tag] = []
+    @State private var newLearningInitialScore: Int16 = 50
+    @State private var newLearningSessionStartTime = Date()
+    @State private var isSavingNewLearning = false
+    @State private var newLearningSaveSuccess = false
     
     @FetchRequest(
         entity: Tag.entity(),
@@ -31,7 +39,7 @@ struct HomeView: View {
         animation: .default)
     private var allTags: FetchedResults<Tag>
     
-    // dailyMemosの計算プロパティ（既存のまま）
+    // dailyMemosの計算プロパティ
     private var dailyMemos: [Memo] {
         let fetchRequest: NSFetchRequest<Memo> = Memo.fetchRequest()
         
@@ -84,7 +92,7 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // 学習タイマーセクション（既存のまま）
+                // 学習タイマーセクション
                 HStack {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("今日の学習時間")
@@ -109,7 +117,7 @@ struct HomeView: View {
                         )
                 )
                 
-                // カスタムカレンダーセクション（既存のまま）
+                // カスタムカレンダーセクション
                 DatePickerCalendarView(selectedDate: $selectedDate)
                     .padding(.vertical, 16)
                     .background(
@@ -123,7 +131,7 @@ struct HomeView: View {
                             )
                     )
                 
-                // メインコンテンツエリア（既存のまま）
+                // メインコンテンツエリア
                 VStack(spacing: 0) {
                     if !allTags.isEmpty {
                         TagFilterSection(
@@ -138,6 +146,15 @@ struct HomeView: View {
                         memoCount: dailyMemos.count,
                         selectedTags: selectedTags
                     )
+                    
+                    // 新規学習ボタンを追加（今日の場合のみ表示）
+                    if Calendar.current.isDateInToday(selectedDate) {
+                        NewLearningButton(onStartNewLearning: {
+                            startNewLearning()
+                        })
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                    }
                     
                     if dailyMemos.isEmpty {
                         EmptyStateView(
@@ -155,7 +172,7 @@ struct HomeView: View {
                                             startReview(memo: memo)
                                         },
                                         onOpenMemo: {
-                                            // NavigationLinkの処理は既存のまま
+                                            // NavigationLinkの処理
                                         }
                                     )
                                 }
@@ -173,9 +190,6 @@ struct HomeView: View {
             }
             .navigationTitle("")
             .navigationBarHidden(true)
-            .overlay(
-                FloatingAddButton(isAddingMemo: $isAddingMemo)
-            )
         }
         .onAppear {
             forceRefreshData()
@@ -185,28 +199,45 @@ struct HomeView: View {
                 forceRefreshData()
             }
         }
-        .fullScreenCover(isPresented: $isAddingMemo) {
-            ContentView(memo: nil)
-        }
-        // 復習フローのモーダル - TabViewを使わない安全な実装
+        // 復習フローのシートモーダル
         .sheet(isPresented: $showingReviewFlow) {
-            // 条件分岐による明示的なView切り替えで安全性を確保
             VStack(spacing: 0) {
-                // ヘッダー部分（全ステップ共通）
-                reviewFlowHeader()
+                // ヘッダー部分
+                HStack {
+                    Text(getReviewStepTitle())
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    
+                    Spacer()
+                    
+                    Button(action: closeReviewFlow) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(.gray)
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 20)
                 
-                // プログレスインジケーター
-                reviewProgressBar()
-                    .padding(.top, 16)
+                // プログレスバー
+                HStack(spacing: 8) {
+                    ForEach(0..<3) { index in
+                        Circle()
+                            .fill(index <= reviewStep ? Color.blue : Color.gray.opacity(0.3))
+                            .frame(width: index == reviewStep ? 12 : 8, height: index == reviewStep ? 12 : 8)
+                            .animation(.easeInOut(duration: 0.3), value: reviewStep)
+                    }
+                }
+                .padding(.top, 16)
                 
-                // メインコンテンツ - 条件分岐で安全に制御
+                // メインコンテンツ
                 Group {
                     if reviewStep == 0 {
-                        contentReviewStepView()
+                        reviewContentStepView()
                     } else if reviewStep == 1 {
-                        memoryAssessmentStepView()
+                        reviewMemoryAssessmentStepView()
                     } else if reviewStep == 2 {
-                        completionStepView()
+                        reviewCompletionStepView()
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -218,64 +249,98 @@ struct HomeView: View {
             }
             .background(Color(.systemGroupedBackground))
             .onAppear {
-                // モーダル表示時の初期化処理
                 setupReviewSession()
             }
         }
+        // 新規学習フローのシートモーダル
+        .sheet(isPresented: $showingNewLearningFlow) {
+            VStack(spacing: 0) {
+                // ヘッダー部分
+                HStack {
+                    Text(getNewLearningStepTitle())
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    
+                    Spacer()
+                    
+                    Button(action: closeNewLearningFlow) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(.gray)
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 20)
+                
+                // プログレスバー
+                HStack(spacing: 8) {
+                    ForEach(0..<3) { index in
+                        Circle()
+                            .fill(index <= newLearningStep ? Color.green : Color.gray.opacity(0.3))
+                            .frame(width: index == newLearningStep ? 12 : 8, height: index == newLearningStep ? 12 : 8)
+                            .animation(.easeInOut(duration: 0.3), value: newLearningStep)
+                    }
+                }
+                .padding(.top, 16)
+                
+                // メインコンテンツ
+                Group {
+                    if newLearningStep == 0 {
+                        newLearningContentInputStepView()
+                    } else if newLearningStep == 1 {
+                        newLearningInitialAssessmentStepView()
+                    } else if newLearningStep == 2 {
+                        newLearningCompletionStepView()
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .transition(.asymmetric(
+                    insertion: .move(edge: .trailing).combined(with: .opacity),
+                    removal: .move(edge: .leading).combined(with: .opacity)
+                ))
+                .animation(.easeInOut(duration: 0.3), value: newLearningStep)
+            }
+            .background(Color(.systemGroupedBackground))
+            .onAppear {
+                setupNewLearningSession()
+            }
+        }
+        // 状態変更の監視
         .onChange(of: showingReviewFlow) { oldValue, newValue in
-            print("🔍 HomeView: showingReviewFlow状態変更 \(oldValue) -> \(newValue)")
             if newValue {
-                // モーダルが開かれた時の初期化
                 reviewStep = 0
                 sessionStartTime = Date()
                 isSavingReview = false
                 reviewSaveSuccess = false
                 if let memo = selectedMemoForReview {
-                    recallScore = memo.recallScore  // 現在の記憶度を初期値として設定
-                    print("📊 初期記憶度を設定: \(recallScore)%")
+                    recallScore = memo.recallScore
                 }
             }
         }
-    }
-    
-    // MARK: - 復習フローのビューコンポーネント
-    
-    // ヘッダー部分（共通）
-    @ViewBuilder
-    private func reviewFlowHeader() -> some View {
-        HStack {
-            Text(getStepTitle())
-                .font(.title2)
-                .fontWeight(.bold)
-            
-            Spacer()
-            
-            Button(action: closeReviewFlow) {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.system(size: 24))
-                    .foregroundColor(.gray)
-            }
-        }
-        .padding(.horizontal, 20)
-        .padding(.top, 20)
-    }
-    
-    // プログレスバー
-    @ViewBuilder
-    private func reviewProgressBar() -> some View {
-        HStack(spacing: 8) {
-            ForEach(0..<3) { index in
-                Circle()
-                    .fill(index <= reviewStep ? Color.blue : Color.gray.opacity(0.3))
-                    .frame(width: index == reviewStep ? 12 : 8, height: index == reviewStep ? 12 : 8)
-                    .animation(.easeInOut(duration: 0.3), value: reviewStep)
+        .onChange(of: showingNewLearningFlow) { oldValue, newValue in
+            if newValue {
+                newLearningStep = 0
+                newLearningSessionStartTime = Date()
+                isSavingNewLearning = false
+                newLearningSaveSuccess = false
+                resetNewLearningForm()
             }
         }
     }
     
-    // ステップ0：内容確認ビュー
+    // MARK: - 復習フロー用ビューメソッド
+    
+    private func getReviewStepTitle() -> String {
+        switch reviewStep {
+        case 0: return "内容の確認"
+        case 1: return "記憶度の評価"
+        case 2: return "復習完了"
+        default: return "復習フロー"
+        }
+    }
+    
     @ViewBuilder
-    private func contentReviewStepView() -> some View {
+    private func reviewContentStepView() -> some View {
         ScrollView {
             VStack(spacing: 24) {
                 if let memo = selectedMemoForReview {
@@ -301,34 +366,6 @@ struct HomeView: View {
                             Text(memo.content ?? "内容が記録されていません")
                                 .font(.body)
                                 .lineSpacing(4)
-                            
-                            // キーワード表示の実装
-                            if let keywords = memo.keywords, !keywords.isEmpty {
-                                let keywordList = keywords.components(separatedBy: ",").filter { !$0.isEmpty }
-                                if !keywordList.isEmpty {
-                                    VStack(alignment: .leading, spacing: 8) {
-                                        Text("重要キーワード:")
-                                            .font(.subheadline)
-                                            .fontWeight(.medium)
-                                            .foregroundColor(.secondary)
-                                            .padding(.top, 16)
-                                        
-                                        LazyVGrid(columns: [
-                                            GridItem(.adaptive(minimum: 80))
-                                        ], spacing: 8) {
-                                            ForEach(keywordList, id: \.self) { keyword in
-                                                Text(keyword.trimmingCharacters(in: .whitespacesAndNewlines))
-                                                    .font(.caption)
-                                                    .padding(.horizontal, 8)
-                                                    .padding(.vertical, 4)
-                                                    .background(Color.blue.opacity(0.1))
-                                                    .foregroundColor(.blue)
-                                                    .cornerRadius(8)
-                                            }
-                                        }
-                                    }
-                                }
-                            }
                         }
                     }
                     .padding(20)
@@ -339,9 +376,7 @@ struct HomeView: View {
                 
                 Spacer(minLength: 40)
                 
-                // 次へボタン
                 Button(action: {
-                    print("📖 内容確認完了 - 記憶度評価に進みます")
                     withAnimation(.easeInOut(duration: 0.3)) {
                         reviewStep = 1
                     }
@@ -358,8 +393,8 @@ struct HomeView: View {
                     .background(
                         LinearGradient(
                             gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
-                            startPoint: UnitPoint.leading,
-                            endPoint: UnitPoint.trailing
+                            startPoint: .leading,
+                            endPoint: .trailing
                         )
                     )
                     .cornerRadius(25)
@@ -370,14 +405,12 @@ struct HomeView: View {
         }
     }
     
-    // ステップ1：記憶度評価ビュー
     @ViewBuilder
-    private func memoryAssessmentStepView() -> some View {
+    private func reviewMemoryAssessmentStepView() -> some View {
         VStack(spacing: 32) {
             Spacer()
             
             VStack(spacing: 24) {
-                // 円形プログレス表示
                 ZStack {
                     Circle()
                         .stroke(Color.gray.opacity(colorScheme == .dark ? 0.3 : 0.2), lineWidth: 12)
@@ -409,7 +442,6 @@ struct HomeView: View {
                     .multilineTextAlignment(.center)
                     .animation(.easeInOut(duration: 0.2), value: recallScore)
                 
-                // スライダー
                 VStack(spacing: 16) {
                     HStack {
                         Text("0%")
@@ -422,7 +454,6 @@ struct HomeView: View {
                                 let generator = UIImpactFeedbackGenerator(style: .light)
                                 generator.impactOccurred()
                                 recallScore = Int16(newValue)
-                                print("📊 記憶度を更新: \(recallScore)%")
                             }
                         ), in: 0...100, step: 1)
                         .accentColor(getRetentionColor(for: recallScore))
@@ -431,26 +462,12 @@ struct HomeView: View {
                             .font(.caption)
                             .foregroundColor(.gray)
                     }
-                    
-                    HStack(spacing: 0) {
-                        ForEach(0..<5) { i in
-                            let level = i * 20
-                            let isActive = recallScore >= Int16(level)
-                            
-                            Rectangle()
-                                .fill(isActive ? getRetentionColorForLevel(i) : Color.gray.opacity(colorScheme == .dark ? 0.3 : 0.2))
-                                .frame(height: 6)
-                                .cornerRadius(3)
-                        }
-                    }
                 }
             }
             
             Spacer()
             
-            // 評価完了ボタン
             Button(action: {
-                print("📊 記憶度評価完了: \(recallScore)% - 完了画面に進みます")
                 withAnimation(.easeInOut(duration: 0.3)) {
                     reviewStep = 2
                 }
@@ -470,8 +487,8 @@ struct HomeView: View {
                             getRetentionColor(for: recallScore),
                             getRetentionColor(for: recallScore).opacity(0.8)
                         ]),
-                        startPoint: UnitPoint.leading,
-                        endPoint: UnitPoint.trailing
+                        startPoint: .leading,
+                        endPoint: .trailing
                     )
                 )
                 .cornerRadius(25)
@@ -481,14 +498,12 @@ struct HomeView: View {
         }
     }
     
-    // ステップ2：完了ビュー（修正版）
     @ViewBuilder
-    private func completionStepView() -> some View {
+    private func reviewCompletionStepView() -> some View {
         VStack(spacing: 32) {
             Spacer()
             
             VStack(spacing: 24) {
-                // 成功アイコン
                 Image(systemName: isSavingReview ? "clock.fill" : (reviewSaveSuccess ? "checkmark.circle.fill" : "sparkles"))
                     .font(.system(size: 80))
                     .foregroundColor(isSavingReview ? .orange : (reviewSaveSuccess ? .green : .blue))
@@ -504,24 +519,6 @@ struct HomeView: View {
                     .font(.title2)
                     .foregroundColor(getRetentionColor(for: recallScore))
                 
-                // 次回復習日の表示（計算結果を表示）
-                if let memo = selectedMemoForReview {
-                    VStack(spacing: 8) {
-                        Text("次回復習予定日")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                        
-                        Text(calculateAndFormatNextReviewDate(for: memo))
-                            .font(.headline)
-                            .foregroundColor(.primary)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(Color.blue.opacity(0.1))
-                            .cornerRadius(12)
-                    }
-                }
-                
-                // 処理結果の表示
                 if reviewSaveSuccess {
                     Text("復習結果が正常に保存されました")
                         .font(.subheadline)
@@ -532,13 +529,8 @@ struct HomeView: View {
             
             Spacer()
             
-            // ★★★ ボタンの動作を修正 ★★★
             if !reviewSaveSuccess {
-                // まだ保存処理が完了していない場合は保存ボタンを表示
-                Button(action: {
-                    print("🎯 復習完了ボタンがタップされました")
-                    executeReviewCompletion()
-                }) {
+                Button(action: executeReviewCompletion) {
                     HStack {
                         if isSavingReview {
                             ProgressView()
@@ -558,8 +550,8 @@ struct HomeView: View {
                     .background(
                         LinearGradient(
                             gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
-                            startPoint: UnitPoint.leading,
-                            endPoint: UnitPoint.trailing
+                            startPoint: .leading,
+                            endPoint: .trailing
                         )
                     )
                     .cornerRadius(25)
@@ -568,11 +560,7 @@ struct HomeView: View {
                 .padding(.horizontal, 20)
                 .padding(.bottom, 40)
             } else {
-                // 保存完了後は手動で閉じるボタンを表示
-                Button(action: {
-                    print("📱 ユーザーが手動で復習フローを閉じました")
-                    closeReviewFlow()
-                }) {
+                Button(action: closeReviewFlow) {
                     HStack {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 18))
@@ -585,8 +573,8 @@ struct HomeView: View {
                     .background(
                         LinearGradient(
                             gradient: Gradient(colors: [Color.green, Color.green.opacity(0.8)]),
-                            startPoint: UnitPoint.leading,
-                            endPoint: UnitPoint.trailing
+                            startPoint: .leading,
+                            endPoint: .trailing
                         )
                     )
                     .cornerRadius(25)
@@ -597,19 +585,400 @@ struct HomeView: View {
         }
     }
     
-    // MARK: - ヘルパーメソッド
+    // MARK: - 新規学習フロー用ビューメソッド
     
-    // ステップタイトルの取得
-    private func getStepTitle() -> String {
-        switch reviewStep {
-        case 0: return "内容の確認"
-        case 1: return "記憶度の評価"
-        case 2: return "復習完了"
-        default: return "復習フロー"
+    private func getNewLearningStepTitle() -> String {
+        switch newLearningStep {
+        case 0: return "学習内容の入力"
+        case 1: return "理解度の評価"
+        case 2: return "学習記録完了"
+        default: return "新規学習フロー"
         }
     }
     
-    // 復習セッションの初期化
+    @ViewBuilder
+    private func newLearningContentInputStepView() -> some View {
+        ScrollView {
+            VStack(spacing: 24) {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("学習内容を入力してください")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    
+                    VStack(alignment: .leading, spacing: 16) {
+                        // タイトル入力
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("タイトル（必須）")
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                            
+                            TextField("学習内容のタイトルを入力", text: $newLearningTitle)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .font(.body)
+                        }
+                        
+                        // ページ範囲入力
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("ページ範囲（任意）")
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                            
+                            TextField("例: p.24-32", text: $newLearningPageRange)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .font(.body)
+                        }
+                        
+                        // 内容入力
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("学習内容")
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                            
+                            TextEditor(text: $newLearningContent)
+                                .frame(minHeight: 120)
+                                .padding(8)
+                                .background(Color(.systemGray6))
+                                .cornerRadius(8)
+                                .overlay(
+                                    Group {
+                                        if newLearningContent.isEmpty {
+                                            Text("学習した内容を自分の言葉で書いてみましょう...")
+                                                .foregroundColor(.gray)
+                                                .padding(12)
+                                                .allowsHitTesting(false)
+                                        }
+                                    }, alignment: .topLeading
+                                )
+                        }
+                        
+                        // タグ選択
+                        if !allTags.isEmpty {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("タグ（任意）")
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                                
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(spacing: 8) {
+                                        ForEach(allTags) { tag in
+                                            Button(action: {
+                                                toggleNewLearningTag(tag)
+                                            }) {
+                                                HStack(spacing: 4) {
+                                                    Circle()
+                                                        .fill(tag.swiftUIColor())
+                                                        .frame(width: 8, height: 8)
+                                                    
+                                                    Text(tag.name ?? "")
+                                                        .font(.subheadline)
+                                                }
+                                                .padding(.horizontal, 12)
+                                                .padding(.vertical, 6)
+                                                .background(
+                                                    newLearningTags.contains(where: { $0.id == tag.id })
+                                                    ? tag.swiftUIColor().opacity(0.2)
+                                                    : Color.gray.opacity(0.15)
+                                                )
+                                                .foregroundColor(
+                                                    newLearningTags.contains(where: { $0.id == tag.id })
+                                                    ? tag.swiftUIColor()
+                                                    : .primary
+                                                )
+                                                .cornerRadius(16)
+                                            }
+                                        }
+                                    }
+                                    .padding(.vertical, 4)
+                                }
+                            }
+                        }
+                    }
+                }
+                .padding(20)
+                .background(Color(.systemBackground))
+                .cornerRadius(16)
+                .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                
+                Spacer(minLength: 40)
+                
+                Button(action: {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        newLearningStep = 1
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.right.circle.fill")
+                            .font(.system(size: 18))
+                        Text("内容を入力しました")
+                            .font(.headline)
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.green, Color.green.opacity(0.8)]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .cornerRadius(25)
+                }
+                .padding(.horizontal, 20)
+                .disabled(newLearningTitle.isEmpty)
+            }
+            .padding(.top, 20)
+        }
+    }
+    
+    @ViewBuilder
+    private func newLearningInitialAssessmentStepView() -> some View {
+        VStack(spacing: 32) {
+            Spacer()
+            
+            VStack(spacing: 24) {
+                Text("学習直後の理解度を評価してください")
+                    .font(.title3)
+                    .fontWeight(.medium)
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.primary)
+                
+                ZStack {
+                    Circle()
+                        .stroke(Color.gray.opacity(colorScheme == .dark ? 0.3 : 0.2), lineWidth: 12)
+                        .frame(width: 180, height: 180)
+                    
+                    Circle()
+                        .trim(from: 0, to: CGFloat(newLearningInitialScore) / 100)
+                        .stroke(
+                            getRetentionColor(for: newLearningInitialScore),
+                            style: StrokeStyle(lineWidth: 12, lineCap: .round)
+                        )
+                        .frame(width: 180, height: 180)
+                        .rotationEffect(.degrees(-90))
+                        .animation(.easeInOut(duration: 0.3), value: newLearningInitialScore)
+                    
+                    VStack(spacing: 4) {
+                        Text("\(Int(newLearningInitialScore))")
+                            .font(.system(size: 48, weight: .bold))
+                        Text("%")
+                            .font(.system(size: 20))
+                    }
+                    .foregroundColor(getRetentionColor(for: newLearningInitialScore))
+                }
+                
+                Text(getRetentionDescription(for: newLearningInitialScore))
+                    .font(.title3)
+                    .fontWeight(.medium)
+                    .foregroundColor(getRetentionColor(for: newLearningInitialScore))
+                    .multilineTextAlignment(.center)
+                    .animation(.easeInOut(duration: 0.2), value: newLearningInitialScore)
+                
+                VStack(spacing: 16) {
+                    HStack {
+                        Text("0%")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                        
+                        Slider(value: Binding(
+                            get: { Double(newLearningInitialScore) },
+                            set: { newValue in
+                                let generator = UIImpactFeedbackGenerator(style: .light)
+                                generator.impactOccurred()
+                                newLearningInitialScore = Int16(newValue)
+                            }
+                        ), in: 0...100, step: 1)
+                        .accentColor(getRetentionColor(for: newLearningInitialScore))
+                        
+                        Text("100%")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                }
+            }
+            
+            Spacer()
+            
+            Button(action: {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    newLearningStep = 2
+                }
+            }) {
+                HStack {
+                    Image(systemName: "arrow.right.circle.fill")
+                        .font(.system(size: 18))
+                    Text("評価完了")
+                        .font(.headline)
+                }
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            getRetentionColor(for: newLearningInitialScore),
+                            getRetentionColor(for: newLearningInitialScore).opacity(0.8)
+                        ]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .cornerRadius(25)
+            }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 40)
+        }
+    }
+    
+    @ViewBuilder
+    private func newLearningCompletionStepView() -> some View {
+        VStack(spacing: 32) {
+            Spacer()
+            
+            VStack(spacing: 24) {
+                Image(systemName: isSavingNewLearning ? "clock.fill" : (newLearningSaveSuccess ? "checkmark.circle.fill" : "brain.head.profile"))
+                    .font(.system(size: 80))
+                    .foregroundColor(isSavingNewLearning ? .orange : (newLearningSaveSuccess ? .green : .green))
+                    .scaleEffect(isSavingNewLearning ? 0.8 : 1.0)
+                    .animation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true), value: isSavingNewLearning)
+                
+                Text(isSavingNewLearning ? "保存中..." : (newLearningSaveSuccess ? "学習記録完了！" : "新規学習完了"))
+                    .font(.title)
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
+                
+                Text("タイトル: \(newLearningTitle)")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                    .multilineTextAlignment(.center)
+                
+                Text("初期理解度: \(Int(newLearningInitialScore))%")
+                    .font(.title2)
+                    .foregroundColor(getRetentionColor(for: newLearningInitialScore))
+                
+                if newLearningSaveSuccess {
+                    Text("学習記録が正常に保存されました")
+                        .font(.subheadline)
+                        .foregroundColor(.green)
+                        .padding(.top, 8)
+                }
+            }
+            
+            Spacer()
+            
+            if !newLearningSaveSuccess {
+                Button(action: executeNewLearningCompletion) {
+                    HStack {
+                        if isSavingNewLearning {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                .scaleEffect(0.8)
+                        } else {
+                            Image(systemName: "brain.head.profile")
+                                .font(.system(size: 18))
+                        }
+                        
+                        Text(isSavingNewLearning ? "保存中..." : "学習記録を保存する")
+                            .font(.headline)
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.green, Color.green.opacity(0.8)]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .cornerRadius(25)
+                    .disabled(isSavingNewLearning)
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 40)
+            } else {
+                Button(action: closeNewLearningFlow) {
+                    HStack {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 18))
+                        Text("確認完了")
+                            .font(.headline)
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.green, Color.green.opacity(0.8)]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .cornerRadius(25)
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 40)
+            }
+        }
+    }
+    
+    // MARK: - アクションメソッド
+    
+    private func startReview(memo: Memo) {
+        print("🚀 HomeView: 復習開始処理を開始")
+        print("🚀   対象記録: \(memo.title ?? "無題")")
+        
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.impactOccurred()
+        
+        selectedMemoForReview = memo
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.showingReviewFlow = true
+        }
+    }
+    
+    private func startNewLearning() {
+        print("🚀 HomeView: 新規学習開始処理を開始")
+        
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.impactOccurred()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.showingNewLearningFlow = true
+        }
+    }
+    
+    private func closeReviewFlow() {
+        print("🔚 復習フローを閉じます")
+        showingReviewFlow = false
+        selectedMemoForReview = nil
+        reviewStep = 0
+        isSavingReview = false
+        reviewSaveSuccess = false
+        
+        forceRefreshData()
+    }
+    
+    private func closeNewLearningFlow() {
+        print("🔚 新規学習フローを閉じます")
+        showingNewLearningFlow = false
+        newLearningStep = 0
+        isSavingNewLearning = false
+        newLearningSaveSuccess = false
+        resetNewLearningForm()
+        
+        forceRefreshData()
+    }
+    
+    private func forceRefreshData() {
+        viewContext.rollback()
+        viewContext.refreshAllObjects()
+        refreshTrigger = UUID()
+    }
+    
+    // MARK: - セットアップメソッド
+    
     private func setupReviewSession() {
         print("🔧 復習セッションを初期化します")
         reviewStep = 0
@@ -624,35 +993,41 @@ struct HomeView: View {
         }
     }
     
-    // 次回復習日の計算と表示用フォーマット
-    private func calculateAndFormatNextReviewDate(for memo: Memo) -> String {
-        // 現在評価された記憶度を使用して次回復習日を計算
-        let nextReviewDate = ReviewCalculator.calculateNextReviewDate(
-            recallScore: recallScore,  // ユーザーが評価した最新の記憶度を使用
-            lastReviewedDate: Date(),  // 現在の日時を最終復習日として設定
-            perfectRecallCount: memo.perfectRecallCount  // 既存の完璧な復習回数を考慮
-        )
-        
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.locale = Locale(identifier: "ja_JP")
-        
-        // 日数の差を計算して表示に含める
-        let calendar = Calendar.current
-        let daysUntilNext = calendar.dateComponents([.day], from: Date(), to: nextReviewDate).day ?? 0
-        
-        let formattedDate = formatter.string(from: nextReviewDate)
-        
-        if daysUntilNext <= 1 {
-            return "\(formattedDate) (明日)"
-        } else if daysUntilNext <= 7 {
-            return "\(formattedDate) (\(daysUntilNext)日後)"
+    private func setupNewLearningSession() {
+        print("🔧 新規学習セッションを初期化します")
+        newLearningStep = 0
+        newLearningSessionStartTime = Date()
+        isSavingNewLearning = false
+        newLearningSaveSuccess = false
+        resetNewLearningForm()
+    }
+    
+    private func resetNewLearningForm() {
+        newLearningTitle = ""
+        newLearningContent = ""
+        newLearningPageRange = ""
+        newLearningTags = []
+        newLearningInitialScore = 50
+    }
+    
+    // MARK: - タグ管理メソッド
+    
+    private func toggleNewLearningTag(_ tag: Tag) {
+        if newLearningTags.contains(where: { $0.id == tag.id }) {
+            removeNewLearningTag(tag)
         } else {
-            return formattedDate
+            newLearningTags.append(tag)
         }
     }
     
-    // 復習完了処理の実行（確実で安全な実装）
+    private func removeNewLearningTag(_ tag: Tag) {
+        if let index = newLearningTags.firstIndex(where: { $0.id == tag.id }) {
+            newLearningTags.remove(at: index)
+        }
+    }
+    
+    // MARK: - 完了処理メソッド
+    
     private func executeReviewCompletion() {
         guard let memo = selectedMemoForReview else {
             print("❌ 復習対象の記録が見つかりません")
@@ -669,41 +1044,61 @@ struct HomeView: View {
         
         isSavingReview = true
         
-        // バックグラウンドで処理を実行してUIの応答性を保つ
         DispatchQueue.global(qos: .userInitiated).async {
-            // 復習セッション時間を計算
             let sessionDuration = Int(Date().timeIntervalSince(self.sessionStartTime))
             print("⏱️ 復習セッション時間: \(sessionDuration)秒")
             
-            // メインスレッドでCoreDataの操作を実行
             DispatchQueue.main.async {
                 self.performReviewDataUpdate(memo: memo, sessionDuration: sessionDuration)
             }
         }
     }
     
-    // CoreDataの更新処理（統合システム対応版）
-    // CoreDataの更新処理（段階的システム対応版）
+    private func executeNewLearningCompletion() {
+        guard !newLearningTitle.isEmpty else {
+            print("❌ タイトルが入力されていません")
+            return
+        }
+        
+        guard !isSavingNewLearning else {
+            print("⚠️ 既に保存処理中です")
+            return
+        }
+        
+        print("💾 新規学習完了処理を開始します")
+        print("📊 タイトル: \(newLearningTitle)")
+        print("📊 初期記憶度: \(newLearningInitialScore)%")
+        
+        isSavingNewLearning = true
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            let sessionDuration = Int(Date().timeIntervalSince(self.newLearningSessionStartTime))
+            print("⏱️ 新規学習セッション時間: \(sessionDuration)秒")
+            
+            DispatchQueue.main.async {
+                self.performNewLearningDataSave(sessionDuration: sessionDuration)
+            }
+        }
+    }
+    
+    // MARK: - データ永続化メソッド
+    
     private func performReviewDataUpdate(memo: Memo, sessionDuration: Int) {
         do {
             print("💾 段階的システムによる復習データ更新を開始")
             
-            // 基本情報の更新
             memo.recallScore = recallScore
             memo.lastReviewedDate = Date()
             
-            // 履歴エントリの作成
             let historyEntry = MemoHistoryEntry(context: viewContext)
             historyEntry.id = UUID()
             historyEntry.date = Date()
             historyEntry.recallScore = recallScore
             historyEntry.memo = memo
             
-            // 既存の履歴を取得（新しいエントリを含む）
             let existingEntries = memo.historyEntriesArray
             let allEntries = [historyEntry] + existingEntries
             
-            // 新しい段階的システムで次回復習日を計算
             let nextReviewDate = ReviewCalculator.calculateProgressiveNextReviewDate(
                 recallScore: recallScore,
                 lastReviewedDate: Date(),
@@ -712,8 +1107,7 @@ struct HomeView: View {
             
             memo.nextReviewDate = nextReviewDate
             
-            // 学習アクティビティの記録
-            let activity = LearningActivity.recordActivityWithPrecision(
+            let _ = LearningActivity.recordActivityWithPrecision(
                 type: .review,
                 durationSeconds: max(sessionDuration, 60),
                 memo: memo,
@@ -723,7 +1117,6 @@ struct HomeView: View {
             
             try viewContext.save()
             
-            // 成功処理
             isSavingReview = false
             reviewSaveSuccess = true
             
@@ -734,23 +1127,71 @@ struct HomeView: View {
             isSavingReview = false
         }
     }
-    // 記憶度に応じた色計算（既存のメソッド）
+    
+    private func performNewLearningDataSave(sessionDuration: Int) {
+        do {
+            print("💾 新規学習データの保存を開始")
+            
+            let newMemo = Memo(context: viewContext)
+            newMemo.id = UUID()
+            newMemo.title = newLearningTitle
+            newMemo.pageRange = newLearningPageRange
+            newMemo.content = newLearningContent
+            newMemo.recallScore = newLearningInitialScore
+            newMemo.createdAt = Date()
+            newMemo.lastReviewedDate = Date()
+            
+            let nextReviewDate = ReviewCalculator.calculateNextReviewDate(
+                recallScore: newLearningInitialScore,
+                lastReviewedDate: Date(),
+                perfectRecallCount: 0
+            )
+            newMemo.nextReviewDate = nextReviewDate
+            
+            for tag in newLearningTags {
+                newMemo.addTag(tag)
+            }
+            
+            let historyEntry = MemoHistoryEntry(context: viewContext)
+            historyEntry.id = UUID()
+            historyEntry.date = Date()
+            historyEntry.recallScore = newLearningInitialScore
+            historyEntry.memo = newMemo
+            
+            let _ = LearningActivity.recordActivityWithPrecision(
+                type: .exercise,
+                durationSeconds: max(sessionDuration, 60),
+                memo: newMemo,
+                note: "新規学習記録作成: \(newLearningTitle) (初期理解度: \(newLearningInitialScore)%)",
+                in: viewContext
+            )
+            
+            try viewContext.save()
+            
+            isSavingNewLearning = false
+            newLearningSaveSuccess = true
+            
+            NotificationCenter.default.post(
+                name: NSNotification.Name("ForceRefreshMemoData"),
+                object: nil
+            )
+            
+            print("✅ 新規学習記録の保存完了")
+            
+        } catch {
+            print("❌ エラー: \(error)")
+            isSavingNewLearning = false
+        }
+    }
+    
+    // MARK: - ヘルパーメソッド
+    
     private func getRetentionColor(for score: Int16) -> Color {
         switch score {
         case 81...100: return Color(red: 0.0, green: 0.7, blue: 0.3)
         case 61...80: return Color(red: 0.3, green: 0.7, blue: 0.0)
         case 41...60: return Color(red: 0.95, green: 0.6, blue: 0.1)
         case 21...40: return Color(red: 0.9, green: 0.45, blue: 0.0)
-        default: return Color(red: 0.9, green: 0.2, blue: 0.2)
-        }
-    }
-    
-    private func getRetentionColorForLevel(_ level: Int) -> Color {
-        switch level {
-        case 4: return Color(red: 0.0, green: 0.7, blue: 0.3)
-        case 3: return Color(red: 0.3, green: 0.7, blue: 0.0)
-        case 2: return Color(red: 0.95, green: 0.6, blue: 0.1)
-        case 1: return Color(red: 0.9, green: 0.45, blue: 0.0)
         default: return Color(red: 0.9, green: 0.2, blue: 0.2)
         }
     }
@@ -770,427 +1211,251 @@ struct HomeView: View {
         }
     }
     
-    // 復習開始処理（既存のメソッド）
-    private func startReview(memo: Memo) {
-        print("🚀 HomeView: 復習開始処理を開始")
-        print("🚀   対象記録: \(memo.title ?? "無題")")
+    // MARK: - サポートコンポーネント
+    
+    struct NewLearningButton: View {
+        let onStartNewLearning: () -> Void
+        @Environment(\.colorScheme) var colorScheme
         
-        let generator = UIImpactFeedbackGenerator(style: .medium)
-        generator.impactOccurred()
-        
-        selectedMemoForReview = memo
-        print("🚀   selectedMemoForReview設定完了: \(selectedMemoForReview?.title ?? "nil")")
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.showingReviewFlow = true
-            print("🚀   showingReviewFlow = \(self.showingReviewFlow)")
+        var body: some View {
+            Button(action: onStartNewLearning) {
+                HStack(spacing: 12) {
+                    Image(systemName: "brain.head.profile")
+                        .font(.system(size: 24))
+                        .foregroundColor(.white)
+                    
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("新規学習を始める！")
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                        
+                        Text("今日学んだ内容を記録しましょう")
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.8))
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "arrow.right.circle.fill")
+                        .font(.system(size: 20))
+                        .foregroundColor(.white)
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
+                .background(
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color.green,
+                            Color.green.opacity(0.8)
+                        ]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .cornerRadius(16)
+                .shadow(
+                    color: Color.green.opacity(0.3),
+                    radius: 8,
+                    x: 0,
+                    y: 4
+                )
+            }
+            .buttonStyle(PlainButtonStyle())
         }
     }
     
-    // 復習フロー終了処理
-    private func closeReviewFlow() {
-        print("🔚 復習フローを閉じます")
-        showingReviewFlow = false
-        selectedMemoForReview = nil
-        reviewStep = 0
-        isSavingReview = false
-        reviewSaveSuccess = false
+    struct TagFilterSection: View {
+        @Binding var selectedTags: [Tag]
+        let allTags: [Tag]
         
-        // データを更新して画面に反映
-        forceRefreshData()
-    }
-    
-    // データの強制リフレッシュ（既存のメソッド）
-    private func forceRefreshData() {
-        viewContext.rollback()
-        viewContext.refreshAllObjects()
-        refreshTrigger = UUID()
-    }
-}
-
-// MARK: - 拡張された復習カード（ボタン付き）
-struct EnhancedReviewListItemWithButtons: View {
-    let memo: Memo
-    let selectedDate: Date
-    let onStartReview: () -> Void
-    let onCompleteReview: () -> Void
-    let onOpenMemo: () -> Void
-    
-    @Environment(\.colorScheme) var colorScheme
-    // State変数を明示的に初期化
-    @State private var showingReviewFlow: Bool = false
-    
-    // デバッグ用の状態（後で削除可能）
-    @State private var debugTapCount = 0
-    
-    // 日付の状態を判定するプロパティ（既存のまま）
-    private var isOverdue: Bool {
-        guard let reviewDate = memo.nextReviewDate else { return false }
-        return Calendar.current.startOfDay(for: reviewDate) < Calendar.current.startOfDay(for: Date())
-    }
-    
-    private var isDueToday: Bool {
-        guard let reviewDate = memo.nextReviewDate else { return false }
-        return Calendar.current.isDateInToday(reviewDate)
-    }
-    
-    private var daysOverdue: Int {
-        guard let reviewDate = memo.nextReviewDate, isOverdue else { return 0 }
-        return Calendar.current.dateComponents([.day], from: reviewDate, to: Date()).day ?? 0
-    }
-    
-    var body: some View {
-        VStack(spacing: 0) {
-            // メインコンテンツエリア（既存と同じ）
-            Button(action: onOpenMemo) {
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        // タイトルとページ範囲を表示
-                        HStack {
-                            Text(memo.title ?? "無題".localized)
+        var body: some View {
+            VStack(alignment: .leading, spacing: 12) {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        Button(action: {
+                            selectedTags = []
+                        }) {
+                            Text("すべて")
                                 .font(.subheadline)
-                                .foregroundColor(.primary)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(selectedTags.isEmpty ? Color.blue : Color.gray.opacity(0.2))
+                                .foregroundColor(selectedTags.isEmpty ? .white : .primary)
+                                .cornerRadius(16)
                         }
                         
-                        HStack {
-                            if let pageRange = memo.pageRange, !pageRange.isEmpty {
-                                Text("(\(pageRange))")
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                            }
-                        }
-
-                        HStack {
-                            // 復習日ラベル - 状態によって表示を変更
-                            Text(reviewDateText)
-                                .font(.subheadline)
-                                .foregroundColor(isOverdue ? .blue : (isDueToday ? .blue : .gray))
-                            
-                            // 遅延日数を表示（遅延の場合のみ）
-                            if isOverdue && daysOverdue > 0 {
-                                Text("(%d日経過)".localizedWithInt(daysOverdue))
-                                    .font(.caption)
-                                    .foregroundColor(.red)
-                            }
-                        }
-                        
-                        // タグ表示
-                        if !memo.tagsArray.isEmpty {
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 4) {
-                                    ForEach(memo.tagsArray.prefix(3), id: \.id) { tag in
-                                        HStack(spacing: 2) {
-                                            Circle()
-                                                .fill(tag.swiftUIColor())
-                                                .frame(width: 6, height: 6)
-                                            
-                                            Text(tag.name ?? "")
-                                                .font(.caption2)
-                                                .foregroundColor(tag.swiftUIColor())
-                                        }
-                                        .padding(.horizontal, 6)
-                                        .padding(.vertical, 2)
-                                        .background(tag.swiftUIColor().opacity(0.1))
-                                        .cornerRadius(8)
-                                    }
-                                    
-                                    if memo.tagsArray.count > 3 {
-                                        Text("+\(memo.tagsArray.count - 3)")
-                                            .font(.caption2)
-                                            .foregroundColor(.gray)
-                                            .padding(.horizontal, 4)
-                                    }
-                                }
-                            }
-                            .frame(height: 20)
+                        ForEach(allTags, id: \.id) { tag in
+                            TagFilterButton(
+                                tag: tag,
+                                isSelected: selectedTags.contains(where: { $0.id == tag.id }),
+                                onToggle: { toggleTag(tag) }
+                            )
                         }
                     }
-
-                    Spacer()
-
-                    // 記憶度表示
-                    VStack(spacing: 4) {
-                        Text("\(memo.recallScore)%")
-                            .font(.headline)
-                            .foregroundColor(progressColor(for: memo.recallScore))
-                        
-                        Text("記憶度")
-                            .font(.caption2)
+                    .padding(.horizontal, 16)
+                }
+                
+                if !selectedTags.isEmpty {
+                    SelectedTagsView(
+                        selectedTags: selectedTags,
+                        onClearAll: { selectedTags = [] }
+                    )
+                    .padding(.horizontal, 16)
+                }
+            }
+        }
+        
+        private func toggleTag(_ tag: Tag) {
+            if let index = selectedTags.firstIndex(where: { $0.id == tag.id }) {
+                selectedTags.remove(at: index)
+            } else {
+                selectedTags.append(tag)
+            }
+        }
+    }
+    
+    struct TagFilterButton: View {
+        let tag: Tag
+        let isSelected: Bool
+        let onToggle: () -> Void
+        
+        var body: some View {
+            Button(action: onToggle) {
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(tag.swiftUIColor())
+                        .frame(width: 8, height: 8)
+                    
+                    Text(tag.name ?? "")
+                        .font(.subheadline)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(
+                    isSelected
+                    ? tag.swiftUIColor().opacity(0.2)
+                    : Color.gray.opacity(0.15)
+                )
+                .foregroundColor(
+                    isSelected
+                    ? tag.swiftUIColor()
+                    : .primary
+                )
+                .cornerRadius(16)
+            }
+        }
+    }
+    
+    struct SelectedTagsView: View {
+        let selectedTags: [Tag]
+        let onClearAll: () -> Void
+        
+        var body: some View {
+            HStack {
+                Text(selectedTags.count == 1 ? "フィルター:" : "フィルター（すべてを含む）:")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 4) {
+                        ForEach(selectedTags, id: \.id) { tag in
+                            HStack(spacing: 2) {
+                                Circle()
+                                    .fill(tag.swiftUIColor())
+                                    .frame(width: 6, height: 6)
+                                
+                                Text(tag.name ?? "")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                            }
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(tag.swiftUIColor().opacity(0.1))
+                            .cornerRadius(10)
+                        }
+                    }
+                }
+                .frame(height: 20)
+                
+                Button(action: onClearAll) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.gray)
+                        .font(.caption)
+                }
+            }
+        }
+    }
+    
+    struct DayInfoHeader: View {
+        let selectedDate: Date
+        let memoCount: Int
+        let selectedTags: [Tag]
+        
+        private var dateText: String {
+            let formatter = DateFormatter()
+            formatter.locale = Locale(identifier: "ja_JP")
+            
+            if Calendar.current.isDateInToday(selectedDate) {
+                return "今日の復習"
+            } else {
+                formatter.dateStyle = .medium
+                return formatter.string(from: selectedDate) + "の復習"
+            }
+        }
+        
+        var body: some View {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(dateText)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    
+                    if !selectedTags.isEmpty || memoCount > 0 {
+                        Text("\(memoCount)件の記録")
+                            .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
                 }
-                .padding(.vertical, 12)
-                .padding(.horizontal, 16)
-            }
-            .buttonStyle(PlainButtonStyle())
-            
-            // 復習ボタンエリア - ここが重要な修正箇所
-            HStack(spacing: 16) {
-                // 復習開始ボタン（メインアクション）
-                Button(action: {
-                    // デバッグ情報を追加
-                    debugTapCount += 1
-                    print("復習ボタンがタップされました: \(debugTapCount)回目")
-                    print("現在のshowingReviewFlow状態: \(showingReviewFlow)")
-                    
-                    // ハプティックフィードバック
-                    let generator = UIImpactFeedbackGenerator(style: .medium)
-                    generator.impactOccurred()
-                    
-                    // 状態を明示的に更新
-                    showingReviewFlow = true
-                    print("showingReviewFlowを更新: \(showingReviewFlow)")
-                    
-                }) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "play.circle.fill")
-                            .font(.system(size: 18))
-                        Text("復習を始める")
-                            .font(.headline)
-                    }
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
-                    .background(
-                        LinearGradient(
-                            gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .cornerRadius(22)
-                    .shadow(
-                        color: Color.blue.opacity(0.3),
-                        radius: 4,
-                        x: 0,
-                        y: 2
-                    )
-                }
-                .buttonStyle(PlainButtonStyle())
                 
-                // 詳細表示ボタン（サブアクション）
-                Button(action: onOpenMemo) {
-                    Image(systemName: "doc.text")
-                        .font(.system(size: 16))
-                        .foregroundColor(.blue)
-                        .frame(width: 44, height: 44)
-                        .background(Color.blue.opacity(0.1))
-                        .cornerRadius(22)
-                }
-                .buttonStyle(PlainButtonStyle())
+                Spacer()
             }
             .padding(.horizontal, 16)
-            .padding(.bottom, 16)
-        }
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(backgroundColorForState)
-                .shadow(
-                    color: colorScheme == .dark ? Color.black.opacity(0.3) : Color.black.opacity(0.1),
-                    radius: colorScheme == .dark ? 3 : 2,
-                    x: 0,
-                    y: colorScheme == .dark ? 2 : 1
-                )
-        )
-        // モーダル表示の修正 - 複数の方法を試す
-        .sheet(isPresented: $showingReviewFlow) {
-            // シンプルなテスト用のモーダルビュー（まず動作確認）
-            NavigationView {
-                VStack {
-                    Text("復習フローテスト")
-                        .font(.title)
-                        .padding()
-                    
-                    Text("記録: \(memo.title ?? "無題")")
-                        .padding()
-                    
-                    Button("閉じる") {
-                        showingReviewFlow = false
-                    }
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-                    
-                    Spacer()
-                }
-                .navigationTitle("復習")
-                .navigationBarItems(trailing: Button("完了") {
-                    showingReviewFlow = false
-                })
-            }
-        }
-        // デバッグ用の状態変更監視
-        .onChange(of: showingReviewFlow) { oldValue, newValue in
-            print("showingReviewFlowが変更されました: \(oldValue) -> \(newValue)")
+            .padding(.vertical, 12)
         }
     }
     
-    // 既存のヘルパーメソッド
-    private var backgroundColorForState: Color {
-        if isOverdue {
-            return Color.blue.opacity(colorScheme == .dark ? 0.2 : 0.1)
-        } else if isDueToday {
-            return Color.blue.opacity(colorScheme == .dark ? 0.2 : 0.1)
-        } else {
-            return colorScheme == .dark ? Color(.secondarySystemBackground) : Color(.systemBackground)
-        }
-    }
-    
-    private var reviewDateText: String {
-        if isOverdue {
-            return "復習予定日: %@".localizedFormat(formattedDate(memo.nextReviewDate))
-        } else if isDueToday {
-            return "今日が復習日".localized
-        } else {
-            return "復習日: %@".localizedFormat(formattedDate(memo.nextReviewDate))
-        }
-    }
-
-    private func progressColor(for score: Int16) -> Color {
-        switch score {
-        case 0..<40:
-            return Color.red
-        case 40..<70:
-            return Color.yellow
-        default:
-            return Color.green
-        }
-    }
-
-    private func formattedDate(_ date: Date?) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        return date != nil ? formatter.string(from: date!) : "未定".localized
-    }
-}
-
-// MARK: - タグフィルタリングセクション
-struct TagFilterSection: View {
-    @Binding var selectedTags: [Tag]
-    let allTags: [Tag]
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // タグ選択のための水平スクロールビュー
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    // 「すべて」ボタン
-                    Button(action: {
-                        selectedTags = []
-                    }) {
-                        Text("すべて")
-                            .font(.subheadline)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(selectedTags.isEmpty ? Color.blue : Color.gray.opacity(0.2))
-                            .foregroundColor(selectedTags.isEmpty ? .white : .primary)
-                            .cornerRadius(16)
-                    }
-                    
-                    // 個別のタグボタン
-                    ForEach(allTags, id: \.id) { tag in
-                        TagFilterButton(
-                            tag: tag,
-                            isSelected: selectedTags.contains(where: { $0.id == tag.id }),
-                            onToggle: { toggleTag(tag) }
-                        )
-                    }
-                }
-                .padding(.horizontal, 16)
-            }
-            
-            // 選択されたタグの表示
-            if !selectedTags.isEmpty {
-                SelectedTagsView(
-                    selectedTags: selectedTags,
-                    onClearAll: { selectedTags = [] }
-                )
-                .padding(.horizontal, 16)
-            }
-        }
-    }
-    
-    // タグの選択/解除をトグル
-    private func toggleTag(_ tag: Tag) {
-        if let index = selectedTags.firstIndex(where: { $0.id == tag.id }) {
-            selectedTags.remove(at: index)
-        } else {
-            selectedTags.append(tag)
-        }
-    }
-}
-
-// MARK: - タグフィルターボタン
-struct TagFilterButton: View {
-    let tag: Tag
-    let isSelected: Bool
-    let onToggle: () -> Void
-    
-    var body: some View {
-        Button(action: onToggle) {
-            HStack(spacing: 4) {
-                Circle()
-                    .fill(tag.swiftUIColor())
-                    .frame(width: 8, height: 8)
+    struct EmptyStateView: View {
+        let selectedDate: Date
+        let hasTagFilter: Bool
+        
+        var body: some View {
+            VStack(spacing: 16) {
+                Image(systemName: "calendar.badge.clock")
+                    .font(.system(size: 60))
+                    .foregroundColor(.gray.opacity(0.6))
                 
-                Text(tag.name ?? "")
-                    .font(.subheadline)
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(
-                isSelected
-                ? tag.swiftUIColor().opacity(0.2)
-                : Color.gray.opacity(0.15)
-            )
-            .foregroundColor(
-                isSelected
-                ? tag.swiftUIColor()
-                : .primary
-            )
-            .cornerRadius(16)
-        }
-    }
-}
-
-// MARK: - 選択されたタグの表示
-struct SelectedTagsView: View {
-    let selectedTags: [Tag]
-    let onClearAll: () -> Void
-    
-    var body: some View {
-        HStack {
-            Text(selectedTags.count == 1 ? "フィルター:" : "フィルター（すべてを含む）:")
-                .font(.caption)
-                .foregroundColor(.gray)
-            
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 4) {
-                    ForEach(selectedTags, id: \.id) { tag in
-                        HStack(spacing: 2) {
-                            Circle()
-                                .fill(tag.swiftUIColor())
-                                .frame(width: 6, height: 6)
-                            
-                            Text(tag.name ?? "")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                        }
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(tag.swiftUIColor().opacity(0.1))
-                        .cornerRadius(10)
-                    }
+                Text(emptyStateMessage)
+                    .font(.headline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                
+                if hasTagFilter {
+                    Text("フィルターを解除すると、他の記録も表示されます")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
                 }
             }
-            .frame(height: 20)
-            
-            // フィルタークリアボタン
-            Button(action: onClearAll) {
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundColor(.gray)
-                    .font(.caption)
+            .padding(.vertical, 40)
+            .frame(maxWidth: .infinity)
+        }
+        
+        private var emptyStateMessage: String {
+            if Calendar.current.isDateInToday(selectedDate) {
+                return hasTagFilter ? "選択されたタグの復習記録がありません" : "今日の復習記録はありません"
+            } else {
+                return hasTagFilter ? "選択されたタグの復習記録がありません" : "この日の復習記録はありません"
             }
         }
     }
