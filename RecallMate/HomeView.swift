@@ -37,6 +37,9 @@ struct HomeView: View {
     @State private var activeRecallStartTime = Date()
     @State private var showActiveRecallGuidance = true
     
+    @State private var learningElapsedTime: TimeInterval = 0
+    @State private var learningTimer: Timer?
+    
     @FetchRequest(
         entity: Tag.entity(),
         sortDescriptors: [NSSortDescriptor(keyPath: \Tag.name, ascending: true)],
@@ -643,15 +646,22 @@ struct HomeView: View {
     @ViewBuilder
     private func activeRecallGuidanceStepView() -> some View {
         VStack(spacing: 24) {
-            // タイマー表示
+            // リアルタイムタイマー表示
             VStack(spacing: 12) {
                 Text("学習時間")
                     .font(.headline)
                     .foregroundColor(.secondary)
                 
-                Text(formatElapsedTime(Date().timeIntervalSince(activeRecallStartTime)))
+                // リアルタイム更新される経過時間表示
+                Text(formatElapsedTime(learningElapsedTime))
                     .font(.system(size: 48, weight: .bold, design: .rounded))
                     .foregroundColor(selectedLearningMethod.color)
+                    .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
+                        // 1秒ごとに経過時間を更新
+                        if showingNewLearningFlow && newLearningStep == 2 {
+                            learningElapsedTime = Date().timeIntervalSince(activeRecallStartTime)
+                        }
+                    }
             }
             .padding(.top, 20)
             
@@ -743,8 +753,41 @@ struct HomeView: View {
             .padding(.horizontal, 20)
             .padding(.bottom, 40)
         }
+        .onAppear {
+            // 学習タイマー開始
+            startLearningTimer()
+        }
+        .onDisappear {
+            // 学習タイマー停止
+            stopLearningTimer()
+        }
+    }
+    // 学習タイマーの開始
+    private func startLearningTimer() {
+        // 初期値を設定
+        learningElapsedTime = Date().timeIntervalSince(activeRecallStartTime)
+        
+        // 既存のタイマーがあれば停止
+        stopLearningTimer()
+        
+        // 1秒ごとに更新するタイマーを開始
+        learningTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            if showingNewLearningFlow && newLearningStep == 2 {
+                learningElapsedTime = Date().timeIntervalSince(activeRecallStartTime)
+            }
+        }
+        
+        // タイマーをRunLoopに追加（バックグラウンドでも動作するように）
+        if let timer = learningTimer {
+            RunLoop.main.add(timer, forMode: .common)
+        }
     }
     
+    // 学習タイマーの停止
+    private func stopLearningTimer() {
+        learningTimer?.invalidate()
+        learningTimer = nil
+    }
     // Step 3: 理解度評価画面
     @ViewBuilder
     private func newLearningInitialAssessmentStepView() -> some View {
@@ -873,9 +916,15 @@ struct HomeView: View {
                     .foregroundColor(getRetentionColor(for: newLearningInitialScore))
                 
                 if selectedLearningMethod != .recordOnly {
-                    Text("学習時間: \(formatElapsedTime(Date().timeIntervalSince(activeRecallStartTime)))")
+                    // リアルタイム更新される学習時間表示
+                    Text("学習時間: \(formatElapsedTime(learningElapsedTime))")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
+                        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
+                            if showingNewLearningFlow && newLearningStep == 4 && selectedLearningMethod != .recordOnly {
+                                learningElapsedTime = Date().timeIntervalSince(activeRecallStartTime)
+                            }
+                        }
                 }
                 
                 if newLearningSaveSuccess {
@@ -940,6 +989,12 @@ struct HomeView: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 40)
+            }
+        }
+        .onAppear {
+            // 最終的な時間を設定
+            if selectedLearningMethod != .recordOnly {
+                learningElapsedTime = Date().timeIntervalSince(activeRecallStartTime)
             }
         }
     }
@@ -1241,6 +1296,10 @@ struct HomeView: View {
     
     private func closeNewLearningFlow() {
         print("🔚 新規学習フローを閉じます")
+        
+        // 学習タイマーを停止
+        stopLearningTimer()
+        
         showingNewLearningFlow = false
         newLearningStep = 0
         isSavingNewLearning = false
