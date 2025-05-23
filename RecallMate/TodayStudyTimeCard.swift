@@ -1,4 +1,4 @@
-// TodayStudyTimeCard.swift - 静的版
+// TodayStudyTimeCard.swift - 修正版
 import SwiftUI
 import CoreData
 
@@ -58,7 +58,7 @@ struct TodayStudyTimeCard: View {
         return String(format: "%d:%02d:%02d", hours, minutes, seconds)
     }
     
-    // CoreDataから今日の学習データを取得（秒単位で直接取得）
+    // CoreDataから今日の学習データを取得（秒単位で直接取得）- 修正版
     private func fetchTodaysStudyData() {
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: Date())
@@ -74,13 +74,19 @@ struct TodayStudyTimeCard: View {
         do {
             let activities = try viewContext.fetch(fetchRequest)
             
-            // 秒単位で直接合計（リアルタイムタイマーは使用しない）
-            todayStudySeconds = activities.reduce(0) { $0 + Int($1.durationSeconds) }
+            // 修正: durationInSecondsプロパティを使用
+            todayStudySeconds = activities.reduce(0) { $0 + Int($1.durationInSeconds) }
             
             // 更新時刻を記録
             lastRefreshed = Date()
             
-            print("📊 今日の学習時間を更新: \(formattedStudyTime)")
+            print("📊 今日の学習時間を更新: \(formattedStudyTime) （\(activities.count)件のアクティビティ）")
+            
+            // デバッグ用：各アクティビティの詳細を出力
+            for (index, activity) in activities.enumerated() {
+                print("   アクティビティ\(index + 1): \(Int(activity.durationInSeconds))秒 (\(activity.type ?? "不明"))")
+            }
+            
         } catch {
             print("Error fetching today's study data: \(error)")
             todayStudySeconds = 0

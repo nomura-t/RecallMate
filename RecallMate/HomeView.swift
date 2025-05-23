@@ -1423,6 +1423,7 @@ struct HomeView: View {
     
     // MARK: - データ永続化メソッド
     
+    // HomeView.swift - performReviewDataUpdate メソッドの修正部分
     private func performReviewDataUpdate(memo: Memo, sessionDuration: Int) {
         do {
             print("💾 段階的システムによる復習データ更新を開始")
@@ -1447,13 +1448,17 @@ struct HomeView: View {
             
             memo.nextReviewDate = nextReviewDate
             
+            // 修正: 最小時間制限を削除
+            let actualDuration = max(sessionDuration, 1) // 最低1秒のみ保証
             let _ = LearningActivity.recordActivityWithPrecision(
                 type: .review,
-                durationSeconds: max(sessionDuration, 60),
+                durationSeconds: actualDuration, // 実際の時間を記録
                 memo: memo,
                 note: "段階的システム復習: \(memo.title ?? "無題") (記憶度: \(recallScore)%)",
                 in: viewContext
             )
+            
+            print("⏱️ 記録された復習時間: \(actualDuration)秒")
             
             try viewContext.save()
             
@@ -1505,13 +1510,17 @@ struct HomeView: View {
                 noteText = "アクティブリコール学習: \(newLearningTitle) (\(selectedLearningMethod.rawValue), 理解度: \(newLearningInitialScore)%)"
             }
             
+            // 修正: 最小時間制限を削除し、実際の学習時間を記録
+            let actualDuration = max(sessionDuration, 1) // 最低1秒のみ保証
             let _ = LearningActivity.recordActivityWithPrecision(
                 type: .exercise,
-                durationSeconds: max(sessionDuration, 60),
+                durationSeconds: actualDuration, // 実際の時間を記録
                 memo: newMemo,
                 note: noteText,
                 in: viewContext
             )
+            
+            print("⏱️ 記録された学習時間: \(actualDuration)秒")
             
             try viewContext.save()
             
