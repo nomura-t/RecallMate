@@ -80,7 +80,6 @@ class ContentViewModel: ObservableObject {
         }
         
         // 関連する比較問題とタグを読み込み
-        loadComparisonQuestions(for: memo)
         selectedTags = memo.tagsArray
     }
     
@@ -92,20 +91,6 @@ class ContentViewModel: ObservableObject {
             lastReviewedDate: Date(),
             perfectRecallCount: memo?.perfectRecallCount ?? 0
         )
-    }
-    
-    // 比較問題の読み込み - 記録に関連する学習問題を取得
-    func loadComparisonQuestions(for memo: Memo) {
-        let fetchRequest: NSFetchRequest<ComparisonQuestion> = ComparisonQuestion.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "memo == %@", memo)
-        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \ComparisonQuestion.createdAt, ascending: true)]
-        
-        do {
-            let fetchedQuestions = try viewContext.fetch(fetchRequest)
-            comparisonQuestions = fetchedQuestions
-        } catch {
-            comparisonQuestions = []
-        }
     }
     
     // 復習履歴を記録 - 学習の進捗を科学的に追跡
