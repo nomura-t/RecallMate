@@ -2,36 +2,6 @@
 import SwiftUI
 import CoreData
 
-//// MARK: - 日付選択カレンダー
-//struct DatePickerCalendarView: View {
-//    @Binding var selectedDate: Date
-//    @Environment(\.colorScheme) var colorScheme
-//    
-//    var body: some View {
-//        VStack(spacing: 12) {
-//            Text(formattedSelectedDate())
-//                .font(.title2)
-//                .fontWeight(.bold)
-//                .foregroundColor(.primary)
-//            
-//            DatePicker(
-//                "",
-//                selection: $selectedDate,
-//                displayedComponents: .date
-//            )
-//            .datePickerStyle(.compact)
-//            .accentColor(.blue)
-//        }
-//    }
-//    
-//    private func formattedSelectedDate() -> String {
-//        let formatter = DateFormatter()
-//        formatter.dateFormat = "M月d日 (E)"
-//        formatter.locale = Locale(identifier: "ja_JP")
-//        return formatter.string(from: selectedDate)
-//    }
-//}
-
 // MARK: - 日付情報ヘッダー
 struct DayInfoHeader: View {
     let selectedDate: Date
