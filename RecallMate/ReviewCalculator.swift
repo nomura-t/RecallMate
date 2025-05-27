@@ -18,10 +18,6 @@ struct ReviewCalculator {
         lastReviewedDate: Date?,
         historyEntries: [MemoHistoryEntry]
     ) -> Date {
-        print("🎯 段階的復習計算システムを開始")
-        print("   現在の記憶度: \(recallScore)%")
-        print("   履歴エントリ数: \(historyEntries.count)")
-        
         // ステップ1: 学習熟達レベルの計算
         // これは従来のperfectRecallCountに代わる、より柔軟な進歩指標です
         let masteryLevel = calculateMasteryLevel(
@@ -29,31 +25,23 @@ struct ReviewCalculator {
             historyEntries: historyEntries
         )
         
-        print("   計算された熟達レベル: \(masteryLevel)")
-        
         // ステップ2: 熟達レベルに基づく基本間隔の決定
         let baseInterval = getBaseIntervalForMasteryLevel(masteryLevel: masteryLevel)
-        print("   基本復習間隔: \(baseInterval)日")
         
         // ステップ3: 現在の記憶度による微調整
         let scoreAdjustment = getScoreBasedAdjustment(recallScore: recallScore)
-        print("   記憶度による調整係数: \(scoreAdjustment)")
         
         // ステップ4: 学習パターンによる追加調整
         let patternAdjustment = getLearningPatternAdjustment(
             currentScore: recallScore,
             historyEntries: historyEntries
         )
-        print("   学習パターン調整係数: \(patternAdjustment)")
         
         // ステップ5: 最終計算と制約適用
         let rawInterval = baseInterval * scoreAdjustment * patternAdjustment
         let finalInterval = applyReasonableConstraints(interval: rawInterval)
         let daysToAdd = Int(round(finalInterval)) // 四捨五入で正確な日数を決定
         
-        print("   最終計算: \(baseInterval) × \(scoreAdjustment) × \(patternAdjustment) = \(rawInterval)")
-        print("   制約適用後: \(finalInterval)日")
-        print("   実際の追加日数: \(daysToAdd)日")
         
         // ステップ6: 次回復習日の算出
         let calendar = Calendar.current
@@ -65,7 +53,6 @@ struct ReviewCalculator {
         
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
-        print("   次回復習日: \(formatter.string(from: nextDate))")
         
         return nextDate
     }
@@ -115,10 +102,6 @@ struct ReviewCalculator {
         
         // 熟達レベルの決定（0-12の範囲）
         let masteryLevel = max(0, min(12, masteryPoints))
-        
-        print("     熟達レベル詳細:")
-        print("       現在スコアポイント: \(masteryPoints)")
-        print("       最終熟達レベル: \(masteryLevel)")
         
         return masteryLevel
     }

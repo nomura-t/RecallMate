@@ -56,6 +56,7 @@ struct MainView: View {
     }
 }
 
+
 // 状態管理クラス（変更なし）
 class MainViewState: ObservableObject {
     @Published var isShowingOnboarding: Bool

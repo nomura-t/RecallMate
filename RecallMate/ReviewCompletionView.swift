@@ -212,8 +212,7 @@ struct ReviewCompletionView: View {
                 dismiss()
             }
             
-        } catch {
-            print("Error saving review completion: \(error)")
+        } catch {            
             isSubmitting = false
         }
     }

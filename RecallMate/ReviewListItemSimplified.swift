@@ -109,7 +109,6 @@ struct ReviewListItemSimplified: View {
             // 復習ボタンエリア - モーダル管理を含まない
             HStack(spacing: 16) {
                 Button(action: {
-                    print("ReviewListItemSimplified: 復習ボタンがタップされました")
                     onStartReview()
                 }) {
                     HStack(spacing: 8) {

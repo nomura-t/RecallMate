@@ -176,7 +176,6 @@ struct HomeView: View {
             
             return memos
         } catch {
-            print("Error fetching daily memos: \(error)")
             return []
         }
     }
@@ -1796,9 +1795,6 @@ struct HomeView: View {
     // MARK: - アクションメソッド
     
     private func startReview(memo: Memo) {
-        print("🚀 HomeView: 復習開始処理を開始")
-        print("🚀   対象記録: \(memo.title ?? "無題")")
-        
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.impactOccurred()
         
@@ -1810,8 +1806,6 @@ struct HomeView: View {
     }
     
     private func startNewLearning() {
-        print("🚀 HomeView: 新規学習開始処理を開始")
-        
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.impactOccurred()
         
@@ -1821,8 +1815,6 @@ struct HomeView: View {
     }
     
     private func closeReviewFlow() {
-        print("🔚 復習フローを閉じます")
-        
         // 復習タイマーを停止
         stopReviewTimer()
         
@@ -1836,8 +1828,6 @@ struct HomeView: View {
     }
     
     private func closeNewLearningFlow() {
-        print("🔚 新規学習フローを閉じます")
-        
         // 学習タイマーを停止
         stopLearningTimer()
         
@@ -1859,7 +1849,6 @@ struct HomeView: View {
     // MARK: - セットアップメソッド
     
     private func setupReviewSession() {
-        print("🔧 復習セッションを初期化します")
         reviewStep = 0
         sessionStartTime = Date()
         isSavingReview = false
@@ -1871,13 +1860,10 @@ struct HomeView: View {
         
         if let memo = selectedMemoForReview {
             recallScore = memo.recallScore
-            print("📊 記録「\(memo.title ?? "無題")」の復習を開始")
-            print("📊 現在の記憶度: \(recallScore)%")
         }
     }
     
     private func setupNewLearningSession() {
-        print("🔧 新規学習セッションを初期化します")
         newLearningStep = 0
         newLearningSessionStartTime = Date()
         isSavingNewLearning = false
@@ -1918,18 +1904,12 @@ struct HomeView: View {
     
     private func executeReviewCompletion() {
         guard let memo = selectedMemoForReview else {
-            print("❌ 復習対象の記録が見つかりません")
             return
         }
         
         guard !isSavingReview else {
-            print("⚠️ 既に保存処理中です")
             return
         }
-        
-        print("💾 復習完了処理を開始します")
-        print("📊 最終記憶度: \(recallScore)%")
-        print("📊 復習方法: \(selectedReviewMethod.rawValue)")
         
         isSavingReview = true
         
@@ -1943,8 +1923,6 @@ struct HomeView: View {
                 sessionDuration = Int(Date().timeIntervalSince(self.activeReviewStartTime))
             }
             
-            print("⏱️ 復習セッション時間: \(sessionDuration)秒")
-            
             DispatchQueue.main.async {
                 self.performReviewDataUpdate(memo: memo, sessionDuration: sessionDuration)
             }
@@ -1953,19 +1931,12 @@ struct HomeView: View {
     
     private func executeNewLearningCompletion() {
         guard !newLearningTitle.isEmpty else {
-            print("❌ タイトルが入力されていません")
             return
         }
         
         guard !isSavingNewLearning else {
-            print("⚠️ 既に保存処理中です")
             return
         }
-        
-        print("💾 新規学習完了処理を開始します")
-        print("📊 タイトル: \(newLearningTitle)")
-        print("📊 理解度: \(newLearningInitialScore)%")
-        print("📊 学習方法: \(selectedLearningMethod.rawValue)")
         
         isSavingNewLearning = true
         
@@ -1979,7 +1950,6 @@ struct HomeView: View {
                 sessionDuration = Int(Date().timeIntervalSince(self.activeRecallStartTime))
             }
             
-            print("⏱️ 新規学習セッション時間: \(sessionDuration)秒")
             
             DispatchQueue.main.async {
                 self.performNewLearningDataSave(sessionDuration: sessionDuration)
@@ -1991,7 +1961,6 @@ struct HomeView: View {
     
     private func performReviewDataUpdate(memo: Memo, sessionDuration: Int) {
         do {
-            print("💾 段階的システムによる復習データ更新を開始")
             
             memo.recallScore = recallScore
             memo.lastReviewedDate = Date()
@@ -2030,24 +1999,20 @@ struct HomeView: View {
                 in: viewContext
             )
             
-            print("⏱️ 記録された復習時間: \(actualDuration)秒")
             
             try viewContext.save()
             
             isSavingReview = false
             reviewSaveSuccess = true
             
-            print("✅ 段階的システムによる復習完了")
             
         } catch {
-            print("❌ エラー: \(error)")
             isSavingReview = false
         }
     }
     
     private func performNewLearningDataSave(sessionDuration: Int) {
         do {
-            print("💾 新規学習データの保存を開始")
             
             let newMemo = Memo(context: viewContext)
             newMemo.id = UUID()
@@ -2092,8 +2057,6 @@ struct HomeView: View {
                 in: viewContext
             )
             
-            print("⏱️ 記録された学習時間: \(actualDuration)秒")
-            
             try viewContext.save()
             
             isSavingNewLearning = false
@@ -2104,10 +2067,7 @@ struct HomeView: View {
                 object: nil
             )
             
-            print("✅ 新規学習記録の保存完了")
-            
         } catch {
-            print("❌ エラー: \(error)")
             isSavingNewLearning = false
         }
     }

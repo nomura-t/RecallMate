@@ -80,15 +80,9 @@ struct TodayStudyTimeCard: View {
             // 更新時刻を記録
             lastRefreshed = Date()
             
-            print("📊 今日の学習時間を更新: \(formattedStudyTime) （\(activities.count)件のアクティビティ）")
             
-            // デバッグ用：各アクティビティの詳細を出力
-            for (index, activity) in activities.enumerated() {
-                print("   アクティビティ\(index + 1): \(Int(activity.durationInSeconds))秒 (\(activity.type ?? "不明"))")
-            }
             
         } catch {
-            print("Error fetching today's study data: \(error)")
             todayStudySeconds = 0
         }
     }
