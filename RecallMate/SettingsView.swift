@@ -98,31 +98,16 @@ struct SettingsView: View {
                     Text("アプリを共有".localized)
                 }
                 
-                Section(header: Text("一般設定".localized)) {
-                    // SettingsView.swift の修正版（Toggle部分のみ）
-                    Toggle("通知を有効にする".localized, isOn: Binding<Bool>(
-                        get: {
-                            self.notificationEnabled
-                        },
-                        set: { newValue in
-                            if newValue {
-                                // 通知を有効化しようとしている場合
-                                // トグルの値はまだ変更せず、モーダルを表示
-                                showNotificationPermission = true
-                            } else {
-                                // 通知を無効化する場合
-                                self.notificationEnabled = false
-                                UserDefaults.standard.set(false, forKey: "notificationsEnabled")
-                                self.cancelAllNotifications()
-                                StreakNotificationManager.shared.disableNotifications()
-                                
-                                // iOS設定アプリの通知設定画面に遷移
-                                openAppNotificationSettings()
-                            }
+                Section("アプリ設定") {
+                    NavigationLink(destination: NotificationSettingsView()) {
+                        HStack {
+                            Image(systemName: "bell.fill")
+                                .foregroundColor(.orange)
+                                .frame(width: 20)
+                            Text("通知設定")
                         }
-                    ))
+                    }
                 }
-                
                 Section(header: Text("通知設定".localized)) {
                     HStack {
                         Text("現在の通知時間:".localized)
