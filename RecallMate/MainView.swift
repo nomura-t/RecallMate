@@ -1,4 +1,4 @@
-// MainView.swift（修正版） - FloatingAddButtonの削除
+// MainView.swift（修正版） - ポモドーロタイマータブを削除
 import SwiftUI
 import CoreData
 import UserNotifications
@@ -23,16 +23,12 @@ struct MainView: View {
                 ActivityProgressView()
                     .tabItem { Label("振り返り", systemImage: "list.bullet.rectangle") }
                     .tag(1)
-                PomodoroView()
-                    .tabItem { Label("集中タイマー", systemImage: "timer") }
-                    .tag(2)
+                // ポモドーロタイマータブを削除
                 SettingsView()
                     .environmentObject(appSettings)
                     .tabItem { Label("設定", systemImage: "gearshape.fill") }
-                    .tag(4)
+                    .tag(2) // タグ番号を4から2に変更
             }
-            // .fullScreenCover(isPresented: $isAddingMemo) の削除
-            // FloatingAddButtonも削除されています
 
             // レビューモーダル
             if showingReviewRequest {
@@ -55,7 +51,6 @@ struct MainView: View {
         .animation(Animation.easeInOut(duration: 0.3), value: viewState.isShowingOnboarding)
     }
 }
-
 
 // 状態管理クラス（変更なし）
 class MainViewState: ObservableObject {
