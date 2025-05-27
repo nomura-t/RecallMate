@@ -860,112 +860,126 @@ struct HomeView: View {
         }
     }
     
-    // Step 4: 復習完了画面（次回復習日表示を追加）
+    // HomeView.swift
+
+    // Step 4: 復習完了画面（修正版）
     @ViewBuilder
     private func reviewCompletionStepView() -> some View {
-        VStack(spacing: 32) {
-            Spacer()
-            
-            VStack(spacing: 24) {
-                Image(systemName: isSavingReview ? "clock.fill" : (reviewSaveSuccess ? "checkmark.circle.fill" : "sparkles"))
-                    .font(.system(size: 80))
-                    .foregroundColor(isSavingReview ? .orange : (reviewSaveSuccess ? .green : selectedReviewMethod.color))
-                    .scaleEffect(isSavingReview ? 0.8 : 1.0)
-                    .animation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true), value: isSavingReview)
+        ScrollView {
+            VStack(spacing: 32) {
+                // 上部のスペース
+                Spacer()
+                    .frame(height: 20)
                 
-                Text(isSavingReview ? "保存中..." : (reviewSaveSuccess ? "復習完了！" : "復習完了"))
-                    .font(.title)
-                    .fontWeight(.bold)
-                    .foregroundColor(.primary)
-                
-                if let memo = selectedMemoForReview {
-                    Text("「\(memo.title ?? "無題")」")
-                        .font(.headline)
+                VStack(spacing: 24) {
+                    Image(systemName: isSavingReview ? "clock.fill" : (reviewSaveSuccess ? "checkmark.circle.fill" : "sparkles"))
+                        .font(.system(size: 80))
+                        .foregroundColor(isSavingReview ? .orange : (reviewSaveSuccess ? .green : selectedReviewMethod.color))
+                        .scaleEffect(isSavingReview ? 0.8 : 1.0)
+                        .animation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true), value: isSavingReview)
+                    
+                    Text(isSavingReview ? "保存中..." : (reviewSaveSuccess ? "復習完了！" : "復習完了"))
+                        .font(.title)
+                        .fontWeight(.bold)
                         .foregroundColor(.primary)
-                        .multilineTextAlignment(.center)
-                }
-                
-                // 記憶度表示
-                HStack(spacing: 16) {
-                    VStack(spacing: 4) {
-                        Text("記憶度")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        
-                        Text("\(Int(recallScore))%")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(getRetentionColor(for: recallScore))
+                    
+                    if let memo = selectedMemoForReview {
+                        Text("「\(memo.title ?? "無題")」")
+                            .font(.headline)
+                            .foregroundColor(.primary)
+                            .multilineTextAlignment(.center)
                     }
                     
-                    // 次回復習日表示（新規追加）
-                    if reviewSaveSuccess, let memo = selectedMemoForReview, let nextReviewDate = memo.nextReviewDate {
+                    // 記憶度表示
+                    HStack(spacing: 16) {
                         VStack(spacing: 4) {
-                            Text("次回復習日")
+                            Text("記憶度")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                             
-                            Text(formatDateForDisplay(nextReviewDate))
-                                .font(.title3)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.blue)
-                        }
-                    }
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(.systemGray6).opacity(0.5))
-                )
-                
-                // 次回復習日の詳細説明（新規追加）
-                if reviewSaveSuccess, let memo = selectedMemoForReview, let nextReviewDate = memo.nextReviewDate {
-                    VStack(spacing: 8) {
-                        HStack {
-                            Image(systemName: "calendar.badge.clock")
-                                .foregroundColor(.blue)
-                                .font(.system(size: 16))
-                            
-                            Text(getNextReviewMessage(for: nextReviewDate, score: recallScore))
-                                .font(.subheadline)
-                                .foregroundColor(.primary)
-                                .multilineTextAlignment(.center)
+                            Text("\(Int(recallScore))%")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .foregroundColor(getRetentionColor(for: recallScore))
                         }
                         
-                        Text(getReviewIntervalExplanation(for: recallScore))
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 8)
-                    }
-                    .padding(12)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color.blue.opacity(0.1))
-                    )
-                }
-                
-                if selectedReviewMethod != .assessment {
-                    // リアルタイム更新される復習時間表示
-                    Text("復習時間: \(formatElapsedTime(reviewElapsedTime))")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
-                            if showingReviewFlow && reviewStep == 4 && selectedReviewMethod != .assessment {
-                                reviewElapsedTime = Date().timeIntervalSince(activeReviewStartTime)
+                        // 次回復習日表示
+                        if reviewSaveSuccess, let memo = selectedMemoForReview, let nextReviewDate = memo.nextReviewDate {
+                            VStack(spacing: 4) {
+                                Text("次回復習日")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                
+                                Text(formatDateForDisplay(nextReviewDate))
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.blue)
                             }
                         }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(.systemGray6).opacity(0.5))
+                    )
+                    
+                    // 次回復習日の詳細説明
+                    if reviewSaveSuccess, let memo = selectedMemoForReview, let nextReviewDate = memo.nextReviewDate {
+                        VStack(spacing: 8) {
+                            HStack {
+                                Image(systemName: "calendar.badge.clock")
+                                    .foregroundColor(.blue)
+                                    .font(.system(size: 16))
+                                
+                                Text(getNextReviewMessage(for: nextReviewDate, score: recallScore))
+                                    .font(.subheadline)
+                                    .foregroundColor(.primary)
+                                    .multilineTextAlignment(.center)
+                            }
+                            
+                            Text(getReviewIntervalExplanation(for: recallScore))
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 8)
+                        }
+                        .padding(12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color.blue.opacity(0.1))
+                        )
+                    }
+                    
+                    if selectedReviewMethod != .assessment {
+                        // リアルタイム更新される復習時間表示
+                        Text("復習時間: \(formatElapsedTime(reviewElapsedTime))")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
+                                if showingReviewFlow && reviewStep == 4 && selectedReviewMethod != .assessment {
+                                    reviewElapsedTime = Date().timeIntervalSince(activeReviewStartTime)
+                                }
+                            }
+                    }
+                    
+                    if reviewSaveSuccess {
+                        Text("復習結果が正常に保存されました")
+                            .font(.subheadline)
+                            .foregroundColor(.green)
+                            .padding(.top, 8)
+                    }
                 }
                 
-                if reviewSaveSuccess {
-                    Text("復習結果が正常に保存されました")
-                        .font(.subheadline)
-                        .foregroundColor(.green)
-                        .padding(.top, 8)
-                }
+                // 最小限のスペースを確保
+                Spacer()
+                    .frame(minHeight: 40)
             }
-            
+            .padding(.horizontal, 20)
+        }
+        
+        // ボタンを画面下部に固定
+        VStack {
             Spacer()
             
             if !reviewSaveSuccess {
@@ -997,7 +1011,6 @@ struct HomeView: View {
                     .disabled(isSavingReview)
                 }
                 .padding(.horizontal, 20)
-                .padding(.bottom, 40)
             } else {
                 Button(action: closeReviewFlow) {
                     HStack {
@@ -1019,9 +1032,9 @@ struct HomeView: View {
                     .cornerRadius(25)
                 }
                 .padding(.horizontal, 20)
-                .padding(.bottom, 40)
             }
         }
+        .padding(.bottom, 20) // セーフエリアを考慮した下部パディング
         .onAppear {
             // 最終的な時間を設定
             if selectedReviewMethod != .assessment {
@@ -1567,110 +1580,122 @@ struct HomeView: View {
         }
     }
     
-    // Step 4: 完了画面（次回復習日表示を追加）
+    // Step 4: 新規学習完了画面（修正版）
     @ViewBuilder
     private func newLearningCompletionStepView() -> some View {
-        VStack(spacing: 32) {
-            Spacer()
-            
-            VStack(spacing: 24) {
-                Image(systemName: isSavingNewLearning ? "clock.fill" : (newLearningSaveSuccess ? "checkmark.circle.fill" : "brain.head.profile"))
-                    .font(.system(size: 80))
-                    .foregroundColor(isSavingNewLearning ? .orange : (newLearningSaveSuccess ? .green : selectedLearningMethod.color))
-                    .scaleEffect(isSavingNewLearning ? 0.8 : 1.0)
-                    .animation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true), value: isSavingNewLearning)
+        ScrollView {
+            VStack(spacing: 32) {
+                // 上部のスペース
+                Spacer()
+                    .frame(height: 20)
                 
-                Text(isSavingNewLearning ? "保存中..." : (newLearningSaveSuccess ? "学習記録完了！" : "新規学習完了"))
-                    .font(.title)
-                    .fontWeight(.bold)
-                    .foregroundColor(.primary)
-                
-                Text("タイトル: \(newLearningTitle)")
-                    .font(.headline)
-                    .foregroundColor(.primary)
-                    .multilineTextAlignment(.center)
-                
-                // 理解度と次回復習日を横並びで表示
-                HStack(spacing: 16) {
-                    VStack(spacing: 4) {
-                        Text("初期理解度")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        
-                        Text("\(Int(newLearningInitialScore))%")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(getRetentionColor(for: newLearningInitialScore))
-                    }
+                VStack(spacing: 24) {
+                    Image(systemName: isSavingNewLearning ? "clock.fill" : (newLearningSaveSuccess ? "checkmark.circle.fill" : "brain.head.profile"))
+                        .font(.system(size: 80))
+                        .foregroundColor(isSavingNewLearning ? .orange : (newLearningSaveSuccess ? .green : selectedLearningMethod.color))
+                        .scaleEffect(isSavingNewLearning ? 0.8 : 1.0)
+                        .animation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true), value: isSavingNewLearning)
                     
-                    // 次回復習日表示（新規追加：保存成功後のみ表示）
-                    if newLearningSaveSuccess {
+                    Text(isSavingNewLearning ? "保存中..." : (newLearningSaveSuccess ? "学習記録完了！" : "新規学習完了"))
+                        .font(.title)
+                        .fontWeight(.bold)
+                        .foregroundColor(.primary)
+                    
+                    Text("タイトル: \(newLearningTitle)")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                        .multilineTextAlignment(.center)
+                    
+                    // 理解度と次回復習日を横並びで表示
+                    HStack(spacing: 16) {
                         VStack(spacing: 4) {
-                            Text("初回復習日")
+                            Text("初期理解度")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                             
-                            Text(getCalculatedNextReviewDate())
-                                .font(.title3)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.blue)
-                        }
-                    }
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(.systemGray6).opacity(0.5))
-                )
-                
-                // 初回復習の重要性を説明（新規追加：保存成功後のみ表示）
-                if newLearningSaveSuccess {
-                    VStack(spacing: 8) {
-                        HStack {
-                            Image(systemName: "lightbulb.fill")
-                                .foregroundColor(.orange)
-                                .font(.system(size: 16))
-                            
-                            Text(getInitialReviewMessage(for: newLearningInitialScore))
-                                .font(.subheadline)
-                                .foregroundColor(.primary)
-                                .multilineTextAlignment(.center)
+                            Text("\(Int(newLearningInitialScore))%")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .foregroundColor(getRetentionColor(for: newLearningInitialScore))
                         }
                         
-                        Text(getInitialReviewExplanation(for: newLearningInitialScore))
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 8)
-                    }
-                    .padding(12)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color.orange.opacity(0.1))
-                    )
-                }
-                
-                if selectedLearningMethod != .recordOnly {
-                    // リアルタイム更新される学習時間表示
-                    Text("学習時間: \(formatElapsedTime(learningElapsedTime))")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
-                            if showingNewLearningFlow && newLearningStep == 4 && selectedLearningMethod != .recordOnly {
-                                learningElapsedTime = Date().timeIntervalSince(activeRecallStartTime)
+                        // 次回復習日表示（保存成功後のみ表示）
+                        if newLearningSaveSuccess {
+                            VStack(spacing: 4) {
+                                Text("初回復習日")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                
+                                Text(getCalculatedNextReviewDate())
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.blue)
                             }
                         }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(.systemGray6).opacity(0.5))
+                    )
+                    
+                    // 初回復習の重要性を説明（保存成功後のみ表示）
+                    if newLearningSaveSuccess {
+                        VStack(spacing: 8) {
+                            HStack {
+                                Image(systemName: "lightbulb.fill")
+                                    .foregroundColor(.orange)
+                                    .font(.system(size: 16))
+                                
+                                Text(getInitialReviewMessage(for: newLearningInitialScore))
+                                    .font(.subheadline)
+                                    .foregroundColor(.primary)
+                                    .multilineTextAlignment(.center)
+                            }
+                            
+                            Text(getInitialReviewExplanation(for: newLearningInitialScore))
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 8)
+                        }
+                        .padding(12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color.orange.opacity(0.1))
+                        )
+                    }
+                    
+                    if selectedLearningMethod != .recordOnly {
+                        // リアルタイム更新される学習時間表示
+                        Text("学習時間: \(formatElapsedTime(learningElapsedTime))")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
+                                if showingNewLearningFlow && newLearningStep == 4 && selectedLearningMethod != .recordOnly {
+                                    learningElapsedTime = Date().timeIntervalSince(activeRecallStartTime)
+                                }
+                            }
+                    }
+                    
+                    if newLearningSaveSuccess {
+                        Text("学習記録が正常に保存されました")
+                            .font(.subheadline)
+                            .foregroundColor(.green)
+                            .padding(.top, 8)
+                    }
                 }
                 
-                if newLearningSaveSuccess {
-                    Text("学習記録が正常に保存されました")
-                        .font(.subheadline)
-                        .foregroundColor(.green)
-                        .padding(.top, 8)
-                }
+                // 最小限のスペースを確保
+                Spacer()
+                    .frame(minHeight: 40)
             }
-            
+            .padding(.horizontal, 20)
+        }
+        
+        // ボタンを画面下部に固定
+        VStack {
             Spacer()
             
             if !newLearningSaveSuccess {
@@ -1702,7 +1727,6 @@ struct HomeView: View {
                     .disabled(isSavingNewLearning)
                 }
                 .padding(.horizontal, 20)
-                .padding(.bottom, 40)
             } else {
                 Button(action: closeNewLearningFlow) {
                     HStack {
@@ -1724,9 +1748,9 @@ struct HomeView: View {
                     .cornerRadius(25)
                 }
                 .padding(.horizontal, 20)
-                .padding(.bottom, 40)
             }
         }
+        .padding(.bottom, 20) // セーフエリアを考慮した下部パディング
         .onAppear {
             // 最終的な時間を設定
             if selectedLearningMethod != .recordOnly {
