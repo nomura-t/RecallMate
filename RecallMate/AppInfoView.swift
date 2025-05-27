@@ -71,7 +71,7 @@ struct AppInfoView: View {
                     HStack {
                         Text("バージョン".localized)
                         Spacer()
-                        Text("1.0.0")
+                        Text("4.0.0")
                             .foregroundColor(.gray)
                     }
                     
