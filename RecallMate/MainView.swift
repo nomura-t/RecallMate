@@ -1,60 +1,34 @@
-// MainView.swift（修正版）
+// MainView.swift（修正版） - ポモドーロタイマータブを削除
 import SwiftUI
 import CoreData
 import UserNotifications
 
 struct MainView: View {
-    @State private var isAddingMemo = false
+    @State private var isAddingMemo = false // この変数は残しますが、新規学習フローで使用しません
     @State private var isRecordingActivity = false
     @State private var selectedTab = 0
     @EnvironmentObject var appSettings: AppSettings
 
-    // StateObjectに変更して永続化（再初期化防止）
     @StateObject private var viewState = MainViewState()
-    
-    // ReviewManagerなど
     @StateObject private var reviewManager = ReviewManager.shared
     @State private var showingReviewRequest = false
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             TabView(selection: $selectedTab) {
-                // 各タブの定義（変更なし）
-                HomeView(isAddingMemo: $isAddingMemo)
+                // HomeViewからisAddingMemoバインディングを削除し、ダミー値を渡します
+                HomeView(isAddingMemo: $isAddingMemo) // バインディングは残しますが使用しません
                     .tabItem { Label("記録する", systemImage: "brain.head.profile") }
                     .tag(0)
                 ActivityProgressView()
                     .tabItem { Label("振り返り", systemImage: "list.bullet.rectangle") }
                     .tag(1)
-                PomodoroView()
-                    .tabItem { Label("集中タイマー", systemImage: "timer") }
-                    .tag(2)
+                // ポモドーロタイマータブを削除
                 SettingsView()
                     .environmentObject(appSettings)
                     .tabItem { Label("設定", systemImage: "gearshape.fill") }
-                    .tag(4)
+                    .tag(2) // タグ番号を4から2に変更
             }
-            .fullScreenCover(isPresented: $isAddingMemo) {
-                ContentView(memo: nil)
-            }
-            
-
-            // オンボーディング
-            if viewState.isShowingOnboarding {
-                OnboardingView(isShowingOnboarding: $viewState.isShowingOnboarding)
-                    .background(Color(.systemBackground))
-                    .edgesIgnoringSafeArea(.all)
-                    .transition(.opacity)
-                    .zIndex(1)
-                    .onDisappear {
-                        // オンボーディング非表示時に通知チェック
-                        if !viewState.hasCheckedNotifications {
-                            viewState.hasCheckedNotifications = true
-                            viewState.checkNotificationPermission()
-                        }
-                    }
-            }
-
 
             // レビューモーダル
             if showingReviewRequest {
@@ -78,27 +52,21 @@ struct MainView: View {
     }
 }
 
-// 状態管理クラスを分離（UIの再構築でも状態を維持）
+// 状態管理クラス（変更なし）
 class MainViewState: ObservableObject {
-    // 状態変数
     @Published var isShowingOnboarding: Bool
     @Published var showNotificationPermission = false
     @Published var hasCheckedNotifications = false
     
     init() {
-        // 初期化時に1回だけUserDefaultsを読み込む
         let hasSeenOnboarding = UserDefaults.standard.bool(forKey: "hasSeenOnboarding")
         isShowingOnboarding = !hasSeenOnboarding
     }
     
-    // 通知許可をチェック
     func checkNotificationPermission() {
-        
-        // 通知が表示済みかチェック
         if !UserDefaults.standard.bool(forKey: "hasPromptedForNotifications") {
             UNUserNotificationCenter.current().getNotificationSettings { settings in
                 DispatchQueue.main.async {
-                    
                     if settings.authorizationStatus == .notDetermined {
                         self.showNotificationPermission = true
                         UserDefaults.standard.set(true, forKey: "hasPromptedForNotifications")

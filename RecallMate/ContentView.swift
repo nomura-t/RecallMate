@@ -532,7 +532,6 @@ struct ContentView: View {
     // 問題エディタ閉じた後の処理
     private func handleQuestionEditorDismiss() {
         if let memo = memo {
-            viewModel.loadComparisonQuestions(for: memo)
             viewModel.contentChanged = true
             viewModel.recordActivityOnSave = true
         }

@@ -13,137 +13,87 @@ class ContentViewModel: ObservableObject {
     @Published var reviewDate: Date? = nil
     @Published var keywords = [String]()
     @Published var comparisonQuestions: [ComparisonQuestion] = []
-    
-    // テスト日関連のプロパティ
-    @Published var testDate: Date? = nil
-    @Published var shouldUseTestDate: Bool = false
-    @Published var showTestDatePicker: Bool = false
     @Published var selectedTags: [Tag] = []
-    // アクティビティ関連
+    
+    // アクティビティ関連のプロパティ
     @Published var contentChanged = false
     @Published var recordActivityOnSave = true
-    @Published var savedMemo: Memo?  // var で宣言して変更可能に
+    @Published var savedMemo: Memo?
     @Published var currentSessionId: UUID?
     
+    // UI状態管理のプロパティ
     @Published var showTitleAlert = false
     @Published var shouldFocusTitle = false
-    
     @Published var titleFieldFocused: Bool = false
     @Published var previouslyFocused: Bool = false
     @Published var hasTitleInput: Bool = false
-    
     @Published var contentFieldFocused: Bool = false
     @Published var triggerBottomScroll: Bool = false
 
     @State private var memoCreationStartTime: Date? = nil
 
-    // 初期化メソッドでの設定
+    // 初期化メソッド - 新規記録と既存記録の両方に対応
     init(viewContext: NSManagedObjectContext, memo: Memo?) {
         self.viewContext = viewContext
         self.memo = memo
         self.savedMemo = memo
+        
+        // 新規記録の場合は作成時間を記録
         if memo == nil {
             self.memoCreationStartTime = Date()
         }
         
         if let memo = memo {
+            // 既存記録の場合：データを読み込み、変更フラグを初期化
             loadMemoData(memo: memo)
             contentChanged = false
             recordActivityOnSave = false
         } else {
-            // 新規記録の場合
+            // 新規記録の場合：フォームをリセットし、記録準備完了状態に
             resetForm()
             contentChanged = false
             recordActivityOnSave = true
         }
     }
-    // タイトルフィールドのフォーカス状態変更を監視するメソッド
+    
+    // フォーカス状態管理メソッド - UIの応答性向上のため
     func onTitleFocusChanged(isFocused: Bool) {
-        // 現在の状態を保存
         previouslyFocused = isFocused
         titleFieldFocused = isFocused
     }
 
-    // 内容フィールドのフォーカス状態変更を監視するメソッド
     func onContentFocusChanged(isFocused: Bool) {
-        // 現在の状態を保存
         contentFieldFocused = isFocused
     }
         
-    // loadMemoData関数内で次回復習日を確実に設定
+    // 記録データの読み込み - 既存記録を編集する際に使用
     func loadMemoData(memo: Memo) {
         title = memo.title ?? ""
         pageRange = memo.pageRange ?? ""
         content = memo.content ?? ""
         recallScore = memo.recallScore
-        reviewDate = memo.nextReviewDate // この行を確実に設定
+        reviewDate = memo.nextReviewDate
         
-        // テスト日の読み込み
-        testDate = memo.testDate
-        shouldUseTestDate = memo.testDate != nil
-        
-        // 保存された単語リストを読み込む
+        // 保存された単語リストを復元
         if let savedKeywords = memo.keywords?.components(separatedBy: ",") {
             keywords = savedKeywords.filter { !$0.isEmpty }
         }
         
-        // 比較問題を直接読み込む
-        loadComparisonQuestions(for: memo)
-        // タグを読み込む
+        // 関連する比較問題とタグを読み込み
         selectedTags = memo.tagsArray
     }
-    // 次回復習日を更新するメソッド
+    
+    // 次回復習日を更新 - シンプルな通常計算のみ
     func updateNextReviewDate() {
-        if shouldUseTestDate, let testDate = testDate {
-            let reviewDates = calculateReviewScheduleBasedOnTestDate()
-            if let firstReviewDate = reviewDates.first {
-                reviewDate = firstReviewDate
-            } else {
-                // テスト日ベースの計算ができない場合は通常計算
-                reviewDate = ReviewCalculator.calculateNextReviewDate(
-                    recallScore: recallScore,
-                    lastReviewedDate: Date(),
-                    perfectRecallCount: memo?.perfectRecallCount ?? 0
-                )
-            }
-        } else {
-            // 通常の復習日計算
-            reviewDate = ReviewCalculator.calculateNextReviewDate(
-                recallScore: recallScore,
-                lastReviewedDate: Date(),
-                perfectRecallCount: memo?.perfectRecallCount ?? 0
-            )
-        }
-    }
-    
-    func loadComparisonQuestions(for memo: Memo) {
-        let fetchRequest: NSFetchRequest<ComparisonQuestion> = ComparisonQuestion.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "memo == %@", memo)
-        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \ComparisonQuestion.createdAt, ascending: true)]
-        
-        do {
-            let fetchedQuestions = try viewContext.fetch(fetchRequest)
-            comparisonQuestions = fetchedQuestions
-        } catch {
-            comparisonQuestions = []
-        }
-    }
-    
-    // テスト日に基づく復習スケジュールの計算
-    func calculateReviewScheduleBasedOnTestDate() -> [Date] {
-        guard let targetDate = testDate, shouldUseTestDate else {
-            return [] // テスト日が設定されていない、または使用しない場合は空の配列を返す
-        }
-        
-        return TestDateReviewer.calculateOptimalReviewSchedule(
-            targetDate: targetDate,
-            currentRecallScore: recallScore,
+        // テスト日機能を削除し、常に科学的根拠に基づく分散学習アルゴリズムを使用
+        reviewDate = ReviewCalculator.calculateNextReviewDate(
+            recallScore: recallScore,
             lastReviewedDate: Date(),
             perfectRecallCount: memo?.perfectRecallCount ?? 0
         )
     }
     
-    // 復習履歴を記録するメソッド
+    // 復習履歴を記録 - 学習の進捗を科学的に追跡
     func recordReviewHistory() {
         guard let memoToRecord = memo else { return }
         
@@ -153,14 +103,14 @@ class ContentViewModel: ObservableObject {
         historyEntry.date = Date()
         historyEntry.recallScore = recallScore
         
-        // 記憶定着度の計算に必要なデータを収集
+        // 記憶定着度の科学的計算のためのデータ収集
         let previousEntries = memoToRecord.historyEntriesArray
         let reviewCount = previousEntries.count
         let highScoreCount = MemoryRetentionCalculator.countHighScores(historyEntries: previousEntries)
         let lastReviewDate = previousEntries.first?.date
         let daysSinceLastReview = MemoryRetentionCalculator.daysSinceLastReview(lastReviewDate: lastReviewDate)
         
-        // 新しい記憶定着度を計算
+        // エビングハウスの忘却曲線とスペーシング効果を考慮した記憶定着度を計算
         let retentionScore = MemoryRetentionCalculator.calculateEnhancedRetentionScore(
             recallScore: recallScore,
             daysSinceLastReview: daysSinceLastReview,
@@ -168,43 +118,23 @@ class ContentViewModel: ObservableObject {
             highScoreCount: highScoreCount
         )
         
-        // 計算結果を保存
+        // 計算結果を履歴エントリに保存
         historyEntry.retentionScore = retentionScore
         historyEntry.memo = memoToRecord
         
-        // 保存前の完璧回数を保持
-        let oldPerfectRecallCount = memoToRecord.perfectRecallCount
-        
         do {
-            // まず履歴エントリを保存
+            // 履歴エントリを保存し、CoreDataの自動更新を反映
             try viewContext.save()
-            
-            // 保存後の完璧回数をチェック（CoreDataによる自動更新を検出）
             viewContext.refresh(memoToRecord, mergeChanges: true)
         } catch {
+            // エラーハンドリング（実際のアプリではログ出力等を行う）
         }
     }
     
-    // テスト日を考慮した次回復習日の計算
-    func getNextReviewDateWithTestDate() -> Date {
-        if shouldUseTestDate, let testDate = testDate {
-            let reviewDates = calculateReviewScheduleBasedOnTestDate()
-            if let firstReviewDate = reviewDates.first {
-                return firstReviewDate
-            }
-        }
-        
-        // デフォルトの復習日計算
-        return reviewDate ?? ReviewCalculator.calculateNextReviewDate(
-            recallScore: recallScore,
-            lastReviewedDate: Date(),
-            perfectRecallCount: memo?.perfectRecallCount ?? 0
-        )
-    }
-    
-    // タグの更新処理
+    // タグの更新処理 - 記録に紐付けられたタグを管理
     private func updateTags(for memo: Memo) {
-        // 現在のタグを一旦全て削除
+        // 既存のタグをすべて削除してから新しいタグを設定
+        // これにより、タグの状態を確実に同期できる
         let currentTags = memo.tags as? Set<Tag> ?? []
         for tag in currentTags {
             memo.removeTag(tag)
@@ -216,9 +146,9 @@ class ContentViewModel: ObservableObject {
         }
     }
     
-    // 既存の saveMemo メソッドを修正
+    // メインの保存メソッド - 記録の作成と更新を処理
     func saveMemo(completion: @escaping () -> Void) {
-        // タイトルのみ必須にする（ページ範囲は任意）
+        // バリデーション：タイトルは必須項目
         if title.isEmpty {
             showTitleAlert = true
             shouldFocusTitle = true
@@ -228,6 +158,7 @@ class ContentViewModel: ObservableObject {
         let memoToSave: Memo
         let isNewMemo = memo == nil
         
+        // 新規記録か既存記録かに応じてメモオブジェクトを準備
         if let existingMemo = memo {
             memoToSave = existingMemo
         } else {
@@ -236,352 +167,302 @@ class ContentViewModel: ObservableObject {
             memoToSave.createdAt = Date()
         }
         
+        // 基本データの設定
         memoToSave.title = title
-        memoToSave.pageRange = pageRange // 空でも保存可能
+        memoToSave.pageRange = pageRange
         memoToSave.content = content
         memoToSave.recallScore = recallScore
         memoToSave.lastReviewedDate = Date()
         
-        // perfectRecallCountは計算プロパティなので直接変更せず、現在の値を読み取る
+        // 現在の完璧回数を取得（後で復習日計算に使用）
         let currentPerfectRecallCount = memoToSave.perfectRecallCount
         
-        // テスト日の保存
-        memoToSave.testDate = shouldUseTestDate ? testDate : nil
-        
-        // テスト日に基づく復習日の設定
-        let oldDate = memoToSave.nextReviewDate
-        // 記憶度変更検出
+        // 記憶度変更検出による復習日の最適化
         let hasRecallScoreChanged = memo != nil && memo?.recallScore != recallScore
         if hasRecallScoreChanged {
-            // 記憶度が80%以上だが100%未満の場合も、復習日延長の恩恵を受けられるようにする
+            // 高い記憶度（80%以上）の場合は復習間隔を適切に延長
             if recallScore >= 80 {
-                // 記憶度に基づいて次のレベルの間隔を計算
                 let baseIntervals: [Double] = [1, 3, 7, 14, 30, 60, 120]
                 let currentIndex = min(Int(currentPerfectRecallCount), baseIntervals.count - 1)
                 let nextIndex = min(currentIndex + 1, baseIntervals.count - 1)
                 
-                // 記憶度と完璧回数に基づく係数を計算
+                // 記憶度に基づく調整係数を計算
                 let scoreFactor = 0.5 + (Double(recallScore) / 100.0)
                 
-                // 現在の基本間隔と次のレベルの基本間隔を取得
+                // 現在のレベルと次のレベルの間隔を取得
                 let currentInterval = baseIntervals[currentIndex]
                 let nextInterval = baseIntervals[nextIndex]
                 
-                // 記憶度80%〜99%では、現在の間隔と次の間隔の間の値を使用
-                let progressFactor = Double(recallScore - 80) / 20.0  // 80%→0.0, 100%→1.0
+                // 記憶度80%-99%の場合：段階的な間隔延長を適用
+                let progressFactor = Double(recallScore - 80) / 20.0
                 let blendedInterval = currentInterval + (nextInterval - currentInterval) * progressFactor
                 let adjustedInterval = blendedInterval * scoreFactor
                 
-                // 修正された復習日を設定（テスト日処理より前に設定）
+                // 最適化された復習日を設定
                 let calendar = Calendar.current
                 let adjustedDate = calendar.date(byAdding: .day, value: Int(adjustedInterval), to: Date())!
-                
-                // 後続のテスト日処理で上書きされる可能性があるため、ここでは変数に保持するだけ
-                let calculatedReviewDate = adjustedDate
-                
-                // テスト日がなく、かつ記憶度80%以上の場合のみ採用（テスト日処理を無効化）
-                if !(shouldUseTestDate && testDate != nil) {
-                    memoToSave.nextReviewDate = calculatedReviewDate
-                }
-            }
-        }
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        
-        if shouldUseTestDate, let testDate = testDate {
-            let reviewDates = calculateReviewScheduleBasedOnTestDate()
-            if let firstReviewDate = reviewDates.first {
-                memoToSave.nextReviewDate = firstReviewDate
-            } else {
-                let newReviewDate = ReviewCalculator.calculateNextReviewDate(
-                    recallScore: recallScore,
-                    lastReviewedDate: Date(),
-                    perfectRecallCount: currentPerfectRecallCount
-                )
-                
-                memoToSave.nextReviewDate = newReviewDate
+                memoToSave.nextReviewDate = adjustedDate
             }
         } else {
-            // 通常の復習日計算
+            // 通常の復習日計算：科学的アルゴリズムを使用
             let newReviewDate = ReviewCalculator.calculateNextReviewDate(
                 recallScore: recallScore,
                 lastReviewedDate: Date(),
                 perfectRecallCount: currentPerfectRecallCount
             )
-            // 新しい復習日を設定
             memoToSave.nextReviewDate = newReviewDate
         }
         
-        // 単語リストをカンマ区切りで保存
+        // 単語リストを永続化形式で保存
         memoToSave.keywords = keywords.joined(separator: ",")
         
-        // タグを保存 - 明示的に更新処理を実行
+        // タグの関連付けを更新
         updateTags(for: memoToSave)
+        
         do {
-            // 変更を保存
+            // データベースへの保存を実行
             try viewContext.save()
-            
             viewContext.refresh(memoToSave, mergeChanges: true)
             
-            // 記憶履歴を記録
+            // 復習履歴を記録（学習分析のため）
             recordReviewHistory()
             
-        // 履歴記録後
-                viewContext.refresh(memoToSave, mergeChanges: true)
+            // 履歴記録後の追加処理
+            viewContext.refresh(memoToSave, mergeChanges: true)
+            
+            // 完璧回数が更新された場合は復習日を再計算
+            let updatedPerfectRecallCount = memoToSave.perfectRecallCount
+            if updatedPerfectRecallCount != currentPerfectRecallCount {
+                let newReviewDate = ReviewCalculator.calculateNextReviewDate(
+                    recallScore: recallScore,
+                    lastReviewedDate: Date(),
+                    perfectRecallCount: updatedPerfectRecallCount
+                )
+                memoToSave.nextReviewDate = newReviewDate
                 
-                // 💫 追加：履歴記録（perfectRecallCount更新）後に復習日を再計算
-                let updatedPerfectRecallCount = memoToSave.perfectRecallCount
-                if updatedPerfectRecallCount != currentPerfectRecallCount {
-                    // テスト日に基づくか通常の計算かを判断
-                    if shouldUseTestDate, let testDate = testDate {
-                        let reviewDates = calculateReviewScheduleBasedOnTestDate()
-                        if let firstReviewDate = reviewDates.first {
-                            let oldDate = memoToSave.nextReviewDate
-                            memoToSave.nextReviewDate = firstReviewDate
-                        }
-                    } else {
-                        // 通常の復習日再計算
-                        let oldDate = memoToSave.nextReviewDate
-                        let newReviewDate = ReviewCalculator.calculateNextReviewDate(
-                            recallScore: recallScore,
-                            lastReviewedDate: Date(),
-                            perfectRecallCount: updatedPerfectRecallCount  // 更新された完璧回数を使用
-                        )
-                        memoToSave.nextReviewDate = newReviewDate
-                    }
-                    
-                    // 再計算後に保存
-                    try viewContext.save()
-                }
-                
-                // 一時保存された比較ペアがあれば、それらの比較問題を作成
-                if let tempPairs = UserDefaults.standard.array(forKey: "tempComparisonPairs") as? [[String]] {
-                    for pair in tempPairs {
-                        if pair.count == 2 {
-                            let word1 = pair[0]
-                            let word2 = pair[1]
-                            
-                            // 比較問題を作成
-                            let newQuestion = ComparisonQuestion(context: viewContext)
-                            newQuestion.id = UUID()
-                            newQuestion.question = "「\(word1)」と「\(word2)」の違いを比較して説明してください。それぞれの特徴、共通点、相違点について詳細に述べてください。"
-                            newQuestion.createdAt = Date()
-                            newQuestion.memo = memoToSave
-                        }
-                    }
-                    
-                    // 一時データをクリア
-                    UserDefaults.standard.removeObject(forKey: "tempComparisonPairs")
-                    
-                    try viewContext.save()
-                }
-                
-                // ストリークを更新
-                StreakTracker.shared.checkAndUpdateStreak(in: viewContext)
-                
-                // 変更を確実に保存（最終）
+                // 再計算後に保存
                 try viewContext.save()
-                
-                // メインスレッドで通知を送信
-                DispatchQueue.main.async {
-                    // 全アプリに通知を送信して強制的にデータをリロード
-                    NotificationCenter.default.post(
-                        name: NSNotification.Name("ForceRefreshMemoData"),
-                        object: nil,
-                        userInfo: ["memoID": memoToSave.objectID]
-                    )
-                    
-                    // 少し遅延させて2回目の通知も送信
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        NotificationCenter.default.post(
-                            name: NSNotification.Name("ForceRefreshMemoData"),
-                            object: nil
-                        )
+            }
+            
+            // 一時保存された比較問題を処理
+            if let tempPairs = UserDefaults.standard.array(forKey: "tempComparisonPairs") as? [[String]] {
+                for pair in tempPairs {
+                    if pair.count == 2 {
+                        let word1 = pair[0]
+                        let word2 = pair[1]
+                        
+                        // 比較問題を作成
+                        let newQuestion = ComparisonQuestion(context: viewContext)
+                        newQuestion.id = UUID()
+                        newQuestion.question = "「\(word1)」と「\(word2)」の違いを比較して説明してください。それぞれの特徴、共通点、相違点について詳細に述べてください。"
+                        newQuestion.createdAt = Date()
+                        newQuestion.memo = memoToSave
                     }
                 }
                 
-                // memo ではなく savedMemo に保存
-                self.savedMemo = memoToSave
-                resetForm(preserveTags: memo != nil)
-                completion()
-            } catch {
-                completion()
-            }
-        }
-            
-            func cleanupOrphanedQuestions() {
-                // memo == nil の問題を検索して削除（孤立した問題）
-                let fetchRequest: NSFetchRequest<ComparisonQuestion> = ComparisonQuestion.fetchRequest()
-                fetchRequest.predicate = NSPredicate(format: "memo == nil")
-                
-                do {
-                    let orphanedQuestions = try viewContext.fetch(fetchRequest)
-                    if !orphanedQuestions.isEmpty {
-                        for question in orphanedQuestions {
-                            viewContext.delete(question)
-                        }
-                        try viewContext.save()
-                    }
-                } catch {
-                }
+                // 一時データをクリア
+                UserDefaults.standard.removeObject(forKey: "tempComparisonPairs")
+                try viewContext.save()
             }
             
-            func resetForm(preserveTags: Bool = false) {
-                title = ""
-                pageRange = ""
-                content = ""
-                recallScore = 50
-                reviewDate = nil
-                keywords = []
-                comparisonQuestions = []
-                
-                // テスト日関連のリセット
-                testDate = nil
-                shouldUseTestDate = false
-                showTestDatePicker = false
-                
-                // タグのリセットは条件付きに
-                if !preserveTags {
-                    selectedTags = []
-                }
-            }
+            // 学習ストリークを更新（習慣化支援のため）
+            StreakTracker.shared.checkAndUpdateStreak(in: viewContext)
             
-            func formattedDate(_ date: Date?) -> String {
-                let formatter = DateFormatter()
-                formatter.dateStyle = .medium
-                return date != nil ? formatter.string(from: date!) : "未設定"
-            }
+            // 最終保存
+            try viewContext.save()
             
-            // タグを即時更新し保存するメソッド
-            func updateAndSaveTags() {
-                guard let memoToUpdate = memo else {
-                    return
-                }
+            // アプリ全体にデータ更新を通知
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(
+                    name: NSNotification.Name("ForceRefreshMemoData"),
+                    object: nil,
+                    userInfo: ["memoID": memoToSave.objectID]
+                )
                 
-                // 待機中の他の変更を先に保存
-                if viewContext.hasChanges {
-                    do {
-                        try viewContext.save()
-                    } catch {
-                    }
-                }
-                
-                // 現在のタグを一旦全て削除
-                let currentTags = memoToUpdate.tags as? Set<Tag> ?? []
-                for tag in currentTags {
-                    memoToUpdate.removeTag(tag)
-                }
-                
-                // 選択されたタグを追加
-                for tag in selectedTags {
-                    memoToUpdate.addTag(tag)
-                }
-                
-                // 変更を保存
-                do {
-                    try viewContext.save()
-                    viewContext.refresh(memoToUpdate, mergeChanges: true)
-                    
-                    // 強制的に通知を送信して更新を促す
-                    NotificationCenter.default.post(
-                        name: NSNotification.Name("ForceRefreshMemoData"),
-                        object: nil,
-                        userInfo: ["memoID": memoToUpdate.objectID]
-                    )
-                } catch {
-                }
-            }
-
-            // タグデータをリフレッシュするための新メソッド
-            func refreshTags() {
-                guard let memoToRefresh = memo else { return }
-                
-                // 記録を再読み込みしてタグを更新
-                viewContext.refresh(memoToRefresh, mergeChanges: true)
-                
-                // 選択されたタグを更新
-                let refreshedTags = memoToRefresh.tagsArray
-                selectedTags = refreshedTags
-            }
-        }
-
-        extension ContentViewModel {
-            // 初期化時に呼び出して時間計測を開始する
-            func startLearningSession() {
-                if let existingMemo = memo {
-                    // 既存記録の場合のみセッション開始
-                    currentSessionId = ActivityTracker.shared.startTimingSession(for: existingMemo)
-                    
-                    // 内容変更フラグを初期化
-                    contentChanged = false
-                }
-            }
-            
-            // 記録の保存時に自動記録を行う - 実時間測定版
-            func saveMemoWithTracking(completion: @escaping () -> Void) {
-                let isNewMemo = memo == nil
-                
-                // 新規記録の場合は強制的に記録フラグをON
-                if isNewMemo {
-                    contentChanged = true
-                    recordActivityOnSave = true
-                }
-                
-                // 内容が変更されたか、新規記録の場合のみアクティビティ記録対象
-                let shouldRecordActivity = contentChanged || isNewMemo
-                
-                saveMemo { [weak self] in
-                    guard let self = self else {
-                        completion()
-                        return
-                    }
-                    
-                    // savedMemo が保存されたか確認
-                    if let memo = self.savedMemo {
-                        // 内容が変更された場合のみ記録
-                        if shouldRecordActivity && self.recordActivityOnSave {
-                            // アクティビティタイプの決定
-                            let activityType: ActivityType = isNewMemo ? .exercise : .review
-                            let context = PersistenceController.shared.container.viewContext
-                            
-                            if isNewMemo, let startTime = self.memoCreationStartTime {
-                                // 実際の操作時間を計算（秒単位）
-                                let durationSeconds = Int(Date().timeIntervalSince(startTime))
-                                // 最低1秒は保証する
-                                let adjustedDuration = max(durationSeconds, 1)
-                                
-                                // 新規記録作成アクティビティを記録
-                                let noteText = "新規記録作成: \(memo.title ?? "無題")"
-                                LearningActivity.recordActivityWithPrecision(
-                                    type: activityType,
-                                    durationSeconds: adjustedDuration, // 固定値ではなく実時間を使用
-                                    memo: memo,
-                                    note: noteText,
-                                    in: context
-                                )
-                            }
-                        }
-                    }
-                    SoundManager.shared.playMemoryCompletedSound()
-
-                    // 状態をリセット
-                    self.contentChanged = false
-                    ReviewManager.shared.incrementTaskCompletionCount()
-                    
-                    completion()
-                }
-            }
-            
-            func saveMemoWithNotification() {
-                do {
-                    try viewContext.save()
-                    
-                    // 全アプリに通知を送信して強制的にデータをリロード
+                // 追加の通知で確実性を高める
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     NotificationCenter.default.post(
                         name: NSNotification.Name("ForceRefreshMemoData"),
                         object: nil
                     )
-                } catch {
                 }
             }
+            
+            // 保存されたメモを保持し、フォームをリセット
+            self.savedMemo = memoToSave
+            resetForm(preserveTags: memo != nil)
+            completion()
+        } catch {
+            // エラー時は完了コールバックを呼び出し
+            completion()
         }
+    }
+    
+    // 孤立した比較問題のクリーンアップ
+    func cleanupOrphanedQuestions() {
+        let fetchRequest: NSFetchRequest<ComparisonQuestion> = ComparisonQuestion.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "memo == nil")
+        
+        do {
+            let orphanedQuestions = try viewContext.fetch(fetchRequest)
+            if !orphanedQuestions.isEmpty {
+                for question in orphanedQuestions {
+                    viewContext.delete(question)
+                }
+                try viewContext.save()
+            }
+        } catch {
+            // エラーハンドリング
+        }
+    }
+    
+    // フォームのリセット処理
+    func resetForm(preserveTags: Bool = false) {
+        title = ""
+        pageRange = ""
+        content = ""
+        recallScore = 50
+        reviewDate = nil
+        keywords = []
+        comparisonQuestions = []
+        
+        // タグの保持は条件に応じて
+        if !preserveTags {
+            selectedTags = []
+        }
+    }
+    
+    // 日付フォーマット用ヘルパーメソッド
+    func formattedDate(_ date: Date?) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        return date != nil ? formatter.string(from: date!) : "未設定"
+    }
+    
+    // タグの即時更新と保存
+    func updateAndSaveTags() {
+        guard let memoToUpdate = memo else {
+            return
+        }
+        
+        // 保留中の変更を先に保存
+        if viewContext.hasChanges {
+            do {
+                try viewContext.save()
+            } catch {
+                // エラーハンドリング
+            }
+        }
+        
+        // タグの関連付けを更新
+        let currentTags = memoToUpdate.tags as? Set<Tag> ?? []
+        for tag in currentTags {
+            memoToUpdate.removeTag(tag)
+        }
+        
+        for tag in selectedTags {
+            memoToUpdate.addTag(tag)
+        }
+        
+        // 変更を保存
+        do {
+            try viewContext.save()
+            viewContext.refresh(memoToUpdate, mergeChanges: true)
+            
+            // 更新通知を送信
+            NotificationCenter.default.post(
+                name: NSNotification.Name("ForceRefreshMemoData"),
+                object: nil,
+                userInfo: ["memoID": memoToUpdate.objectID]
+            )
+        } catch {
+            // エラーハンドリング
+        }
+    }
+
+    // タグデータのリフレッシュ
+    func refreshTags() {
+        guard let memoToRefresh = memo else { return }
+        
+        viewContext.refresh(memoToRefresh, mergeChanges: true)
+        let refreshedTags = memoToRefresh.tagsArray
+        selectedTags = refreshedTags
+    }
+}
+
+extension ContentViewModel {
+    // 学習セッションの開始処理
+    func startLearningSession() {
+        if let existingMemo = memo {
+            // 既存記録の復習セッションを開始
+            currentSessionId = ActivityTracker.shared.startTimingSession(for: existingMemo)
+            contentChanged = false
+        }
+    }
+    
+    // 学習時間追跡付きの保存メソッド
+    func saveMemoWithTracking(completion: @escaping () -> Void) {
+        let isNewMemo = memo == nil
+        
+        // 新規記録の場合は自動的に記録対象とする
+        if isNewMemo {
+            contentChanged = true
+            recordActivityOnSave = true
+        }
+        
+        let shouldRecordActivity = contentChanged || isNewMemo
+        
+        saveMemo { [weak self] in
+            guard let self = self else {
+                completion()
+                return
+            }
+            
+            // 保存されたメモが存在し、活動記録が必要な場合
+            if let memo = self.savedMemo, shouldRecordActivity && self.recordActivityOnSave {
+                let activityType: ActivityType = isNewMemo ? .exercise : .review
+                let context = PersistenceController.shared.container.viewContext
+                
+                if isNewMemo, let startTime = self.memoCreationStartTime {
+                    // 実際の作業時間を計算
+                    let durationSeconds = Int(Date().timeIntervalSince(startTime))
+                    let adjustedDuration = max(durationSeconds, 1)
+                    
+                    // 学習活動を記録（戻り値は使用しないため_で受ける）
+                    let noteText = "新規記録作成: \(memo.title ?? "無題")"
+                    _ = LearningActivity.recordActivityWithPrecision(
+                        type: activityType,
+                        durationSeconds: adjustedDuration,
+                        memo: memo,
+                        note: noteText,
+                        in: context
+                    )
+                }
+            }
+            
+            // 完了時の音響フィードバック
+            SoundManager.shared.playMemoryCompletedSound()
+
+            // 状態をリセットし、レビュー管理を更新
+            self.contentChanged = false
+            ReviewManager.shared.incrementTaskCompletionCount()
+            
+            completion()
+        }
+    }
+    
+    // 通知付きの簡易保存メソッド
+    func saveMemoWithNotification() {
+        do {
+            try viewContext.save()
+            
+            // データ更新を全アプリに通知
+            NotificationCenter.default.post(
+                name: NSNotification.Name("ForceRefreshMemoData"),
+                object: nil
+            )
+        } catch {
+            // エラーハンドリング
+        }
+    }
+}
