@@ -40,7 +40,7 @@ struct NotificationSettingsView: View {
                     Section(header: Text("通知の種類")) {
                         Toggle("学習ストリークリマインダー", isOn: $notificationSettings.streakReminderEnabled)
                         Toggle("復習リマインダー", isOn: $notificationSettings.reviewReminderEnabled)
-                        Toggle("学習目標達成通知", isOn: $notificationSettings.goalAchievementEnabled)
+//                        Toggle("学習目標達成通知", isOn: $notificationSettings.goalAchievementEnabled)
                     }
                     
                     Section(header: Text("通知頻度")) {
