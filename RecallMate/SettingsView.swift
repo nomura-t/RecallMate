@@ -25,19 +25,6 @@ struct SettingsView: View {
             Form {
                 // 「このアプリについて」セクションを追加
                 Section(header: Text("アプリ情報".localized)) {
-                    NavigationLink(destination: AppInfoView()) {
-                        HStack {
-                            Image(systemName: "brain.head.profile")
-                                .foregroundColor(.blue)
-                                .font(.system(size: 22))
-                                .frame(width: 30)
-                            
-                            Text("このアプリについて".localized)
-                                .font(.headline)
-                        }
-                        .padding(.vertical, 8)
-                    }
-                    
                     // 開発者のTwitterリンクを追加
                     Button(action: {
                         openTwitterProfile()
