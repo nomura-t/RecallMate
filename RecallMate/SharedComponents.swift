@@ -53,53 +53,6 @@ struct DayInfoHeader: View {
     }
 }
 
-// MARK: - 空の状態ビュー
-struct EmptyStateView: View {
-    let selectedDate: Date
-    let hasTagFilter: Bool
-    
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "brain.head.profile")
-                .font(.system(size: 60))
-                .foregroundColor(.gray.opacity(0.6))
-            
-            VStack(spacing: 8) {
-                Text(emptyStateTitle())
-                    .font(.headline)
-                    .foregroundColor(.primary)
-                
-                Text(emptyStateMessage())
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-            }
-        }
-        .padding(.top, 60)
-        .padding(.horizontal, 32)
-    }
-    
-    private func emptyStateTitle() -> String {
-        if hasTagFilter {
-            return "該当する記録がありません"
-        } else if Calendar.current.isDateInToday(selectedDate) {
-            return "今日の復習はありません"
-        } else {
-            return "この日の復習予定はありません"
-        }
-    }
-    
-    private func emptyStateMessage() -> String {
-        if hasTagFilter {
-            return "選択されたタグの組み合わせに一致する記録がありません。フィルターを変更してみてください。"
-        } else if Calendar.current.isDateInToday(selectedDate) {
-            return "素晴らしいです！今日の復習は完了しています。新しい記録を作成して学習を続けましょう。"
-        } else {
-            return "この日は復習予定の記録がありません。"
-        }
-    }
-}
-
 // MARK: - フローティング追加ボタン
 struct FloatingAddButton: View {
     @Binding var isAddingMemo: Bool
