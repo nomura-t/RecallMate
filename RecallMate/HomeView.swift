@@ -60,83 +60,7 @@ struct HomeView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \Tag.name, ascending: true)],
         animation: .default)
     private var allTags: FetchedResults<Tag>
-    
-    // 既存のenum定義（ReviewMethod, LearningMethod）は変更なし
-    enum ReviewMethod: String, CaseIterable {
-        case thorough = "じっくり復習コース"
-        case quick = "さくっと復習コース"
-        case assessment = "理解度確認のみ"
-        
-        var icon: String {
-            switch self {
-            case .thorough: return "brain.head.profile"
-            case .quick: return "bolt.fill"
-            case .assessment: return "checkmark.circle.fill"
-            }
-        }
-        
-        var description: String {
-            switch self {
-            case .thorough: return "しっかりと時間をかけて復習したい時に"
-            case .quick: return "時間がない時や軽く復習したい時に"
-            case .assessment: return "記憶度だけを確認したい時に"
-            }
-        }
-        
-        var detail: String {
-            switch self {
-            case .thorough: return "4ステップのアクティブリコールで完全復習"
-            case .quick: return "3ステップの効率的復習"
-            case .assessment: return "素早く記憶度をチェックして次回の復習日を最適化"
-            }
-        }
-        
-        var color: Color {
-            switch self {
-            case .thorough: return .blue
-            case .quick: return .orange
-            case .assessment: return .purple
-            }
-        }
-    }
-    
-    enum LearningMethod: String, CaseIterable {
-        case thorough = "じっくり学習コース"
-        case quick = "さくっと学習コース"
-        case recordOnly = "記録のみコース"
-        
-        var icon: String {
-            switch self {
-            case .thorough: return "brain.head.profile"
-            case .quick: return "bolt.fill"
-            case .recordOnly: return "doc.text.fill"
-            }
-        }
-        
-        var description: String {
-            switch self {
-            case .thorough: return "しっかりと時間をかけて学習したい時に"
-            case .quick: return "時間がない時や軽く学習したい時に"
-            case .recordOnly: return "既に学習済みの内容を記録して、効果的な復習計画を立てたい時に"
-            }
-        }
-        
-        var detail: String {
-            switch self {
-            case .thorough: return "4ステップのアクティブリコールで完全習得"
-            case .quick: return "3ステップの効率的アクティブリコール"
-            case .recordOnly: return "学習記録から最適な復習タイミングを自動計算。分散学習の効果で長期記憶への定着をサポートします"
-            }
-        }
-        
-        var color: Color {
-            switch self {
-            case .thorough: return .blue
-            case .quick: return .orange
-            case .recordOnly: return .green
-            }
-        }
-    }
+
     
     // dailyMemosの計算プロパティ（変更なし）
     private var dailyMemos: [Memo] {
@@ -239,14 +163,14 @@ struct HomeView: View {
                         .padding(.top, 16)
                     }
                     
-                    DayInfoHeader(
+                    DayInfoHeaderView(
                         selectedDate: selectedDate,
                         memoCount: dailyMemos.count,
                         selectedTags: selectedTags
                     )
                     
                     if Calendar.current.isDateInToday(selectedDate) {
-                        NewLearningButton(onStartNewLearning: {
+                        NewLearningButtonView(onStartNewLearning: {
                             startNewLearning()
                         })
                         .padding(.horizontal, 16)
@@ -2513,59 +2437,6 @@ struct HomeView: View {
             ]
         }
         
-        // MARK: - サポートコンポーネント（既存のまま）
-        
-        struct NewLearningButton: View {
-            let onStartNewLearning: () -> Void
-            @Environment(\.colorScheme) var colorScheme
-            
-            var body: some View {
-                Button(action: onStartNewLearning) {
-                    HStack(spacing: 12) {
-                        Image(systemName: "brain.head.profile")
-                            .font(.system(size: 24))
-                            .foregroundColor(.white)
-                        
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("新規学習を始める！")
-                                .font(.headline)
-                                .fontWeight(.bold)
-                                .foregroundColor(.white)
-                            
-                            Text("今日学んだ内容を記録しましょう")
-                                .font(.caption)
-                                .foregroundColor(.white.opacity(0.8))
-                        }
-                        
-                        Spacer()
-                        
-                        Image(systemName: "arrow.right.circle.fill")
-                            .font(.system(size: 20))
-                            .foregroundColor(.white)
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 16)
-                    .background(
-                        LinearGradient(
-                            gradient: Gradient(colors: [
-                                Color.green,
-                                Color.green.opacity(0.8)
-                            ]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .cornerRadius(16)
-                    .shadow(
-                        color: Color.green.opacity(0.3),
-                        radius: 8,
-                        x: 0,
-                        y: 4
-                    )
-                }
-                .buttonStyle(PlainButtonStyle())
-            }
-        }
         
         struct TagFilterSection: View {
             @Binding var selectedTags: [Tag]
@@ -2688,84 +2559,11 @@ struct HomeView: View {
                 }
             }
         }
-        
-        struct DayInfoHeader: View {
-            let selectedDate: Date
-            let memoCount: Int
-            let selectedTags: [Tag]
-            
-            private var dateText: String {
-                let formatter = DateFormatter()
-                formatter.locale = Locale(identifier: "ja_JP")
-                
-                if Calendar.current.isDateInToday(selectedDate) {
-                    return "今日の復習"
-                } else {
-                    formatter.dateStyle = .medium
-                    return formatter.string(from: selectedDate) + "の復習"
-                }
-            }
-            
-            var body: some View {
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(dateText)
-                            .font(.title2)
-                            .fontWeight(.bold)
-                        
-                        if !selectedTags.isEmpty || memoCount > 0 {
-                            Text("\(memoCount)件の記録")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                    
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-            }
-        }
-        
-        struct EmptyStateView: View {
-            let selectedDate: Date
-            let hasTagFilter: Bool
-            
-            var body: some View {
-                VStack(spacing: 16) {
-                    Image(systemName: "calendar.badge.clock")
-                        .font(.system(size: 60))
-                        .foregroundColor(.gray.opacity(0.6))
-                    
-                    Text(emptyStateMessage)
-                        .font(.headline)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                    
-                    if hasTagFilter {
-                        Text("フィルターを解除すると、他の記録も表示されます")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                    }
-                }
-                .padding(.vertical, 40)
-                .frame(maxWidth: .infinity)
-            }
-            
-            private var emptyStateMessage: String {
-                if Calendar.current.isDateInToday(selectedDate) {
-                    return hasTagFilter ? "選択されたタグの復習記録がありません" : "今日の復習記録はありません"
-                } else {
-                    return hasTagFilter ? "選択されたタグの復習記録がありません" : "この日の復習記録はありません"
-                }
-            }
-        }
     }
 
     // 復習方法選択カード
     struct ReviewMethodCard: View {
-        let method: HomeView.ReviewMethod
+        let method: ReviewMethod
         let isSelected: Bool
         let onSelect: () -> Void
         @Environment(\.colorScheme) var colorScheme
@@ -2823,7 +2621,7 @@ struct HomeView: View {
 
     // 学習方法選択カード
     struct LearningMethodCard: View {
-        let method: HomeView.LearningMethod
+        let method: LearningMethod
         let isSelected: Bool
         let onSelect: () -> Void
         @Environment(\.colorScheme) var colorScheme
