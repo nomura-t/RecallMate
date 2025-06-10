@@ -22,7 +22,6 @@ struct WorkTimerView: View {
     private var allTagsRaw: FetchedResults<Tag>
     
     // 使用頻度順にソートされたタグリスト
-    // これは作業記録での使用頻度を基準にソートされます
     private var sortedTags: [Tag] {
         let tagUsageMap = calculateTagUsageFrequency()
         
@@ -76,6 +75,7 @@ struct WorkTimerView: View {
                                 tag: tag,
                                 isCurrentlyRunning: timerManager.currentTag?.id == tag.id,
                                 onStartTimer: { startTimer(for: tag) },
+                                onStopTimer: { stopCurrentTimer() }, // 停止専用のアクションを追加
                                 onEditTag: { editTag(tag) }
                             )
                             .padding(.horizontal, 16)
@@ -95,7 +95,7 @@ struct WorkTimerView: View {
                     refreshData()
                 }
             }
-            .navigationTitle("作業記録")
+            .navigationTitle("")
             .navigationBarTitleDisplayMode(.large)
             .background(Color(.systemGroupedBackground))
         }
@@ -255,6 +255,7 @@ struct WorkTimerCard: View {
     let tag: Tag
     let isCurrentlyRunning: Bool
     let onStartTimer: () -> Void
+    let onStopTimer: () -> Void // 停止専用のアクションを追加
     let onEditTag: () -> Void
     
     @Environment(\.colorScheme) var colorScheme
@@ -300,8 +301,14 @@ struct WorkTimerCard: View {
                         .cornerRadius(18)
                 }
                 
-                // タイマー開始/停止ボタン
-                Button(action: onStartTimer) {
+                // タイマー開始/停止ボタン - 実行中かどうかで適切なアクションを呼び分け
+                Button(action: {
+                    if isCurrentlyRunning {
+                        onStopTimer() // 実行中の場合は停止アクションを呼び出し
+                    } else {
+                        onStartTimer() // 停止中の場合は開始アクションを呼び出し
+                    }
+                }) {
                     HStack(spacing: 6) {
                         Image(systemName: isCurrentlyRunning ? "stop.fill" : "play.fill")
                             .font(.system(size: 14))
@@ -332,7 +339,6 @@ struct WorkTimerCard: View {
     
     /// 指定されたタグの今日の作業時間を計算します
     private func getTodayWorkTime(for tag: Tag) -> String {
-        // オプショナルバインディングでUUIDを安全に取り扱い
         guard let tagId = tag.id else { return "0:00" }
         
         let calendar = Calendar.current
@@ -342,7 +348,7 @@ struct WorkTimerCard: View {
         let activities = LearningActivity.fetchWorkTimerActivities(
             from: startOfDay,
             to: endOfDay,
-            tagId: tagId, // アンラップされたUUIDを使用
+            tagId: tagId,
             in: PersistenceController.shared.container.viewContext
         )
         
