@@ -2,9 +2,7 @@ import Foundation
 import CoreData
 import SwiftUI
 
-
-// 学習活動タイプの列挙型
-// 学習活動タイプの列挙型
+// 学習活動タイプの列挙型を拡張
 enum ActivityType: String, CaseIterable, Identifiable {
     case reading = "読書"
     case exercise = "問題演習"
@@ -13,6 +11,7 @@ enum ActivityType: String, CaseIterable, Identifiable {
     case project = "プロジェクト"
     case experiment = "実験/実習"
     case review = "復習"
+    case workTimer = "作業記録" // 新規追加
     case other = "その他"
     
     var id: String { self.rawValue }
@@ -21,12 +20,13 @@ enum ActivityType: String, CaseIterable, Identifiable {
     var iconName: String {
         switch self {
         case .reading: return "book.fill"
-        case .exercise: return "doc.badge.plus" // 新規記録作成用アイコンに変更
+        case .exercise: return "doc.badge.plus"
         case .lecture: return "tv.fill"
         case .test: return "checkmark.square.fill"
         case .project: return "folder.fill"
         case .experiment: return "atom"
         case .review: return "arrow.counterclockwise"
+        case .workTimer: return "timer" // 作業記録用アイコン
         case .other: return "ellipsis.circle.fill"
         }
     }
@@ -41,13 +41,14 @@ enum ActivityType: String, CaseIterable, Identifiable {
         case .project: return "orange"
         case .experiment: return "teal"
         case .review: return "lightBlue"
+        case .workTimer: return "indigo" // 作業記録用の色
         case .other: return "gray"
         }
     }
 }
 
 // CoreDataの拡張：学習活動を記録するエンティティ
-extension LearningActivity {    
+extension LearningActivity {
     // 指定期間の活動を取得
     static func fetchActivities(
         from startDate: Date,
@@ -76,6 +77,78 @@ extension LearningActivity {
         } catch {
             return []
         }
+    }
+    
+    // 作業記録専用の活動取得メソッド
+    static func fetchWorkTimerActivities(
+        from startDate: Date,
+        to endDate: Date,
+        tagId: UUID? = nil,
+        in context: NSManagedObjectContext
+    ) -> [LearningActivity] {
+        let request: NSFetchRequest<LearningActivity> = LearningActivity.fetchRequest()
+        
+        var predicateComponents = [NSPredicate]()
+        
+        // 作業記録タイプのみに絞る
+        predicateComponents.append(NSPredicate(format: "type == %@", ActivityType.workTimer.rawValue))
+        
+        // 日付範囲で絞る
+        let calendar = Calendar.current
+        let startComponents = calendar.dateComponents([.year, .month, .day], from: startDate)
+        let endComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: endDate)
+        
+        guard let normalizedStartDate = calendar.date(from: startComponents),
+              var normalizedEndDate = calendar.date(from: endComponents) else {
+            return []
+        }
+        
+        normalizedEndDate = calendar.date(byAdding: .day, value: 1, to: normalizedEndDate) ?? normalizedEndDate
+        predicateComponents.append(NSPredicate(format: "date >= %@ AND date < %@", normalizedStartDate as NSDate, normalizedEndDate as NSDate))
+        
+        // 特定のタグでフィルタリング（オプション）
+        if let tagId = tagId {
+            predicateComponents.append(NSPredicate(format: "ANY memo.tags.id == %@", tagId as CVarArg))
+        }
+        
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicateComponents)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \LearningActivity.date, ascending: false)]
+        
+        do {
+            return try context.fetch(request)
+        } catch {
+            return []
+        }
+    }
+    
+    // タグ別の作業時間統計を取得
+    static func getWorkTimerStatistics(
+        from startDate: Date,
+        to endDate: Date,
+        in context: NSManagedObjectContext
+    ) -> [(Tag, TimeInterval)] {
+        let activities = fetchWorkTimerActivities(from: startDate, to: endDate, in: context)
+        
+        var tagStatistics: [UUID: (Tag, TimeInterval)] = [:]
+        
+        for activity in activities {
+            if let memo = activity.memo,
+               let tags = memo.tags as? Set<Tag> {
+                let activityDuration = TimeInterval(activity.durationInSeconds)
+                
+                for tag in tags {
+                    if let tagId = tag.id {
+                        if let existing = tagStatistics[tagId] {
+                            tagStatistics[tagId] = (existing.0, existing.1 + activityDuration)
+                        } else {
+                            tagStatistics[tagId] = (tag, activityDuration)
+                        }
+                    }
+                }
+            }
+        }
+        
+        return Array(tagStatistics.values).sorted { $0.1 > $1.1 }
     }
     
     // 特定の日の活動レベルを計算
