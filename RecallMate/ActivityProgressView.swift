@@ -156,6 +156,8 @@ struct ActivityProgressView: View {
                 ScrollView {
                     VStack(spacing: 24) {
                         // 統計サマリーカード - 期間とタグフィルターを渡す
+                        StudyGoalProgressView()
+                            .padding(.horizontal, 16)
                         StatisticsCardWithPeriod(
                             dateRange: dateRange,
                             periodText: periodText,
