@@ -18,7 +18,7 @@ struct MainView: View {
             TabView(selection: $selectedTab) {
                 // HomeViewからisAddingMemoバインディングを削除し、ダミー値を渡します
                 HomeView(isAddingMemo: $isAddingMemo) // バインディングは残しますが使用しません
-                    .tabItem { Label("記録する", systemImage: "brain.head.profile") }
+                    .tabItem { Label("復習管理", systemImage: "brain.head.profile") }
                     .tag(0)
                 ActivityProgressView()
                     .tabItem { Label("振り返り", systemImage: "list.bullet.rectangle") }
