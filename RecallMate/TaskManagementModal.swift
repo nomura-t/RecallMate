@@ -104,6 +104,7 @@ struct TaskManagementModal: View {
                         Spacer()
                         
                         Button("完了".localized) {
+                            onSave() // TaskManagementModal終了時に親に変更を通知
                             dismiss()
                         }
                         .fontWeight(.semibold)
@@ -253,7 +254,7 @@ struct TaskManagementModal: View {
                 tag: tag,
                 onSave: { title, description, priority, estimatedMinutes in
                     addNewTask(title: title, description: description, priority: priority, estimatedMinutes: estimatedMinutes)
-                    showingAddTask = false
+                    // モーダルを閉じない - 連続でタスクを追加できるように
                 },
                 onCancel: { showingAddTask = false }
             )
@@ -265,6 +266,7 @@ struct TaskManagementModal: View {
                     taskManager.updateTask(updatedTask)
                     refreshTasks()
                     editingTask = nil
+                    // onSave() 呼び出しは TaskManagementModal 終了時のみ行う
                 },
                 onCancel: { editingTask = nil }
             )
@@ -341,7 +343,7 @@ struct TaskManagementModal: View {
             for: tagId
         )
         refreshTasks()
-        onSave()
+        // onSave() を削除 - AddTaskModal が閉じないようにするため
     }
     
     // タスクを削除
@@ -352,7 +354,7 @@ struct TaskManagementModal: View {
                 taskManager.deleteTask(task)
             }
             refreshTasks()
-            onSave()
+            // onSave() 呼び出しは TaskManagementModal 終了時のみ行う
         }
     }
     
@@ -669,6 +671,7 @@ struct AddTaskModal: View {
     @State private var description = ""
     @State private var priority = TaskPriority.medium
     @State private var estimatedMinutes = 30
+    @State private var showingSuccessMessage = false
     
     let tag: Tag
     let onSave: (String, String, TaskPriority, Int) -> Void
@@ -786,6 +789,8 @@ struct AddTaskModal: View {
                 VStack(spacing: 12) {
                     Button(action: {
                         onSave(title, description, priority, estimatedMinutes)
+                        resetForm()
+                        showSuccessMessage()
                     }) {
                         Text("タスクを追加".localized)
                             .font(.headline)
@@ -806,6 +811,53 @@ struct AddTaskModal: View {
                 .padding(.bottom, 20)
             }
             .background(Color(.systemGroupedBackground))
+            .overlay(
+                // 成功メッセージの表示
+                Group {
+                    if showingSuccessMessage {
+                        VStack {
+                            Spacer()
+                            HStack {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.green)
+                                Text("タスクを追加しました".localized)
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .background(Color(.systemBackground))
+                            .cornerRadius(25)
+                            .shadow(radius: 4)
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                        }
+                        .padding(.bottom, 100)
+                    }
+                }
+            )
+        }
+    }
+    
+    // フォームをリセット
+    private func resetForm() {
+        withAnimation(.easeInOut(duration: 0.3)) {
+            title = ""
+            description = ""
+            priority = .medium
+            estimatedMinutes = 30
+        }
+    }
+    
+    // 成功メッセージを表示
+    private func showSuccessMessage() {
+        withAnimation(.easeInOut(duration: 0.3)) {
+            showingSuccessMessage = true
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                showingSuccessMessage = false
+            }
         }
     }
 }

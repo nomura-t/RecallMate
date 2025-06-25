@@ -95,6 +95,9 @@
 // 時間単位
 "秒" = "sec";
 "分" = "min";
+
+// 成功メッセージ
+"タスクを追加しました" = "Task added successfully";
 "回答を適用" = "Apply Answers";
 "回答のインポート" = "Import Answers";
 "キャンセル" = "Cancel";
