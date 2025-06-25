@@ -48,6 +48,53 @@
 "生成AIの回答を貼り付け" = "Paste AI-generated answers";
 "検出された回答" = "Detected Answers";
 "問題%@" = "Question %@";
+
+// タスク管理モーダル関連
+"完了" = "Done";
+"無名のタグ" = "Unnamed Tag";
+"総タスク数" = "Total Tasks";
+"完了済み" = "Completed";
+"未完了" = "Incomplete";
+"タスクを追加して始めましょう" = "Let's add tasks to get started";
+"作業を細かく分けて効率的に進めることができます" = "You can work efficiently by breaking down tasks";
+"新しいタスクを追加" = "Add New Task";
+"セッション継続中" = "Session in Progress";
+"実行中" = "Running";
+"一時停止中" = "Paused";
+"停止中" = "Stopped";
+
+// タスク優先度
+"低" = "Low";
+"中" = "Medium";
+"高" = "High";
+
+// タスク追加/編集モーダル
+"タスクを細かく分けて効率的に作業しましょう" = "Break tasks down for efficient work";
+"タスク名" = "Task Name";
+"例: 数学の宿題、レポート作成" = "e.g. Math homework, Report writing";
+"説明（任意）" = "Description (Optional)";
+"詳細や注意点があれば入力" = "Enter details or notes if any";
+"優先度" = "Priority";
+"予定時間" = "Estimated Time";
+"タスクを追加" = "Add Task";
+"キャンセル" = "Cancel";
+"タスクを編集" = "Edit Task";
+"保存" = "Save";
+
+// タスク詳細表示
+"完了した作業時間" = "Completed Work Time";
+"進行中のセッション" = "Current Session";
+"合計作業時間" = "Total Work Time";
+"進捗" = "Progress";
+"完了情報" = "Completion Info";
+"完了日時" = "Completion Date";
+"タスク情報" = "Task Information";
+"設定" = "Settings";
+"作業時間記録" = "Work Time Record";
+
+// 時間単位
+"秒" = "sec";
+"分" = "min";
 "回答を適用" = "Apply Answers";
 "回答のインポート" = "Import Answers";
 "キャンセル" = "Cancel";

@@ -28,7 +28,7 @@ struct CanvasView: UIViewRepresentable {
         if !context.coordinator.isToolPickerInitialized {
             // 非同期処理として実行し、メインスレッドの負荷を軽減
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                if let window = uiView.window {
+                if uiView.window != nil {
                     toolPicker.setVisible(true, forFirstResponder: uiView)
                     toolPicker.addObserver(uiView)
                     uiView.becomeFirstResponder()

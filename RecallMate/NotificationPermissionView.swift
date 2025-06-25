@@ -96,7 +96,7 @@ struct NotificationPermissionView: View {
     private func requestNotifications() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             DispatchQueue.main.async {
-                if let error = error {
+                if error != nil {
                 }
                 
                 if granted {

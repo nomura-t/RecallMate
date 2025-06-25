@@ -98,7 +98,7 @@ struct FullScreenCanvasView: View {
             
             // ツールピッカーの表示
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let window = windowScene.windows.first {
+               let _ = windowScene.windows.first {
                 toolPicker.setVisible(true, forFirstResponder: canvas)
                 toolPicker.addObserver(canvas)
                 canvas.becomeFirstResponder()

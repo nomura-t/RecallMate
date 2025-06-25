@@ -118,8 +118,8 @@ class ShareService {
         let controller = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
         
         // iPadでの表示位置を指定するために必要な情報をプロパティとして保持
-        controller.completionWithItemsHandler = { [weak self] (activityType, completed, _, _) in
-            if completed, let activityTypeString = activityType?.rawValue {
+        controller.completionWithItemsHandler = { (activityType, completed, _, _) in
+            if completed, let _ = activityType?.rawValue {
             }
         }
         

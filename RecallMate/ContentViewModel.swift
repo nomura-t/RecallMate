@@ -156,7 +156,7 @@ class ContentViewModel: ObservableObject {
         }
         
         let memoToSave: Memo
-        let isNewMemo = memo == nil
+        let _ = memo == nil
         
         // 新規記録か既存記録かに応じてメモオブジェクトを準備
         if let existingMemo = memo {

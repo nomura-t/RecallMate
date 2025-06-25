@@ -15,7 +15,7 @@ class StreakNotificationManager {
     private func requestNotificationPermission() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             if granted {
-            } else if let error = error {
+            } else if error != nil {
             }
         }
     }
@@ -65,10 +65,10 @@ class StreakNotificationManager {
         let request = UNNotificationRequest(identifier: "streakReminder", content: content, trigger: trigger)
         
         UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
+            if error != nil {
             } else {
-                let hourStr = String(format: "%02d", timeComponents.hour ?? 0)
-                let minuteStr = String(format: "%02d", timeComponents.minute ?? 0)
+                let _ = String(format: "%02d", timeComponents.hour ?? 0)
+                let _ = String(format: "%02d", timeComponents.minute ?? 0)
             }
         }
     }

@@ -91,7 +91,6 @@ class ReviewFlowViewModel: ObservableObject {
                 isSavingReview = false
             }
             // エラーハンドリング処理
-            print("復習完了処理でエラーが発生しました: \(error)")
         }
     }
     

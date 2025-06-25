@@ -1444,6 +1444,7 @@ struct NewLearningDateSelectionStepView: View {
     
     var body: some View {
         VStack(spacing: 32) {
+            // ヘッダー部分
             VStack(spacing: 16) {
                 Image(systemName: "calendar.badge.plus")
                     .font(.system(size: 60))
@@ -1461,6 +1462,7 @@ struct NewLearningDateSelectionStepView: View {
                     .multilineTextAlignment(.center)
             }
             
+            // リアルタイム更新される推奨日表示
             VStack(spacing: 12) {
                 HStack {
                     Image(systemName: "lightbulb.fill")
@@ -1473,6 +1475,12 @@ struct NewLearningDateSelectionStepView: View {
                         .foregroundColor(.primary)
                     
                     Spacer()
+                    
+                    // 計算中インジケーター
+                    if viewModel.isCalculatingReviewDate {
+                        ProgressView()
+                            .scaleEffect(0.7)
+                    }
                 }
                 
                 Text(getInitialReviewDateExplanation(for: viewModel.newLearningInitialScore))
@@ -1486,6 +1494,7 @@ struct NewLearningDateSelectionStepView: View {
             .cornerRadius(12)
             .padding(.horizontal, 20)
             
+            // 日付選択部分
             VStack(spacing: 16) {
                 Text("復習日を選択")
                     .font(.headline)
@@ -1502,7 +1511,8 @@ struct NewLearningDateSelectionStepView: View {
                 .frame(height: 200)
                 
                 Button(action: {
-                    viewModel.selectedNewLearningReviewDate = viewModel.defaultNewLearningReviewDate
+                    // ViewModelのメソッドを呼び出す
+                    viewModel.resetToRecommendedDate()
                 }) {
                     HStack {
                         Image(systemName: "arrow.counterclockwise")
@@ -1517,8 +1527,9 @@ struct NewLearningDateSelectionStepView: View {
             
             Spacer()
             
+            // 次へボタン
             Button(action: {
-                viewModel.proceedToNextStep()  // 完了ステップへ
+                viewModel.proceedToNextStep()
             }) {
                 HStack {
                     Image(systemName: "arrow.right.circle.fill")

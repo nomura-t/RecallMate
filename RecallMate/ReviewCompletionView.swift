@@ -181,7 +181,7 @@ struct ReviewCompletionView: View {
         memo.nextReviewDate = nextReviewDate
         
         // 復習アクティビティを記録
-        let activity = LearningActivity.recordActivityWithPrecision(
+        let _ = LearningActivity.recordActivityWithPrecision(
             type: .review,
             durationSeconds: max(reviewDuration, 60), // 最低1分は記録
             memo: memo,

@@ -1,49 +1,97 @@
+// ReviewCalculator.swift - 修正版
 import Foundation
 
 struct ReviewCalculator {
     
-    // メインの計算メソッド - perfectRecallCountシステムを完全に削除
+    // メインの計算メソッド - より直接的なアプローチに変更
     static func calculateNextReviewDate(recallScore: Int16, lastReviewedDate: Date?, perfectRecallCount: Int16) -> Date {
-        // perfectRecallCountパラメータは後方互換性のためだけに保持し、実際は使用しない
+        // 新規学習の場合（perfectRecallCount = 0）は、シンプルな計算を使用
+        if perfectRecallCount == 0 {
+            return calculateInitialReviewDate(recallScore: recallScore, lastReviewedDate: lastReviewedDate)
+        }
+        
+        // 既存の復習の場合は、段階的計算を使用
         return calculateProgressiveNextReviewDate(
             recallScore: recallScore,
             lastReviewedDate: lastReviewedDate,
-            historyEntries: [] // 履歴が利用できない場合の基本計算
+            historyEntries: []
         )
     }
     
-    // 新しい段階的計算システムのメインメソッド
+    // 新規学習専用の初回復習日計算
+    private static func calculateInitialReviewDate(recallScore: Int16, lastReviewedDate: Date?) -> Date {
+        let baseDate = lastReviewedDate ?? Date()
+        let calendar = Calendar.current
+        
+        // 理解度に基づく基本間隔（日数）
+        let baseDays: Double
+        switch recallScore {
+        case 95...100:
+            baseDays = 14.0  // 2週間
+        case 85...94:
+            baseDays = 10.0  // 10日
+        case 75...84:
+            baseDays = 7.0   // 1週間
+        case 65...74:
+            baseDays = 5.0   // 5日
+        case 55...64:
+            baseDays = 3.0   // 3日
+        case 45...54:
+            baseDays = 2.0   // 2日
+        case 35...44:
+            baseDays = 1.5   // 1.5日
+        default:
+            baseDays = 1.0   // 1日
+        }
+        
+        // 理解度による微調整
+        let scoreFactor: Double
+        switch recallScore {
+        case 90...100:
+            scoreFactor = 1.2  // 20%延長
+        case 80...89:
+            scoreFactor = 1.1  // 10%延長
+        case 70...79:
+            scoreFactor = 1.0  // 基準
+        case 60...69:
+            scoreFactor = 0.9  // 10%短縮
+        case 50...59:
+            scoreFactor = 0.8  // 20%短縮
+        default:
+            scoreFactor = 0.7  // 30%短縮
+        }
+        
+        let finalDays = baseDays * scoreFactor
+        let daysToAdd = Int(round(finalDays))
+        
+        let nextDate = calendar.date(byAdding: .day, value: daysToAdd, to: baseDate) ?? baseDate
+        
+        return nextDate
+    }
+    
+    // 既存の段階的計算システム（復習用）
     static func calculateProgressiveNextReviewDate(
         recallScore: Int16,
         lastReviewedDate: Date?,
         historyEntries: [MemoHistoryEntry]
     ) -> Date {
-        // ステップ1: 学習熟達レベルの計算
-        // これは従来のperfectRecallCountに代わる、より柔軟な進歩指標です
+        // 既存の実装をそのまま維持
         let masteryLevel = calculateMasteryLevel(
             currentScore: recallScore,
             historyEntries: historyEntries
         )
         
-        // ステップ2: 熟達レベルに基づく基本間隔の決定
         let baseInterval = getBaseIntervalForMasteryLevel(masteryLevel: masteryLevel)
-        
-        // ステップ3: 現在の記憶度による微調整
         let scoreAdjustment = getScoreBasedAdjustment(recallScore: recallScore)
-        
-        // ステップ4: 学習パターンによる追加調整
         let patternAdjustment = getLearningPatternAdjustment(
             currentScore: recallScore,
             historyEntries: historyEntries
         )
         
-        // ステップ5: 最終計算と制約適用
         let rawInterval = baseInterval * scoreAdjustment * patternAdjustment
         let finalInterval = applyReasonableConstraints(interval: rawInterval)
-        let daysToAdd = Int(round(finalInterval)) // 四捨五入で正確な日数を決定
+        let daysToAdd = Int(round(finalInterval))
         
-        
-        // ステップ6: 次回復習日の算出
         let calendar = Calendar.current
         let nextDate = calendar.date(
             byAdding: .day,
@@ -51,48 +99,38 @@ struct ReviewCalculator {
             to: lastReviewedDate ?? Date()
         ) ?? Date()
         
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        
         return nextDate
     }
     
-    // 学習熟達レベルの計算 - perfectRecallCountの完全な代替
-    // この関数は学習者の成長を段階的に評価し、小さな進歩も適切に認識します
+    // 既存のヘルパーメソッドは変更なし
     private static func calculateMasteryLevel(
         currentScore: Int16,
         historyEntries: [MemoHistoryEntry]
     ) -> Int {
         var masteryPoints = 0
         
-        // 現在の記憶度に基づく基礎ポイント
-        // この段階的な評価により、73%のような成績も適切に価値付けされます
         switch currentScore {
         case 90...100:
-            masteryPoints += 8  // 優秀レベル
+            masteryPoints += 8
         case 80...89:
-            masteryPoints += 6  // 良好レベル
+            masteryPoints += 6
         case 70...79:
-            masteryPoints += 4  // 及第レベル（73%はここに該当）
+            masteryPoints += 4
         case 60...69:
-            masteryPoints += 2  // 基本レベル
+            masteryPoints += 2
         case 50...59:
-            masteryPoints += 1  // 入門レベル
+            masteryPoints += 1
         default:
-            masteryPoints += 0  // 要努力レベル
+            masteryPoints += 0
         }
         
-        // 履歴がある場合の追加評価
         if !historyEntries.isEmpty {
-            // 過去の成績による累積ポイント
             let historicalPoints = calculateHistoricalProgress(historyEntries: historyEntries)
             masteryPoints += historicalPoints
             
-            // 一貫性による追加ポイント
             let consistencyPoints = calculateConsistencyPoints(historyEntries: historyEntries)
             masteryPoints += consistencyPoints
             
-            // 改善傾向による追加ポイント
             let improvementPoints = calculateImprovementPoints(
                 currentScore: currentScore,
                 historyEntries: historyEntries
@@ -100,37 +138,31 @@ struct ReviewCalculator {
             masteryPoints += improvementPoints
         }
         
-        // 熟達レベルの決定（0-12の範囲）
         let masteryLevel = max(0, min(12, masteryPoints))
-        
         return masteryLevel
     }
     
-    // 過去の成績による累積進歩の評価
+    // 残りのヘルパーメソッドは既存のまま保持
     private static func calculateHistoricalProgress(historyEntries: [MemoHistoryEntry]) -> Int {
         var points = 0
         
-        // 各成績レベルでの学習経験を評価
         let excellentCount = historyEntries.filter { $0.recallScore >= 85 }.count
         let goodCount = historyEntries.filter { $0.recallScore >= 70 }.count
         let fairCount = historyEntries.filter { $0.recallScore >= 55 }.count
         
-        // 段階的なポイント付与
-        points += excellentCount * 2  // 優秀な成績は高く評価
-        points += goodCount * 1       // 良好な成績も適切に評価
-        points += fairCount / 2       // 及第点の成績も無視しない
+        points += excellentCount * 2
+        points += goodCount * 1
+        points += fairCount / 2
         
-        return min(points, 6) // 最大6ポイントに制限
+        return min(points, 6)
     }
     
-    // 学習の一貫性による追加ポイント
     private static func calculateConsistencyPoints(historyEntries: [MemoHistoryEntry]) -> Int {
         guard historyEntries.count >= 3 else { return 0 }
         
         let recentScores = Array(historyEntries.prefix(5).map { $0.recallScore })
         let average = Double(recentScores.reduce(0, +)) / Double(recentScores.count)
         
-        // 一貫して良好な成績を維持している場合のボーナス
         if average >= 70 {
             return 2
         } else if average >= 55 {
@@ -140,62 +172,42 @@ struct ReviewCalculator {
         }
     }
     
-    // 改善傾向による追加ポイント
     private static func calculateImprovementPoints(
         currentScore: Int16,
         historyEntries: [MemoHistoryEntry]
     ) -> Int {
         guard historyEntries.count >= 2 else { return 0 }
         
-        // 最近3回の平均と現在のスコアを比較
         let recentEntries = Array(historyEntries.prefix(3))
         let recentAverage = Double(recentEntries.reduce(0) { $0 + Int($1.recallScore) }) / Double(recentEntries.count)
         let improvement = Double(currentScore) - recentAverage
         
-        // 改善度に応じたポイント付与
         switch improvement {
         case 10...:
-            return 3  // 大幅改善
+            return 3
         case 5...9:
-            return 2  // 明確な改善
+            return 2
         case 0...4:
-            return 1  // 維持・軽微改善
+            return 1
         default:
-            return 0  // 改善なしまたは低下
+            return 0
         }
     }
     
-    // 熟達レベルに基づく基本間隔の決定
-    // この関数は学習の段階に応じて、科学的根拠に基づいた復習間隔を提供します
     private static func getBaseIntervalForMasteryLevel(masteryLevel: Int) -> Double {
-        // 段階的な間隔システム - 従来のbaseIntervalsよりも柔軟
         let masteryIntervals: [Double] = [
-            1.0,   // レベル0: 1日（初心者）
-            1.5,   // レベル1: 1.5日
-            2.5,   // レベル2: 2.5日
-            4.0,   // レベル3: 4日
-            6.0,   // レベル4: 6日
-            9.0,   // レベル5: 9日
-            13.0,  // レベル6: 13日
-            20.0,  // レベル7: 20日
-            30.0,  // レベル8: 30日
-            45.0,  // レベル9: 45日
-            65.0,  // レベル10: 65日
-            90.0,  // レベル11: 90日
-            120.0  // レベル12: 120日（マスターレベル）
+            1.0, 1.5, 2.5, 4.0, 6.0, 9.0, 13.0, 20.0, 30.0, 45.0, 65.0, 90.0, 120.0
         ]
         
         let safeLevel = max(0, min(masteryLevel, masteryIntervals.count - 1))
         return masteryIntervals[safeLevel]
     }
     
-    // 現在の記憶度による微調整
     private static func getScoreBasedAdjustment(recallScore: Int16) -> Double {
-        // より細かい調整により、記憶度の微細な違いも反映
         switch recallScore {
         case 95...100: return 1.3
         case 85...94:  return 1.2
-        case 75...84:  return 1.1  // 73%もここで適切に評価される
+        case 75...84:  return 1.1
         case 65...74:  return 1.05
         case 55...64:  return 1.0
         case 45...54:  return 0.95
@@ -204,29 +216,24 @@ struct ReviewCalculator {
         }
     }
     
-    // 学習パターンの分析による調整
     private static func getLearningPatternAdjustment(
         currentScore: Int16,
         historyEntries: [MemoHistoryEntry]
     ) -> Double {
         guard !historyEntries.isEmpty else { return 1.0 }
         
-        // 最近の学習頻度を分析
         let recentEntries = Array(historyEntries.prefix(3))
         
-        // 安定した成績パターンにボーナスを提供
         if recentEntries.allSatisfy({ $0.recallScore >= 65 }) {
-            return 1.1  // 安定した良好な成績
+            return 1.1
         } else if recentEntries.count >= 2 && recentEntries.allSatisfy({ $0.recallScore >= 50 }) {
-            return 1.05 // 安定した基本的な成績
+            return 1.05
         } else {
-            return 1.0  // 標準的な調整
+            return 1.0
         }
     }
     
-    // 実用的な制約の適用
     private static func applyReasonableConstraints(interval: Double) -> Double {
-        // 学習効果を最大化するための実用的な制約
         return max(1.0, min(365.0, interval))
     }
 }

@@ -39,7 +39,7 @@ class ActivityTracker {
         
         // 秒を直接使用して記録
         let context = PersistenceController.shared.container.viewContext
-        LearningActivity.recordActivityWithPrecision(
+        let _ = LearningActivity.recordActivityWithPrecision(
             type: .review,
             durationSeconds: adjustedDuration, // 秒単位をそのまま使用
             memo: memo,

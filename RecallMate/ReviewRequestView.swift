@@ -89,7 +89,11 @@ struct ReviewRequestView: View {
     private func requestReview() {
         // iOS 14.0以降でのレビュー依頼方法
         if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-            SKStoreReviewController.requestReview(in: scene)
+            // StoreKitの古いAPIを使用（iOS 18で非推奨だが動作する）
+            // 新しいAppStore APIへの移行は将来のバージョンで実装予定
+            if #available(iOS 14.0, *) {
+                SKStoreReviewController.requestReview(in: scene)
+            }
         }
     }
 }

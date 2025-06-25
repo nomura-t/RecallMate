@@ -11,6 +11,11 @@ struct WorkTimerView: View {
     @State private var showingNewTagCreator = false
     @State private var editingTag: Tag? = nil
     
+    // タスク管理用の状態管理
+    @State private var taskManagementTag: Tag? = nil
+    @State private var selectedTag: Tag? = nil
+    @State private var showingTaskSelector = false
+    
     // データ更新用のトリガー
     @State private var refreshTrigger = UUID()
     
@@ -41,10 +46,13 @@ struct WorkTimerView: View {
         NavigationStack {
             VStack(spacing: 0) {
                 // ヘッダーセクション - 現在のタイマー状態を表示
-                if timerManager.isRunning {
-                    CurrentTimerHeaderView(timerManager: timerManager) {
-                        stopCurrentTimer()
-                    }
+                if timerManager.isActive {
+                    CurrentTimerHeaderView(
+                        timerManager: timerManager,
+                        onStop: { stopCurrentTimer() },
+                        onPause: { pauseCurrentTimer() },
+                        onResume: { resumeCurrentTimer() }
+                    )
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
                     .background(
@@ -73,10 +81,14 @@ struct WorkTimerView: View {
                         ForEach(sortedTags, id: \.id) { tag in
                             WorkTimerCard(
                                 tag: tag,
-                                isCurrentlyRunning: timerManager.currentTag?.id == tag.id,
+                                isCurrentlyRunning: timerManager.currentTag?.id == tag.id && timerManager.isRunning,
+                                isPaused: timerManager.currentTag?.id == tag.id && timerManager.isPaused,
                                 onStartTimer: { startTimer(for: tag) },
-                                onStopTimer: { stopCurrentTimer() }, // 停止専用のアクションを追加
-                                onEditTag: { editTag(tag) }
+                                onStopTimer: { stopCurrentTimer() },
+                                onPauseTimer: { pauseCurrentTimer() },
+                                onResumeTimer: { resumeCurrentTimer() },
+                                onEditTag: { editTag(tag) },
+                                onManageTasks: { showTaskManagement(for: tag) }
                             )
                             .padding(.horizontal, 16)
                         }
@@ -126,6 +138,38 @@ struct WorkTimerView: View {
                 onCancel: { showingNewTagCreator = false }
             )
         }
+        // タスク管理モーダル
+        .sheet(item: $taskManagementTag) { tag in
+            TaskManagementModal(
+                tag: tag,
+                timerManager: timerManager,
+                onSave: {
+                    taskManagementTag = nil
+                    refreshData()
+                }
+            )
+        }
+        // タスク選択モーダル
+        .sheet(isPresented: $showingTaskSelector) {
+            if let selectedTag = selectedTag {
+                TaskSelectorModal(
+                    tag: selectedTag,
+                    onSelectTask: { task in
+                        showingTaskSelector = false
+                        timerManager.startTimer(for: selectedTag, task: task)
+                        refreshData()
+                    },
+                    onStartWithoutTask: {
+                        showingTaskSelector = false
+                        timerManager.startTimer(for: selectedTag)
+                        refreshData()
+                    },
+                    onCancel: {
+                        showingTaskSelector = false
+                    }
+                )
+            }
+        }
     }
     
     // MARK: - タイマー操作メソッド
@@ -138,8 +182,20 @@ struct WorkTimerView: View {
             timerManager.stopTimer(in: viewContext)
         }
         
-        // 新しいタイマーを開始
-        timerManager.startTimer(for: tag)
+        // タグに未完了タスクがある場合はタスク選択を表示
+        guard let tagId = tag.id else {
+            timerManager.startTimer(for: tag)
+            return
+        }
+        
+        let pendingTasks = SimpleTaskManager.shared.getTasks(for: tagId, includeCompleted: false)
+        if !pendingTasks.isEmpty {
+            selectedTag = tag
+            showingTaskSelector = true
+        } else {
+            // タスクがない場合は通常のタイマーを開始
+            timerManager.startTimer(for: tag)
+        }
     }
     
     /// 現在のタイマーを停止し、作業記録を保存します
@@ -148,11 +204,26 @@ struct WorkTimerView: View {
         refreshData()
     }
     
+    /// 現在のタイマーを一時停止します
+    private func pauseCurrentTimer() {
+        timerManager.pauseTimer()
+    }
+    
+    /// 現在のタイマーを再開します
+    private func resumeCurrentTimer() {
+        timerManager.resumeTimer()
+    }
+    
     // MARK: - タグ管理メソッド
     
     /// タグの編集画面を表示します
     private func editTag(_ tag: Tag) {
         editingTag = tag
+    }
+    
+    /// タスク管理画面を表示します
+    private func showTaskManagement(for tag: Tag) {
+        taskManagementTag = tag
     }
     
     // MARK: - データ管理メソッド
@@ -198,11 +269,13 @@ struct WorkTimerView: View {
 struct CurrentTimerHeaderView: View {
     @ObservedObject var timerManager: WorkTimerManager
     let onStop: () -> Void
+    let onPause: () -> Void
+    let onResume: () -> Void
     
     var body: some View {
         HStack(spacing: 16) {
             // タイマー情報
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 8) {
                     Circle()
                         .fill(timerManager.currentTag?.swiftUIColor() ?? .blue)
@@ -212,33 +285,101 @@ struct CurrentTimerHeaderView: View {
                         .font(.headline)
                         .fontWeight(.semibold)
                     
-                    // 実行中インジケーター
-                    Image(systemName: "timer")
-                        .foregroundColor(.blue)
-                        .font(.system(size: 14))
+                    // 状態インジケーター
+                    if timerManager.isPaused {
+                        HStack(spacing: 4) {
+                            Image(systemName: "pause.circle.fill")
+                                .foregroundColor(.orange)
+                                .font(.system(size: 14))
+                            Text("一時停止中")
+                                .font(.caption)
+                                .foregroundColor(.orange)
+                                .fontWeight(.semibold)
+                        }
+                    } else {
+                        Image(systemName: "timer")
+                            .foregroundColor(.blue)
+                            .font(.system(size: 14))
+                    }
                 }
                 
-                Text("経過時間: \(timerManager.formattedElapsedTime)")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                // 現在のタスク情報
+                if let currentTask = timerManager.currentTask {
+                    HStack(spacing: 6) {
+                        Image(systemName: "checkmark.square")
+                            .foregroundColor(currentTask.priority.color)
+                            .font(.system(size: 12))
+                        
+                        Text(currentTask.title)
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundColor(.primary)
+                            .lineLimit(1)
+                    }
+                    
+                    // 経過時間表示
+                    Text("経過時間: \(timerManager.formattedElapsedTime)")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                } else {
+                    Text("経過時間: \(timerManager.formattedElapsedTime)")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
             }
             
             Spacer()
             
-            // 停止ボタン
-            Button(action: onStop) {
-                HStack(spacing: 6) {
-                    Image(systemName: "stop.fill")
-                        .font(.system(size: 14))
-                    Text("停止")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
+            // コントロールボタン
+            HStack(spacing: 8) {
+                // 一時停止/再開ボタン
+                if timerManager.isPaused {
+                    Button(action: onResume) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "play.fill")
+                                .font(.system(size: 14))
+                            Text("再開")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                        }
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Color.green)
+                        .cornerRadius(20)
+                    }
+                } else {
+                    Button(action: onPause) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "pause.fill")
+                                .font(.system(size: 14))
+                            Text("一時停止")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                        }
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Color.orange)
+                        .cornerRadius(20)
+                    }
                 }
-                .foregroundColor(.white)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(Color.red)
-                .cornerRadius(20)
+                
+                // 停止ボタン
+                Button(action: onStop) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "stop.fill")
+                            .font(.system(size: 14))
+                        Text("停止")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(Color.red)
+                    .cornerRadius(20)
+                }
             }
         }
         .padding(16)
@@ -254,9 +395,13 @@ struct CurrentTimerHeaderView: View {
 struct WorkTimerCard: View {
     let tag: Tag
     let isCurrentlyRunning: Bool
+    let isPaused: Bool
     let onStartTimer: () -> Void
-    let onStopTimer: () -> Void // 停止専用のアクションを追加
+    let onStopTimer: () -> Void
+    let onPauseTimer: () -> Void
+    let onResumeTimer: () -> Void
     let onEditTag: () -> Void
+    let onManageTasks: () -> Void
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -278,19 +423,74 @@ struct WorkTimerCard: View {
                         Image(systemName: "timer")
                             .foregroundColor(.blue)
                             .font(.system(size: 14))
+                    } else if isPaused {
+                        HStack(spacing: 4) {
+                            Image(systemName: "pause.circle.fill")
+                                .foregroundColor(.orange)
+                                .font(.system(size: 14))
+                            Text("一時停止")
+                                .font(.caption)
+                                .foregroundColor(.orange)
+                                .fontWeight(.semibold)
+                        }
                     }
                 }
                 
-                // 今日の作業時間表示
-                Text("今日: \(getTodayWorkTime(for: tag))")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                // 今日の作業時間とタスク数表示
+                HStack(spacing: 12) {
+                    Text("今日: \(getTodayWorkTime(for: tag))")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    
+                    // タスク数表示
+                    let taskCount = getPendingTaskCount(for: tag)
+                    let ongoingSessionCount = getOngoingSessionCount(for: tag)
+                    
+                    if taskCount > 0 {
+                        HStack(spacing: 4) {
+                            Image(systemName: "checklist")
+                                .font(.system(size: 12))
+                            Text("\(taskCount)個のタスク")
+                                .font(.caption)
+                        }
+                        .foregroundColor(.orange)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.orange.opacity(0.1))
+                        .cornerRadius(4)
+                    }
+                    
+                    // 継続中セッション表示
+                    if ongoingSessionCount > 0 {
+                        HStack(spacing: 4) {
+                            Image(systemName: "clock.badge.exclamationmark")
+                                .font(.system(size: 12))
+                            Text("\(ongoingSessionCount)継続中")
+                                .font(.caption)
+                        }
+                        .foregroundColor(.blue)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.blue.opacity(0.1))
+                        .cornerRadius(4)
+                    }
+                }
             }
             
             Spacer()
             
             // アクションボタンセクション
             HStack(spacing: 12) {
+                // タスク管理ボタン
+                Button(action: onManageTasks) {
+                    Image(systemName: "checklist")
+                        .font(.system(size: 16))
+                        .foregroundColor(.purple)
+                        .frame(width: 36, height: 36)
+                        .background(Color.purple.opacity(0.1))
+                        .cornerRadius(18)
+                }
+                
                 // 編集ボタン
                 Button(action: onEditTag) {
                     Image(systemName: "pencil")
@@ -301,26 +501,63 @@ struct WorkTimerCard: View {
                         .cornerRadius(18)
                 }
                 
-                // タイマー開始/停止ボタン - 実行中かどうかで適切なアクションを呼び分け
-                Button(action: {
-                    if isCurrentlyRunning {
-                        onStopTimer() // 実行中の場合は停止アクションを呼び出し
+                // タイマーコントロールボタン
+                HStack(spacing: 8) {
+                    if isCurrentlyRunning || isPaused {
+                        // 一時停止/再開ボタン
+                        Button(action: {
+                            if isCurrentlyRunning {
+                                onPauseTimer()
+                            } else if isPaused {
+                                onResumeTimer()
+                            }
+                        }) {
+                            HStack(spacing: 4) {
+                                Image(systemName: isPaused ? "play.fill" : "pause.fill")
+                                    .font(.system(size: 12))
+                                Text(isPaused ? "再開" : "一時停止")
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                            }
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(isPaused ? Color.green : Color.orange)
+                            .cornerRadius(16)
+                        }
+                        
+                        // 停止ボタン
+                        Button(action: onStopTimer) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "stop.fill")
+                                    .font(.system(size: 12))
+                                Text("停止")
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                            }
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(Color.red)
+                            .cornerRadius(16)
+                        }
                     } else {
-                        onStartTimer() // 停止中の場合は開始アクションを呼び出し
+                        // 開始ボタン
+                        Button(action: onStartTimer) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "play.fill")
+                                    .font(.system(size: 14))
+                                Text("開始")
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                            }
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(tag.swiftUIColor())
+                            .cornerRadius(20)
+                        }
                     }
-                }) {
-                    HStack(spacing: 6) {
-                        Image(systemName: isCurrentlyRunning ? "stop.fill" : "play.fill")
-                            .font(.system(size: 14))
-                        Text(isCurrentlyRunning ? "停止" : "開始")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                    }
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(isCurrentlyRunning ? Color.red : tag.swiftUIColor())
-                    .cornerRadius(20)
                 }
             }
         }
@@ -355,6 +592,19 @@ struct WorkTimerCard: View {
         let totalSeconds = activities.reduce(0) { $0 + Int($1.durationInSeconds) }
         
         return WorkTimerManager.shared.formatDuration(totalSeconds)
+    }
+    
+    /// 指定されたタグの未完了タスク数を取得します
+    private func getPendingTaskCount(for tag: Tag) -> Int {
+        guard let tagId = tag.id else { return 0 }
+        return SimpleTaskManager.shared.getTasks(for: tagId, includeCompleted: false).count
+    }
+    
+    /// 指定されたタグの継続中セッション数を取得します
+    private func getOngoingSessionCount(for tag: Tag) -> Int {
+        guard let tagId = tag.id else { return 0 }
+        let tasks = SimpleTaskManager.shared.getTasks(for: tagId, includeCompleted: false)
+        return tasks.filter { $0.currentSessionSeconds > 0 }.count
     }
 }
 

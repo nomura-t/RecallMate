@@ -213,7 +213,7 @@ struct ActivityProgressView: View {
                 // Empty activities
             } else {
                 // 最新のアクティビティを表示
-                if let latest = activities.first, let date = latest.date {
+                if let latest = activities.first, let _ = latest.date {
                     // Latest activity
                 }
             }

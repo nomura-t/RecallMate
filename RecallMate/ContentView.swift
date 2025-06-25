@@ -496,7 +496,7 @@ struct ContentView: View {
     
     // 画面表示時の初期化
     private func handleOnAppear() {
-        if let memo = memo {
+        if memo != nil {
             viewModel.startLearningSession()
         }
     }
@@ -510,7 +510,7 @@ struct ContentView: View {
                 let noteText = "復習セッション: %@".localizedFormat(memo.title ?? "無題".localized)
                 
                 let context = PersistenceController.shared.container.viewContext
-                LearningActivity.recordActivityWithPrecision(
+                let _ = LearningActivity.recordActivityWithPrecision(
                     type: ActivityType.review,  // 完全修飾名を使用
                     durationSeconds: ActivityTracker.shared.getCurrentSessionDuration(sessionId: sessionId),  // 分から秒に変換
                     memo: memo,
@@ -531,7 +531,7 @@ struct ContentView: View {
 
     // 問題エディタ閉じた後の処理
     private func handleQuestionEditorDismiss() {
-        if let memo = memo {
+        if memo != nil {
             viewModel.contentChanged = true
             viewModel.recordActivityOnSave = true
         }
