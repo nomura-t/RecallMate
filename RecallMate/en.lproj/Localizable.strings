@@ -1597,3 +1597,16 @@ registering your work from \"Add New Work\"";
 
 // HomeView Step Navigation
 "ステップ %d" = "Step %d";
+
+// NewLearningFlowViewModel Step Titles
+"学習内容を入力" = "Enter Learning Content";
+"学習方法を選択" = "Select Learning Method";
+"理解度の評価" = "Evaluate Understanding";
+"アクティブリコール学習" = "Active Recall Learning";
+"復習日の選択" = "Select Review Date";
+"学習記録完了" = "Learning Record Complete";
+"新規学習フロー" = "New Learning Flow";
+
+// NewLearningFlowViewModel Learning Notes
+"学習記録: %@ (理解度: %d%%)" = "Learning Record: %@ (Understanding: %d%%)";
+"アクティブリコール学習: %@ (%@, 理解度: %d%%)" = "Active Recall Learning: %@ (%@, Understanding: %d%%)";

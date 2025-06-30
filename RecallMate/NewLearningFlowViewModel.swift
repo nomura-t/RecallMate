@@ -198,18 +198,18 @@ class NewLearningFlowViewModel: ObservableObject {
     
     var currentStepTitle: String {
         switch newLearningStep {
-        case 0: return "学習内容を入力"
-        case 1: return "学習方法を選択"
+        case 0: return "学習内容を入力".localized
+        case 1: return "学習方法を選択".localized
         case 2:
             if selectedLearningMethod == .recordOnly {
-                return "理解度の評価"
+                return "理解度の評価".localized
             } else {
-                return "アクティブリコール学習"
+                return "アクティブリコール学習".localized
             }
-        case 3: return "理解度の評価"
-        case 4: return "復習日の選択"
-        case 5: return "学習記録完了"
-        default: return "新規学習フロー"
+        case 3: return "理解度の評価".localized
+        case 4: return "復習日の選択".localized
+        case 5: return "学習記録完了".localized
+        default: return "新規学習フロー".localized
         }
     }
     
@@ -373,9 +373,9 @@ class NewLearningFlowViewModel: ObservableObject {
     /// - Returns: 作成されたノートテキスト
     private func createLearningNote() -> String {
         if selectedLearningMethod == .recordOnly {
-            return "学習記録: \(newLearningTitle) (理解度: \(newLearningInitialScore)%)"
+            return "学習記録: %@ (理解度: %d%%)".localizedFormat(newLearningTitle, newLearningInitialScore)
         } else {
-            return "アクティブリコール学習: \(newLearningTitle) (\(selectedLearningMethod.localizedRawValue), 理解度: \(newLearningInitialScore)%)"
+            return "アクティブリコール学習: %@ (%@, 理解度: %d%%)".localizedFormat(newLearningTitle, selectedLearningMethod.localizedRawValue, newLearningInitialScore)
         }
     }
     

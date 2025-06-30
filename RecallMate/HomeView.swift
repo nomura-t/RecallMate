@@ -942,31 +942,6 @@ struct ReviewDateSelectionStepView: View {
                 }
             }
             
-            VStack(spacing: 12) {
-                HStack {
-                    Image(systemName: "brain.head.profile")
-                        .foregroundColor(.blue)
-                        .font(.system(size: 16))
-                    
-                    Text("記憶度 %d%% に基づく推奨復習日".localizedWithInt(Int(viewModel.recallScore)))
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.primary)
-                    
-                    Spacer()
-                }
-                
-                Text(getReviewDateExplanation(for: viewModel.recallScore))
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.leading)
-                    .padding(.horizontal, 8)
-            }
-            .padding(16)
-            .background(Color.blue.opacity(0.1))
-            .cornerRadius(12)
-            .padding(.horizontal, 20)
-            
             VStack(spacing: 16) {
                 Text("復習日を選択".localized)
                     .font(.headline)
