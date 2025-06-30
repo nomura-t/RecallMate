@@ -10,13 +10,13 @@ struct LearningTimer: View {
     @State private var elapsedTime: TimeInterval = 0
     
     var body: some View {
-        VStack(spacing: 12) {
+        HStack(spacing: 12) {
             Text("学習時間")
                 .font(.headline)
                 .foregroundColor(.secondary)
             
             Text(formattedTime)
-                .font(.system(size: 48, weight: .bold, design: .rounded))
+                .font(.system(.largeTitle, design: .rounded).weight(.bold))
                 .foregroundColor(color)
         }
         .onAppear {

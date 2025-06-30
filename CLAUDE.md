@@ -9,11 +9,13 @@ RecallMate is an iOS app built with SwiftUI that helps users track learning acti
 ## Development Commands
 
 ### Building and Running
+
 - **Build**: Use Xcode to build the project (`⌘+B`)
 - **Run**: Use Xcode to run on simulator or device (`⌘+R`)
 - **Test**: Use Xcode to run tests (`⌘+U`)
 
 ### Testing
+
 - **Unit Tests**: Located in `RecallMateTests/`
 - **UI Tests**: Located in `RecallMateUITests/`
 - Tests use Swift Testing framework (`import Testing`)
@@ -21,7 +23,9 @@ RecallMate is an iOS app built with SwiftUI that helps users track learning acti
 ## Architecture
 
 ### Core Data Model
+
 The app uses Core Data with the following main entities:
+
 - **Memo**: Primary learning content with recall scores and review dates
 - **LearningActivity**: Time-tracked activities with types (reading, exercise, lecture, etc.)
 - **Tag**: Categorization system for memos
@@ -30,13 +34,15 @@ The app uses Core Data with the following main entities:
 - **MemoHistoryEntry**: Historical recall performance data
 
 ### App Structure
+
 - **SwiftUI + MVVM**: Uses SwiftUI with view models for state management
 - **Three-tab interface**:
   1. 復習管理 (Review Management) - `HomeView`
-  2. 作業記録 (Work Recording) - `WorkTimerView`  
+  2. 作業記録 (Work Recording) - `WorkTimerView`
   3. 振り返り (Reflection) - `ActivityProgressView`
 
 ### Key Managers
+
 - **PersistenceController**: Core Data stack management
 - **ReviewManager**: App Store review prompts and task completion tracking
 - **StreakTracker**: Learning streak calculation and maintenance
@@ -44,18 +50,21 @@ The app uses Core Data with the following main entities:
 - **TagService**: Tag management and operations
 
 ### Localization
+
 - Supports multiple languages: English, Japanese, Chinese (Simplified/Traditional/Hong Kong)
 - Localization files in `*.lproj/Localizable.strings`
 
 ## File Organization
 
 ### Core Files
+
 - `RecallMateApp.swift`: Main app entry point with Core Data initialization
 - `MainView.swift`: Tab-based main interface
 - `Persistence.swift`: Core Data setup and preview data
 - `ContentView.swift`: Main memo creation/editing interface
 
 ### Feature Areas
+
 - **Timer/Work Tracking**: `WorkTimerView.swift`, `WorkTimerManager.swift`
 - **Review System**: `ReviewCalculator.swift`, `ReviewManager.swift`
 - **Activity Tracking**: `ActivityProgressView.swift`, `ActivityTracker.swift`
@@ -63,6 +72,7 @@ The app uses Core Data with the following main entities:
 - **Notifications**: `NotificationSettingsManager.swift`, `StreakNotificationManager.swift`
 
 ### UI Components
+
 - Shared components in `SharedComponents.swift`
 - Canvas/drawing support with PencilKit integration
 - Tag management UI in `TagChip.swift`, `TagSelectionView.swift`
@@ -75,3 +85,11 @@ The app uses Core Data with the following main entities:
 - Core Data with `@FetchRequest` and `@StateObject`
 - Environment objects for shared state (`AppSettings`)
 - Combine framework for reactive programming where applicable
+
+## 🚨 Safe "YOLO" mode の設定
+
+このプロジェクトでは、タスク自動化のために以下の方法を **許容** します：
+
+```bash
+claude --dangerously-skip-permissions
+```

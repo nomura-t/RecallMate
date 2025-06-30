@@ -737,7 +737,7 @@ struct ActiveReviewGuidanceStepView: View {
                 .padding(.horizontal, 20)
             }
             
-            Spacer()
+//            Spacer()
             
             VStack(spacing: 16) {
                 if viewModel.activeReviewStep < (viewModel.selectedReviewMethod == .thorough ? 3 : 2) {

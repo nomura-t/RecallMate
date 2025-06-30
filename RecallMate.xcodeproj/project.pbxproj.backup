@@ -6,6 +6,21 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		970FD43A2D86ECAC008C8281 /* MemoHistoryEntry+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970FD4382D86ECAC008C8281 /* MemoHistoryEntry+CoreDataClass.swift */; };
+		970FD43B2D86ECAC008C8281 /* MemoHistoryEntry+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970FD4392D86ECAC008C8281 /* MemoHistoryEntry+CoreDataProperties.swift */; };
+		970FD4482D88558D008C8281 /* Tag+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970FD4472D88558D008C8281 /* Tag+CoreDataProperties.swift */; };
+		970FD4492D88558D008C8281 /* Tag+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970FD4462D88558D008C8281 /* Tag+CoreDataClass.swift */; };
+		970FD45A2D89AE5D008C8281 /* LearningActivity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970FD4592D89AE5D008C8281 /* LearningActivity+CoreDataProperties.swift */; };
+		970FD45B2D89AE5D008C8281 /* LearningActivity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970FD4582D89AE5D008C8281 /* LearningActivity+CoreDataClass.swift */; };
+		97D2DFBA2D7B17ED007B6B7B /* Memo+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D2DFB82D7B17ED007B6B7B /* Memo+CoreDataClass.swift */; };
+		97D2DFBD2D7B17ED007B6B7B /* Memo+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D2DFB92D7B17ED007B6B7B /* Memo+CoreDataProperties.swift */; };
+		97D2DFC02D7B197F007B6B7B /* StreakData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D2DFBF2D7B197F007B6B7B /* StreakData+CoreDataProperties.swift */; };
+		97D2DFC12D7B197F007B6B7B /* StreakData+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D2DFBE2D7B197F007B6B7B /* StreakData+CoreDataClass.swift */; };
+		97D2DFC42D7B2F07007B6B7B /* ComparisonQuestion+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D2DFC32D7B2F07007B6B7B /* ComparisonQuestion+CoreDataProperties.swift */; };
+		97D2DFC52D7B2F07007B6B7B /* ComparisonQuestion+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D2DFC22D7B2F07007B6B7B /* ComparisonQuestion+CoreDataClass.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		9772E8752D6BD9A5004CF4BD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,9 +39,21 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		970FD4382D86ECAC008C8281 /* MemoHistoryEntry+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemoHistoryEntry+CoreDataClass.swift"; sourceTree = "<group>"; };
+		970FD4392D86ECAC008C8281 /* MemoHistoryEntry+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemoHistoryEntry+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		970FD4462D88558D008C8281 /* Tag+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Tag+CoreDataClass.swift"; sourceTree = "<group>"; };
+		970FD4472D88558D008C8281 /* Tag+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Tag+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		970FD4582D89AE5D008C8281 /* LearningActivity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LearningActivity+CoreDataClass.swift"; sourceTree = "<group>"; };
+		970FD4592D89AE5D008C8281 /* LearningActivity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LearningActivity+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		9772E85E2D6BD9A2004CF4BD /* RecallMate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RecallMate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9772E8742D6BD9A5004CF4BD /* RecallMateTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecallMateTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9772E87E2D6BD9A5004CF4BD /* RecallMateUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecallMateUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		97D2DFB82D7B17ED007B6B7B /* Memo+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Memo+CoreDataClass.swift"; sourceTree = "<group>"; };
+		97D2DFB92D7B17ED007B6B7B /* Memo+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Memo+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		97D2DFBE2D7B197F007B6B7B /* StreakData+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StreakData+CoreDataClass.swift"; sourceTree = "<group>"; };
+		97D2DFBF2D7B197F007B6B7B /* StreakData+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StreakData+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		97D2DFC22D7B2F07007B6B7B /* ComparisonQuestion+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ComparisonQuestion+CoreDataClass.swift"; sourceTree = "<group>"; };
+		97D2DFC32D7B2F07007B6B7B /* ComparisonQuestion+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ComparisonQuestion+CoreDataProperties.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -75,6 +102,18 @@
 		9772E8552D6BD9A2004CF4BD = {
 			isa = PBXGroup;
 			children = (
+				970FD4582D89AE5D008C8281 /* LearningActivity+CoreDataClass.swift */,
+				970FD4592D89AE5D008C8281 /* LearningActivity+CoreDataProperties.swift */,
+				970FD4462D88558D008C8281 /* Tag+CoreDataClass.swift */,
+				970FD4472D88558D008C8281 /* Tag+CoreDataProperties.swift */,
+				970FD4382D86ECAC008C8281 /* MemoHistoryEntry+CoreDataClass.swift */,
+				970FD4392D86ECAC008C8281 /* MemoHistoryEntry+CoreDataProperties.swift */,
+				97D2DFC22D7B2F07007B6B7B /* ComparisonQuestion+CoreDataClass.swift */,
+				97D2DFC32D7B2F07007B6B7B /* ComparisonQuestion+CoreDataProperties.swift */,
+				97D2DFBE2D7B197F007B6B7B /* StreakData+CoreDataClass.swift */,
+				97D2DFBF2D7B197F007B6B7B /* StreakData+CoreDataProperties.swift */,
+				97D2DFB82D7B17ED007B6B7B /* Memo+CoreDataClass.swift */,
+				97D2DFB92D7B17ED007B6B7B /* Memo+CoreDataProperties.swift */,
 				9772E8602D6BD9A2004CF4BD /* RecallMate */,
 				9772E8772D6BD9A5004CF4BD /* RecallMateTests */,
 				9772E8812D6BD9A5004CF4BD /* RecallMateUITests */,
@@ -240,6 +279,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				97D2DFBA2D7B17ED007B6B7B /* Memo+CoreDataClass.swift in Sources */,
+				97D2DFBD2D7B17ED007B6B7B /* Memo+CoreDataProperties.swift in Sources */,
+				97D2DFC02D7B197F007B6B7B /* StreakData+CoreDataProperties.swift in Sources */,
+				97D2DFC12D7B197F007B6B7B /* StreakData+CoreDataClass.swift in Sources */,
+				97D2DFC42D7B2F07007B6B7B /* ComparisonQuestion+CoreDataProperties.swift in Sources */,
+				970FD4482D88558D008C8281 /* Tag+CoreDataProperties.swift in Sources */,
+				970FD4492D88558D008C8281 /* Tag+CoreDataClass.swift in Sources */,
+				970FD45A2D89AE5D008C8281 /* LearningActivity+CoreDataProperties.swift in Sources */,
+				970FD45B2D89AE5D008C8281 /* LearningActivity+CoreDataClass.swift in Sources */,
+				970FD43A2D86ECAC008C8281 /* MemoHistoryEntry+CoreDataClass.swift in Sources */,
+				970FD43B2D86ECAC008C8281 /* MemoHistoryEntry+CoreDataProperties.swift in Sources */,
+				97D2DFC52D7B2F07007B6B7B /* ComparisonQuestion+CoreDataClass.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -392,19 +443,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = RecallMate/Resources/RecallMate.entitlements;
+				CODE_SIGN_ENTITLEMENTS = RecallMate/RecallMate.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 6;
-				DEVELOPMENT_ASSET_PATHS = "\"RecallMate/Resources/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"RecallMate/Preview Content\"";
 				DEVELOPMENT_TEAM = UF646AVHYA;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RecallMate/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "";
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
-				INFOPLIST_KEY_LSApplicationQueriesSchemes = (
-					line,
-					twitter,
-				);
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -437,19 +485,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = RecallMate/Resources/RecallMate.entitlements;
+				CODE_SIGN_ENTITLEMENTS = RecallMate/RecallMate.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 6;
-				DEVELOPMENT_ASSET_PATHS = "\"RecallMate/Resources/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"RecallMate/Preview Content\"";
 				DEVELOPMENT_TEAM = UF646AVHYA;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RecallMate/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "";
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
-				INFOPLIST_KEY_LSApplicationQueriesSchemes = (
-					line,
-					twitter,
-				);
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
