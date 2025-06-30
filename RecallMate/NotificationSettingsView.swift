@@ -11,8 +11,8 @@ struct NotificationSettingsView: View {
         NavigationView {
             Form {
                 // 通知の全体制御
-                Section(header: Text("通知設定")) {
-                    Toggle("通知を有効にする", isOn: $notificationSettings.isNotificationEnabled)
+                Section(header: Text("通知設定".localized)) {
+                    Toggle("通知を有効にする".localized, isOn: $notificationSettings.isNotificationEnabled)
                         .onChange(of: notificationSettings.isNotificationEnabled) { _, newValue in
                             if newValue {
                                 notificationSettings.enableNotifications()
@@ -24,7 +24,7 @@ struct NotificationSettingsView: View {
                     if notificationSettings.isNotificationEnabled {
                         // 通知時間の設定
                         HStack {
-                            Text("通知時間")
+                            Text("通知時間".localized)
                             Spacer()
                             Button(notificationSettings.formattedNotificationTime) {
                                 tempNotificationTime = notificationSettings.notificationTime
@@ -37,39 +37,39 @@ struct NotificationSettingsView: View {
                 
                 // 通知の種類別設定
                 if notificationSettings.isNotificationEnabled {
-                    Section(header: Text("通知の種類")) {
-                        Toggle("学習ストリークリマインダー", isOn: $notificationSettings.streakReminderEnabled)
-                        Toggle("復習リマインダー", isOn: $notificationSettings.reviewReminderEnabled)
-//                        Toggle("学習目標達成通知", isOn: $notificationSettings.goalAchievementEnabled)
+                    Section(header: Text("通知の種類".localized)) {
+                        Toggle("学習ストリークリマインダー".localized, isOn: $notificationSettings.streakReminderEnabled)
+                        Toggle("復習リマインダー".localized, isOn: $notificationSettings.reviewReminderEnabled)
+//                        Toggle("学習目標達成通知".localized, isOn: $notificationSettings.goalAchievementEnabled)
                     }
                     
-                    Section(header: Text("通知頻度")) {
-                        Picker("リマインダー頻度", selection: $notificationSettings.reminderFrequency) {
-                            Text("毎日").tag(ReminderFrequency.daily)
-                            Text("平日のみ").tag(ReminderFrequency.weekdays)
-                            Text("週3回").tag(ReminderFrequency.threeTimesWeek)
+                    Section(header: Text("通知頻度".localized)) {
+                        Picker("リマインダー頻度".localized, selection: $notificationSettings.reminderFrequency) {
+                            Text("毎日".localized).tag(ReminderFrequency.daily)
+                            Text("平日のみ".localized).tag(ReminderFrequency.weekdays)
+                            Text("週3回".localized).tag(ReminderFrequency.threeTimesWeek)
                         }
                     }
                 }
                 
                 // 通知の状態表示
-                Section(header: Text("システム情報")) {
+                Section(header: Text("システム情報".localized)) {
                     HStack {
-                        Text("システム通知許可")
+                        Text("システム通知許可".localized)
                         Spacer()
                         Text(notificationSettings.systemPermissionStatus)
                             .foregroundColor(notificationSettings.hasSystemPermission ? .green : .red)
                     }
                     
                     if !notificationSettings.hasSystemPermission {
-                        Button("設定アプリで許可する") {
+                        Button("設定アプリで許可する".localized) {
                             notificationSettings.openSystemSettings()
                         }
                         .foregroundColor(.blue)
                     }
                 }
             }
-            .navigationTitle("通知設定")
+            .navigationTitle("通知設定".localized)
         }
         .sheet(isPresented: $showingTimePicker) {
             TimePickerView(
@@ -93,4 +93,8 @@ enum ReminderFrequency: String, CaseIterable {
     case daily = "毎日"
     case weekdays = "平日のみ"
     case threeTimesWeek = "週3回"
+    
+    var localizedRawValue: String {
+        return self.rawValue.localized
+    }
 }

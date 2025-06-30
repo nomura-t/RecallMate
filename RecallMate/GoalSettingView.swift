@@ -13,16 +13,16 @@ struct GoalSettingView: View {
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("学習目標設定")) {
-                    Toggle("学習目標を有効にする", isOn: $tempIsEnabled)
+                Section(header: Text("学習目標設定".localized)) {
+                    Toggle("学習目標を有効にする".localized, isOn: $tempIsEnabled)
                     
                     if tempIsEnabled {
                         VStack(alignment: .leading, spacing: 12) {
-                            Text("1日の学習目標時間")
+                            Text("1日の学習目標時間".localized)
                                 .font(.subheadline)
                                 .foregroundColor(.primary)
                             
-                            Picker("目標時間", selection: $tempGoalMinutes) {
+                            Picker("目標時間".localized, selection: $tempGoalMinutes) {
                                 ForEach(goalOptions, id: \.self) { minutes in
                                     Text(formatGoalTime(minutes))
                                         .tag(minutes)
@@ -33,7 +33,7 @@ struct GoalSettingView: View {
                             
                             // カスタム時間入力
                             HStack {
-                                Text("カスタム:")
+                                Text("カスタム:".localized)
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                                 
@@ -42,7 +42,7 @@ struct GoalSettingView: View {
                                     in: 5...480,
                                     step: 5
                                 ) {
-                                    Text("\(tempGoalMinutes)分")
+                                    Text("%d分".localizedFormat(tempGoalMinutes))
                                         .font(.subheadline)
                                         .foregroundColor(.primary)
                                 }
@@ -52,42 +52,42 @@ struct GoalSettingView: View {
                 }
                 
                 if tempIsEnabled {
-                    Section(header: Text("目標の効果")) {
+                    Section(header: Text("目標の効果".localized)) {
                         GoalBenefitsView(goalMinutes: tempGoalMinutes)
                     }
                 }
                 
-                Section(header: Text("ストリーク記録")) {
+                Section(header: Text("ストリーク記録".localized)) {
                     HStack {
                         Image(systemName: "flame.fill")
                             .foregroundColor(.red)
-                        Text("現在のストリーク")
+                        Text("現在のストリーク".localized)
                         Spacer()
-                        Text("\(goalManager.currentStreak)日")
+                        Text("%d日".localizedFormat(goalManager.currentStreak))
                             .fontWeight(.semibold)
                     }
                     
                     HStack {
                         Image(systemName: "trophy.fill")
                             .foregroundColor(.orange)
-                        Text("最長ストリーク")
+                        Text("最長ストリーク".localized)
                         Spacer()
-                        Text("\(goalManager.bestStreak)日")
+                        Text("%d日".localizedFormat(goalManager.bestStreak))
                             .fontWeight(.semibold)
                     }
                     
-                    Button("ストリークをリセット") {
+                    Button("ストリークをリセット".localized) {
                         resetStreak()
                     }
                     .foregroundColor(.red)
                 }
             }
-            .navigationTitle("学習目標")
+            .navigationTitle("学習目標".localized)
             .navigationBarItems(
-                leading: Button("キャンセル") {
+                leading: Button("キャンセル".localized) {
                     dismiss()
                 },
-                trailing: Button("保存") {
+                trailing: Button("保存".localized) {
                     saveSettings()
                     dismiss()
                 }
@@ -104,11 +104,11 @@ struct GoalSettingView: View {
         let remainingMinutes = minutes % 60
         
         if hours > 0 && remainingMinutes > 0 {
-            return "\(hours)時間\(remainingMinutes)分"
+            return "%d時間%d分".localizedFormat(hours, remainingMinutes)
         } else if hours > 0 {
-            return "\(hours)時間"
+            return "%d時間".localizedFormat(hours)
         } else {
-            return "\(minutes)分"
+            return "%d分".localizedFormat(minutes)
         }
     }
     
@@ -132,20 +132,20 @@ struct GoalBenefitsView: View {
         VStack(alignment: .leading, spacing: 8) {
             BenefitRow(
                 icon: "brain.head.profile",
-                title: "記憶定着の向上",
-                description: "\(goalMinutes)分の学習で効果的な記憶定着が期待できます"
+                title: "記憶定着の向上".localized,
+                description: "%d分の学習で効果的な記憶定着が期待できます".localizedFormat(goalMinutes)
             )
             
             BenefitRow(
                 icon: "calendar",
-                title: "学習習慣の形成",
-                description: "毎日の継続で強固な学習習慣を築けます"
+                title: "学習習慣の形成".localized,
+                description: "毎日の継続で強固な学習習慣を築けます".localized
             )
             
             BenefitRow(
                 icon: "chart.line.uptrend.xyaxis",
-                title: "進捗の可視化",
-                description: "達成度を確認してモチベーションを維持できます"
+                title: "進捗の可視化".localized,
+                description: "達成度を確認してモチベーションを維持できます".localized
             )
         }
     }

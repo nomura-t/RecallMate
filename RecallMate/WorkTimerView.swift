@@ -45,6 +45,23 @@ struct WorkTimerView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
+                // 今日の学習時間表示セクション
+                if !timerManager.isActive {
+                    TodayStudyTimeSection()
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(
+                            Rectangle()
+                                .fill(Color(.systemBackground))
+                                .shadow(
+                                    color: colorScheme == .dark ? Color.black.opacity(0.3) : Color.black.opacity(0.1),
+                                    radius: 2,
+                                    x: 0,
+                                    y: 1
+                                )
+                        )
+                }
+                
                 // ヘッダーセクション - 現在のタイマー状態を表示
                 if timerManager.isActive {
                     CurrentTimerHeaderView(
@@ -281,7 +298,7 @@ struct CurrentTimerHeaderView: View {
                         .fill(timerManager.currentTag?.swiftUIColor() ?? .blue)
                         .frame(width: 12, height: 12)
                     
-                    Text(timerManager.currentTag?.name ?? "作業中")
+                    Text(timerManager.currentTag?.name ?? "作業中".localized)
                         .font(.headline)
                         .fontWeight(.semibold)
                     
@@ -291,7 +308,7 @@ struct CurrentTimerHeaderView: View {
                             Image(systemName: "pause.circle.fill")
                                 .foregroundColor(.orange)
                                 .font(.system(size: 14))
-                            Text("一時停止中")
+                            Text("一時停止中".localized)
                                 .font(.caption)
                                 .foregroundColor(.orange)
                                 .fontWeight(.semibold)
@@ -318,11 +335,11 @@ struct CurrentTimerHeaderView: View {
                     }
                     
                     // 経過時間表示
-                    Text("経過時間: \(timerManager.formattedElapsedTime)")
+                    Text("経過時間: %@".localizedFormat(timerManager.formattedElapsedTime))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 } else {
-                    Text("経過時間: \(timerManager.formattedElapsedTime)")
+                    Text("経過時間: %@".localizedFormat(timerManager.formattedElapsedTime))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
@@ -338,7 +355,7 @@ struct CurrentTimerHeaderView: View {
                         HStack(spacing: 6) {
                             Image(systemName: "play.fill")
                                 .font(.system(size: 14))
-                            Text("再開")
+                            Text("再開".localized)
                                 .font(.subheadline)
                                 .fontWeight(.semibold)
                         }
@@ -353,7 +370,7 @@ struct CurrentTimerHeaderView: View {
                         HStack(spacing: 6) {
                             Image(systemName: "pause.fill")
                                 .font(.system(size: 14))
-                            Text("一時停止")
+                            Text("一時停止".localized)
                                 .font(.subheadline)
                                 .fontWeight(.semibold)
                         }
@@ -370,7 +387,7 @@ struct CurrentTimerHeaderView: View {
                     HStack(spacing: 6) {
                         Image(systemName: "stop.fill")
                             .font(.system(size: 14))
-                        Text("停止")
+                        Text("停止".localized)
                             .font(.subheadline)
                             .fontWeight(.semibold)
                     }
@@ -414,7 +431,7 @@ struct WorkTimerCard: View {
                         .fill(tag.swiftUIColor())
                         .frame(width: 16, height: 16)
                     
-                    Text(tag.name ?? "無名のタグ")
+                    Text(tag.name ?? "無名のタグ".localized)
                         .font(.headline)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
@@ -428,7 +445,7 @@ struct WorkTimerCard: View {
                             Image(systemName: "pause.circle.fill")
                                 .foregroundColor(.orange)
                                 .font(.system(size: 14))
-                            Text("一時停止")
+                            Text("一時停止".localized)
                                 .font(.caption)
                                 .foregroundColor(.orange)
                                 .fontWeight(.semibold)
@@ -438,7 +455,7 @@ struct WorkTimerCard: View {
                 
                 // 今日の作業時間とタスク数表示
                 HStack(spacing: 12) {
-                    Text("今日: \(getTodayWorkTime(for: tag))")
+                    Text("今日: %@".localizedFormat(getTodayWorkTime(for: tag)))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     
@@ -450,7 +467,7 @@ struct WorkTimerCard: View {
                         HStack(spacing: 4) {
                             Image(systemName: "checklist")
                                 .font(.system(size: 12))
-                            Text("\(taskCount)個のタスク")
+                            Text("%d個のタスク".localizedWithInt(taskCount))
                                 .font(.caption)
                         }
                         .foregroundColor(.orange)
@@ -465,7 +482,7 @@ struct WorkTimerCard: View {
                         HStack(spacing: 4) {
                             Image(systemName: "clock.badge.exclamationmark")
                                 .font(.system(size: 12))
-                            Text("\(ongoingSessionCount)継続中")
+                            Text("%d継続中".localizedWithInt(ongoingSessionCount))
                                 .font(.caption)
                         }
                         .foregroundColor(.blue)
@@ -515,7 +532,7 @@ struct WorkTimerCard: View {
                             HStack(spacing: 4) {
                                 Image(systemName: isPaused ? "play.fill" : "pause.fill")
                                     .font(.system(size: 12))
-                                Text(isPaused ? "再開" : "一時停止")
+                                Text(isPaused ? "再開".localized : "一時停止".localized)
                                     .font(.caption)
                                     .fontWeight(.semibold)
                             }
@@ -531,7 +548,7 @@ struct WorkTimerCard: View {
                             HStack(spacing: 4) {
                                 Image(systemName: "stop.fill")
                                     .font(.system(size: 12))
-                                Text("停止")
+                                Text("停止".localized)
                                     .font(.caption)
                                     .fontWeight(.semibold)
                             }
@@ -544,18 +561,12 @@ struct WorkTimerCard: View {
                     } else {
                         // 開始ボタン
                         Button(action: onStartTimer) {
-                            HStack(spacing: 6) {
-                                Image(systemName: "play.fill")
-                                    .font(.system(size: 14))
-                                Text("開始")
-                                    .font(.subheadline)
-                                    .fontWeight(.semibold)
-                            }
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(tag.swiftUIColor())
-                            .cornerRadius(20)
+                            Image(systemName: "play.fill")
+                                .font(.system(size: 16))
+                                .foregroundColor(.white)
+                                .frame(width: 36, height: 36)
+                                .background(tag.swiftUIColor())
+                                .cornerRadius(18)
                         }
                     }
                 }
@@ -620,12 +631,12 @@ struct CreateNewTagButton: View {
                     .foregroundColor(.green)
                 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("新しい作業を追加")
+                    Text("新しい作業を追加".localized)
                         .font(.headline)
                         .fontWeight(.bold)
                         .foregroundColor(.primary)
                     
-                    Text("数学、英語、プログラミングなど")
+                    Text("数学、英語、プログラミングなど".localized)
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -659,12 +670,12 @@ struct EmptyStateMessage: View {
                 .foregroundColor(.gray.opacity(0.6))
             
             VStack(spacing: 8) {
-                Text("作業記録を始めましょう")
+                Text("作業記録を始めましょう".localized)
                     .font(.headline)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
                 
-                Text("「新しい作業を追加」から\n作業内容を登録して時間管理を始めることができます")
+                Text("「新しい作業を追加」から\n作業内容を登録して時間管理を始めることができます".localized)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)

@@ -7,6 +7,10 @@ enum ReviewMethod: String, CaseIterable {
     case quick = "さくっと復習コース"
     case assessment = "理解度確認のみ"
     
+    var localizedRawValue: String {
+        return self.rawValue.localized
+    }
+    
     var icon: String {
         switch self {
         case .thorough: return "brain.head.profile"
@@ -17,17 +21,17 @@ enum ReviewMethod: String, CaseIterable {
     
     var description: String {
         switch self {
-        case .thorough: return "しっかりと時間をかけて復習したい時に"
-        case .quick: return "時間がない時や軽く復習したい時に"
-        case .assessment: return "記憶度だけを確認したい時に"
+        case .thorough: return "しっかりと時間をかけて復習したい時に".localized
+        case .quick: return "時間がない時や軽く復習したい時に".localized
+        case .assessment: return "記憶度だけを確認したい時に".localized
         }
     }
     
     var detail: String {
         switch self {
-        case .thorough: return "4ステップのアクティブリコールで完全復習"
-        case .quick: return "3ステップの効率的復習"
-        case .assessment: return "素早く記憶度をチェックして次回の復習日を最適化"
+        case .thorough: return "4ステップのアクティブリコールで完全復習".localized
+        case .quick: return "3ステップの効率的復習".localized
+        case .assessment: return "素早く記憶度をチェックして次回の復習日を最適化".localized
         }
     }
     

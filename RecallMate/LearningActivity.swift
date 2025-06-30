@@ -16,6 +16,10 @@ enum ActivityType: String, CaseIterable, Identifiable {
     
     var id: String { self.rawValue }
     
+    var localizedRawValue: String {
+        return self.rawValue.localized
+    }
+    
     // アイコン名
     var iconName: String {
         switch self {

@@ -33,7 +33,7 @@ struct GoalAchievementCard: View {
         VStack(spacing: 20) {
             // ヘッダー
             HStack {
-                Text("今日の学習目標")
+                Text("今日の学習目標".localized)
                     .font(.headline)
                     .foregroundColor(.primary)
                 
@@ -82,7 +82,7 @@ struct GoalAchievementCard: View {
                             .foregroundColor(.blue)
                             .font(.system(size: 16))
                         
-                        Text("目標: \(goalMinutes)分")
+                        Text("目標: %d分".localizedFormat(goalMinutes))
                             .font(.subheadline)
                             .foregroundColor(.primary)
                     }
@@ -92,7 +92,7 @@ struct GoalAchievementCard: View {
                             .foregroundColor(.green)
                             .font(.system(size: 16))
                         
-                        Text("実績: \(formattedStudyTime)")
+                        Text("実績: %@".localizedFormat(formattedStudyTime))
                             .font(.subheadline)
                             .foregroundColor(.primary)
                     }
@@ -103,7 +103,7 @@ struct GoalAchievementCard: View {
                                 .foregroundColor(.green)
                                 .font(.system(size: 16))
                             
-                            Text("目標達成！")
+                            Text("目標達成！".localized)
                                 .font(.subheadline)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.green)
@@ -114,7 +114,7 @@ struct GoalAchievementCard: View {
                                 .foregroundColor(.orange)
                                 .font(.system(size: 16))
                             
-                            Text("残り: \(remainingMinutes)分")
+                            Text("残り: %d分".localizedFormat(remainingMinutes))
                                 .font(.subheadline)
                                 .foregroundColor(.orange)
                         }
@@ -127,7 +127,7 @@ struct GoalAchievementCard: View {
                                 .foregroundColor(.red)
                                 .font(.system(size: 16))
                             
-                            Text("\(currentStreak)日連続達成")
+                            Text("%d日連続達成".localizedFormat(currentStreak))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -140,7 +140,7 @@ struct GoalAchievementCard: View {
             // プログレスバー（補助表示）
             VStack(spacing: 8) {
                 HStack {
-                    Text("進捗")
+                    Text("進捗".localized)
                         .font(.caption)
                         .foregroundColor(.secondary)
                     
@@ -198,15 +198,15 @@ struct GoalAchievementCard: View {
     // ステータスメッセージ
     private var statusMessage: String {
         if isGoalAchieved {
-            return "目標達成！素晴らしいです"
+            return "目標達成！素晴らしいです".localized
         } else if achievementRate >= 0.8 {
-            return "もう少しで達成です！"
+            return "もう少しで達成です！".localized
         } else if achievementRate >= 0.5 {
-            return "順調に進んでいます"
+            return "順調に進んでいます".localized
         } else if achievementRate > 0 {
-            return "良いスタートです"
+            return "良いスタートです".localized
         } else {
-            return "今日も頑張りましょう"
+            return "今日も頑張りましょう".localized
         }
     }
     
@@ -216,9 +216,9 @@ struct GoalAchievementCard: View {
         let minutes = todayStudyMinutes % 60
         
         if hours > 0 {
-            return "\(hours)時間\(minutes)分"
+            return "%d時間%d分".localizedWithFormat(hours, minutes)
         } else {
-            return "\(minutes)分"
+            return "%d分".localizedWithInt(minutes)
         }
     }
 }
@@ -245,7 +245,7 @@ struct GoalStatisticsCard: View {
     var body: some View {
         VStack(spacing: 12) {
             HStack {
-                Text("今日の詳細統計")
+                Text("今日の詳細統計".localized)
                     .font(.subheadline)
                     .fontWeight(.medium)
                     .foregroundColor(.primary)
@@ -255,23 +255,23 @@ struct GoalStatisticsCard: View {
             
             HStack(spacing: 16) {
                 StatisticItem(
-                    title: "学習時間",
-                    value: "\(todayStudyMinutes)分",
+                    title: "学習時間".localized,
+                    value: "%d分".localizedWithInt(todayStudyMinutes),
                     icon: "clock.fill",
                     color: .blue
                 )
                 
                 StatisticItem(
-                    title: "目標時間",
-                    value: "\(goalMinutes)分",
+                    title: "目標時間".localized,
+                    value: "%d分".localizedWithInt(goalMinutes),
                     icon: "target",
                     color: .purple
                 )
                 
                 if isGoalAchieved && overageMinutes > 0 {
                     StatisticItem(
-                        title: "目標超過",
-                        value: "+\(overageMinutes)分",
+                        title: "目標超過".localized,
+                        value: "+%d分".localizedWithInt(overageMinutes),
                         icon: "plus.circle.fill",
                         color: .green
                     )
@@ -330,12 +330,12 @@ struct GoalDisabledCard: View {
                 .font(.system(size: 48))
                 .foregroundColor(.gray.opacity(0.6))
             
-            Text("学習目標を設定しませんか？")
+            Text("学習目標を設定しませんか？".localized)
                 .font(.headline)
                 .foregroundColor(.primary)
                 .multilineTextAlignment(.center)
             
-            Text("1日の学習目標を設定することで、継続的な学習習慣を身につけることができます。")
+            Text("1日の学習目標を設定することで、継続的な学習習慣を身につけることができます。".localized)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -345,7 +345,7 @@ struct GoalDisabledCard: View {
                     Image(systemName: "plus.circle.fill")
                         .font(.system(size: 16))
                     
-                    Text("目標を設定する")
+                    Text("目標を設定する".localized)
                         .font(.headline)
                 }
                 .foregroundColor(.white)
@@ -402,17 +402,17 @@ struct GoalAchievementCelebrationView: View {
                     .scaleEffect(isPresented ? 1.2 : 0.8)
                     .animation(.spring(response: 0.6, dampingFraction: 0.6), value: isPresented)
                 
-                Text("🎉 目標達成！🎉")
+                Text("🎉 目標達成！🎉".localized)
                     .font(.title)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
                 
                 VStack(spacing: 8) {
-                    Text("今日は\(studyMinutes)分学習しました")
+                    Text("今日は%d分学習しました".localizedFormat(studyMinutes))
                         .font(.headline)
                         .foregroundColor(.primary)
                     
-                    Text("目標の\(goalMinutes)分を達成です！")
+                    Text("目標の%d分を達成です！".localizedFormat(goalMinutes))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     
@@ -421,7 +421,7 @@ struct GoalAchievementCelebrationView: View {
                             Image(systemName: "flame.fill")
                                 .foregroundColor(.red)
                             
-                            Text("\(currentStreak)日連続達成中")
+                            Text("%d日連続達成中".localizedFormat(currentStreak))
                                 .font(.headline)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.primary)
@@ -435,7 +435,7 @@ struct GoalAchievementCelebrationView: View {
                         isPresented = false
                     }
                 }) {
-                    Text("素晴らしい！")
+                    Text("素晴らしい！".localized)
                         .font(.headline)
                         .fontWeight(.semibold)
                         .foregroundColor(.white)

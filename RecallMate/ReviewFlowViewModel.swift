@@ -193,7 +193,7 @@ class ReviewFlowViewModel: ObservableObject {
         if selectedReviewMethod == .assessment {
             return "記憶度確認: \(memo.title ?? "無題") (記憶度: \(recallScore)%)"
         } else {
-            return "アクティブリコール復習: \(memo.title ?? "無題") (\(selectedReviewMethod.rawValue), 記憶度: \(recallScore)%)"
+            return "アクティブリコール復習: \(memo.title ?? "無題") (\(selectedReviewMethod.localizedRawValue), 記憶度: \(recallScore)%)"
         }
     }
     

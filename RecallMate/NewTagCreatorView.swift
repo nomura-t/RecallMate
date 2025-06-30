@@ -33,8 +33,8 @@ struct NewTagCreatorView: View {
                     UnifiedColorSelectionSection(
                         selectedColor: $selectedColor,
                         tagService: tagService,
-                        title: "色の選択",
-                        description: "作業内容を区別しやすくするため、色を選んでください"
+                        title: "色の選択".localized,
+                        description: "作業内容を区別しやすくするため、色を選んでください".localized
                     )
                     
                     // 使用例の提案セクション
@@ -42,21 +42,21 @@ struct NewTagCreatorView: View {
                 }
                 .padding(20)
             }
-            .navigationTitle("作業内容を追加")
+            .navigationTitle("作業内容を追加".localized)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarItems(
-                leading: Button("キャンセル") {
+                leading: Button("キャンセル".localized) {
                     onCancel()
                 }
                 .foregroundColor(.blue),
-                trailing: Button("作成") {
+                trailing: Button("作成".localized) {
                     createNewTag()
                 }
                 .foregroundColor(.blue)
                 .disabled(tagName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isLoading)
             )
-            .alert("エラー", isPresented: $showErrorAlert) {
-                Button("OK") { }
+            .alert("エラー".localized, isPresented: $showErrorAlert) {
+                Button("OK".localized) { }
             } message: {
                 Text(errorMessage)
             }
@@ -67,13 +67,13 @@ struct NewTagCreatorView: View {
         let trimmedName = tagName.trimmingCharacters(in: .whitespacesAndNewlines)
         
         guard !trimmedName.isEmpty else {
-            errorMessage = "作業内容名を入力してください"
+            errorMessage = "作業内容名を入力してください".localized
             showErrorAlert = true
             return
         }
         
         guard trimmedName.count <= 20 else {
-            errorMessage = "作業内容名は20文字以内で入力してください"
+            errorMessage = "作業内容名は20文字以内で入力してください".localized
             showErrorAlert = true
             return
         }
@@ -88,7 +88,7 @@ struct NewTagCreatorView: View {
             onSave(newTag)
         } else {
             isLoading = false
-            errorMessage = "同じ名前の作業内容が既に存在します"
+            errorMessage = "同じ名前の作業内容が既に存在します".localized
             showErrorAlert = true
         }
     }
@@ -103,18 +103,18 @@ struct IntroductionCard: View {
                     .foregroundColor(.green)
                     .font(.system(size: 24))
                 
-                Text("新しい作業内容を追加")
+                Text("新しい作業内容を追加".localized)
                     .font(.headline)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
             }
             
             VStack(alignment: .leading, spacing: 8) {
-                Text("作業時間を記録するためのカテゴリを作成します。")
+                Text("作業時間を記録するためのカテゴリを作成します。".localized)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                 
-                Text("例：数学、プログラミング、英語学習、読書など")
+                Text("例：数学、プログラミング、英語学習、読書など".localized)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .italic()
@@ -135,31 +135,31 @@ struct IntroductionCard: View {
 struct UsageExamplesSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("使用例")
+            Text("使用例".localized)
                 .font(.headline)
                 .foregroundColor(.primary)
             
-            Text("作業内容は以下のような分類で作成することをお勧めします：")
+            Text("作業内容は以下のような分類で作成することをお勧めします：".localized)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
             
             VStack(spacing: 10) {
                 UsageExampleRow(
                     icon: "function",
-                    category: "学習分野別",
-                    examples: "数学、物理、化学、英語、プログラミング"
+                    category: "学習分野別".localized,
+                    examples: "数学、物理、化学、英語、プログラミング".localized
                 )
                 
                 UsageExampleRow(
                     icon: "briefcase.fill",
-                    category: "作業タイプ別",
-                    examples: "資料作成、会議準備、企画書作成、メール対応"
+                    category: "作業タイプ別".localized,
+                    examples: "資料作成、会議準備、企画書作成、メール対応".localized
                 )
                 
                 UsageExampleRow(
                     icon: "book.fill",
-                    category: "スキル向上",
-                    examples: "読書、オンライン講座、語学学習、資格勉強"
+                    category: "スキル向上".localized,
+                    examples: "読書、オンライン講座、語学学習、資格勉強".localized
                 )
             }
             .padding(16)

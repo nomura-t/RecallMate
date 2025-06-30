@@ -7,7 +7,7 @@ struct TodayStudyTimeSection: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 8) {
-                Text("今日の学習時間")
+                Text("今日の学習時間".localized)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                 

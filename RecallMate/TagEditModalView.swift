@@ -34,8 +34,8 @@ struct TagEditModalView: View {
                     UnifiedColorSelectionSection(
                         selectedColor: $editedColor,
                         tagService: tagService,
-                        title: "色を変更",
-                        description: "作業内容を区別しやすくするため、色を変更できます"
+                        title: "色を変更".localized,
+                        description: "作業内容を区別しやすくするため、色を変更できます".localized
                     )
                     
                     // 使用状況表示セクション
@@ -43,14 +43,14 @@ struct TagEditModalView: View {
                 }
                 .padding(20)
             }
-            .navigationTitle("作業内容を編集")
+            .navigationTitle("作業内容を編集".localized)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarItems(
-                leading: Button("キャンセル") {
+                leading: Button("キャンセル".localized) {
                     onCancel()
                 }
                 .foregroundColor(.blue),
-                trailing: Button("保存") {
+                trailing: Button("保存".localized) {
                     saveChanges()
                 }
                 .foregroundColor(.blue)
@@ -59,7 +59,7 @@ struct TagEditModalView: View {
             .onAppear {
                 setupInitialValues()
             }
-            .alert("エラー", isPresented: $showErrorAlert) {
+            .alert("エラー".localized, isPresented: $showErrorAlert) {
                 Button("OK") { }
             } message: {
                 Text(errorMessage)
@@ -76,7 +76,7 @@ struct TagEditModalView: View {
         let trimmedName = editedName.trimmingCharacters(in: .whitespacesAndNewlines)
         
         guard !trimmedName.isEmpty else {
-            errorMessage = "タグ名を入力してください"
+            errorMessage = "タグ名を入力してください".localized
             showErrorAlert = true
             return
         }
@@ -97,7 +97,7 @@ struct TagEditModalView: View {
             generator.notificationOccurred(.success)
             onSave(tag)
         } else {
-            errorMessage = "同じ名前のタグが既に存在します"
+            errorMessage = "同じ名前のタグが既に存在します".localized
             showErrorAlert = true
         }
     }
@@ -112,12 +112,12 @@ struct WarningMessageCard: View {
                 .font(.system(size: 20))
             
             VStack(alignment: .leading, spacing: 4) {
-                Text("変更の影響について")
+                Text("変更の影響について".localized)
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
                 
-                Text("このタグは復習記録でも使用されている可能性があります。変更はすべての記録に反映されます。")
+                Text("このタグは復習記録でも使用されている可能性があります。変更はすべての記録に反映されます。".localized)
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -141,21 +141,21 @@ struct TagUsageInfoSection: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("使用状況")
+            Text("使用状況".localized)
                 .font(.headline)
                 .foregroundColor(.primary)
             
             VStack(spacing: 8) {
                 UsageInfoRow(
                     icon: "brain.head.profile",
-                    title: "復習記録",
+                    title: "復習記録".localized,
                     count: getReviewMemoCount(),
                     color: .blue
                 )
                 
                 UsageInfoRow(
                     icon: "timer",
-                    title: "作業記録",
+                    title: "作業記録".localized,
                     count: getWorkTimerCount(),
                     color: .green
                 )
@@ -214,7 +214,7 @@ struct UsageInfoRow: View {
             
             Spacer()
             
-            Text("\(count)件")
+            Text("%d件".localizedFormat(count))
                 .font(.subheadline)
                 .fontWeight(.semibold)
                 .foregroundColor(count > 0 ? color : .secondary)

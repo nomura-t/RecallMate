@@ -85,13 +85,13 @@ struct SettingsView: View {
                     Text("アプリを共有".localized)
                 }
                 
-                Section("アプリ設定") {
+                Section("アプリ設定".localized) {
                     NavigationLink(destination: NotificationSettingsView()) {
                         HStack {
                             Image(systemName: "bell.fill")
                                 .foregroundColor(.orange)
                                 .frame(width: 20)
-                            Text("通知設定")
+                            Text("通知設定".localized)
                         }
                     }
                 }

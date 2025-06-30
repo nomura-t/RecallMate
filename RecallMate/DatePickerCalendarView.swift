@@ -8,7 +8,7 @@ struct DatePickerCalendarView: View {
     // カレンダー設定を明示的に定義して一貫性を保つ
     private var calendar: Calendar {
         var cal = Calendar(identifier: .gregorian)
-        cal.locale = Locale(identifier: "ja_JP")
+        cal.locale = Locale.current
         cal.timeZone = TimeZone.current
         cal.firstWeekday = 2  // 月曜日を週の始まりに設定
         return cal
@@ -16,7 +16,7 @@ struct DatePickerCalendarView: View {
     
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ja_JP")
+        formatter.locale = Locale.current
         formatter.timeZone = TimeZone.current
         return formatter
     }()
@@ -54,7 +54,7 @@ struct DatePickerCalendarView: View {
                 
                 Spacer()
                 
-                Text("← スワイプで週移動 →")
+                Text("← スワイプで週移動 →".localized)
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -128,17 +128,25 @@ struct DatePickerCalendarView: View {
     // 年月のテキスト表示（週の中央の日付を基準に判定）
     private var yearMonthText: String {
         guard let middleDate = weekDates.count >= 4 ? weekDates[3] : weekDates.first else {
-            dateFormatter.dateFormat = "yyyy年M月"
+            dateFormatter.setLocalizedDateFormatFromTemplate("yyyyMMMM")
             return dateFormatter.string(from: Date())
         }
         
-        dateFormatter.dateFormat = "yyyy年M月"
+        dateFormatter.setLocalizedDateFormatFromTemplate("yyyyMMMM")
         return dateFormatter.string(from: middleDate)
     }
     
     // 曜日表示用のシンボル配列
     private var weekdaySymbols: [String] {
-        return ["月", "火", "水", "木", "金", "土", "日"]
+        let formatter = DateFormatter()
+        formatter.locale = Locale.current
+        let weekdaySymbols = formatter.shortWeekdaySymbols ?? ["月", "火", "水", "木", "金", "土", "日"]
+        
+        // 月曜日から始まるように並び替え（元は日曜日が最初）
+        var reorderedSymbols = Array(weekdaySymbols[1...6]) // 月-土
+        reorderedSymbols.append(weekdaySymbols[0]) // 日を最後に追加
+        
+        return reorderedSymbols
     }
     
     // 指定された日付を含む週の月曜日を確実に計算する関数

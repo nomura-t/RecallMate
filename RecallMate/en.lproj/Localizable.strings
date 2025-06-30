@@ -98,6 +98,291 @@
 
 // 成功メッセージ
 "タスクを追加しました" = "Task added successfully";
+
+// Review Flow Modal
+"復習を開始" = "Start Review";
+"復習対象のメモを選択" = "Select Memos to Review";
+"復習するメモが見つかりません" = "No memos found for review";
+"新しいメモを作成してから復習を始めてください" = "Please create new memos before starting review";
+"復習を続ける" = "Continue Review";
+"復習を完了" = "Complete Review";
+"次のメモ" = "Next Memo";
+"前のメモ" = "Previous Memo";
+"復習結果を保存" = "Save Review Results";
+"理解度を評価" = "Rate Understanding";
+"よく理解できた" = "Well Understood";
+"少し理解できた" = "Partially Understood";
+"理解できなかった" = "Not Understood";
+"メモを表示" = "Show Memo";
+"回答を表示" = "Show Answer";
+"復習セッション完了" = "Review Session Complete";
+"お疲れ様でした！" = "Great work!";
+"復習した項目数: %d件" = "Items reviewed: %d";
+"正解率: %.1f%%" = "Accuracy rate: %.1f%%";
+
+// New Learning Flow Modal
+"新規学習を開始" = "Start New Learning";
+"新しいメモを作成" = "Create New Memo";
+"学習内容を入力" = "Enter Learning Content";
+"タイトルを入力" = "Enter Title";
+"内容を入力" = "Enter Content";
+"タグを選択" = "Select Tags";
+"難易度を設定" = "Set Difficulty";
+"簡単" = "Easy";
+"普通" = "Normal";
+"難しい" = "Hard";
+"メモを保存" = "Save Memo";
+"学習セッションを開始" = "Start Learning Session";
+"メモ作成完了" = "Memo Creation Complete";
+"新しいメモが作成されました" = "New memo has been created";
+"復習スケジュールに追加されました" = "Added to review schedule";
+"続けて学習" = "Continue Learning";
+"学習を終了" = "End Learning";
+
+// Reflection Tab - Goal Setting
+"学習目標設定" = "Learning Goal Settings";
+"学習目標を有効にする" = "Enable Learning Goals";
+"1日の学習目標時間" = "Daily Study Goal Time";
+"目標時間" = "Goal Time";
+"カスタム:" = "Custom:";
+"目標の効果" = "Benefits of Goals";
+"ストリーク記録" = "Streak Records";
+"現在のストリーク" = "Current Streak";
+"最長ストリーク" = "Best Streak";
+"ストリークをリセット" = "Reset Streak";
+"学習目標" = "Learning Goals";
+
+// Goal Achievement
+"今日の学習目標" = "Today's Learning Goal";
+"目標: %d分" = "Goal: %d min";
+"実績: %@" = "Achieved: %@";
+"目標達成！" = "Goal Achieved!";
+"残り: %d分" = "Remaining: %d min";
+"%d日連続達成" = "%d consecutive days";
+"進捗" = "Progress";
+"目標達成！素晴らしいです" = "Goal achieved! Excellent!";
+"もう少しで達成です！" = "Almost there!";
+"順調に進んでいます" = "Making good progress";
+"良いスタートです" = "Good start";
+"今日も頑張りましょう" = "Let's do our best today";
+"今日の詳細統計" = "Today's Detailed Statistics";
+"学習時間" = "Study Time";
+"目標超過" = "Goal Exceeded";
+"学習目標を設定しませんか？" = "Would you like to set a learning goal?";
+"1日の学習目標を設定することで、継続的な学習習慣を身につけることができます。" = "By setting a daily study goal, you can develop consistent learning habits.";
+"目標を設定する" = "Set Goal";
+"🎉 目標達成！🎉" = "🎉 Goal Achieved! 🎉";
+"今日は%d分学習しました" = "You studied %d minutes today";
+"目標の%d分を達成です！" = "You achieved your goal of %d minutes!";
+"%d日連続達成中" = "%d consecutive days achieved";
+"素晴らしい！" = "Excellent!";
+
+// Study Time Charts
+"学習時間推移" = "Study Time Trends";
+"平均:" = "Average:";
+"平均: %@" = "Avg: %@";
+"この期間のデータはありません" = "No data for this period";
+"データがありません" = "No data available";
+"平均: %d分" = "Avg: %d min";
+
+// Goal Benefits
+"記憶定着の向上" = "Improved Memory Retention";
+"%d分の学習で効果的な記憶定着が期待できます" = "Effective memory retention expected with %d minutes of study";
+"学習習慣の形成" = "Habit Formation";
+"毎日の継続で強固な学習習慣を築けます" = "Build strong study habits through daily consistency";
+"進捗の可視化" = "Progress Visualization";
+"達成度を確認してモチベーションを維持できます" = "Maintain motivation by checking achievement progress";
+
+// Review Modal Content
+"復習する内容を確認しましょう" = "Let's review the content";
+"復習対象" = "Review Target";
+"ページ: %@" = "Page: %@";
+"💡 復習のコツ" = "💡 Review Tips";
+"効果的な復習のために、まず内容をざっと見直して全体像を思い出しましょう。その後、実際に思い出す練習（アクティブリコール）を行うことで、記憶がより強化されます。" = "For effective review, first skim through the content to recall the overall picture. Then practice active recall to strengthen your memory.";
+"内容を確認しました" = "Content Confirmed";
+"どのように復習しますか？" = "How would you like to review?";
+"記憶度を評価する" = "Assess Memory Level";
+"復習スタート！" = "Start Review!";
+"次のステップへ" = "Next Step";
+"復習完了！" = "Review Complete!";
+"復習をスキップして評価に進む" = "Skip Review and Proceed to Assessment";
+"復習後の記憶度を評価してください" = "Please assess your memory level after review";
+"評価完了" = "Assessment Complete";
+"次回の復習日を選択してください" = "Please select next review date";
+"記憶度 %d%% に基づく推奨復習日" = "Recommended review date based on %d%% memory level";
+"復習日を選択" = "Select Review Date";
+"推奨日に戻す" = "Reset to Recommended Date";
+"復習日を設定" = "Set Review Date";
+"記憶度" = "Memory Level";
+"次回復習日" = "Next Review Date";
+"復習時間: %@" = "Review Time: %@";
+"復習結果が正常に保存されました" = "Review results saved successfully";
+"確認完了" = "Confirmation Complete";
+
+// New Learning Modal Content
+"今日は何を学習しますか？" = "What would you like to learn today?";
+"学習内容のタイトルを入力してください" = "Please enter the title of your learning content";
+"学習タイトル（必須）" = "Learning Title (Required)";
+"例: 英単語の暗記、数学の微分積分" = "e.g. English vocabulary, Calculus";
+"タグ（任意）" = "Tags (Optional)";
+"選択中のタグ:" = "Selected Tags:";
+"学習方法を選択する" = "Select Learning Method";
+"どのように学習しますか？" = "How would you like to learn?";
+"学習スタート！" = "Start Learning!";
+"学習完了！" = "Learning Complete!";
+"学習をスキップして評価に進む" = "Skip Learning and Proceed to Assessment";
+"学習内容の理解度を評価してください" = "Please assess your understanding of the content";
+"初回復習日を選択してください" = "Please select first review date";
+"理解度 %d%% に基づく推奨復習日" = "Recommended review date based on %d%% understanding";
+"タイトル: %@" = "Title: %@";
+"初期理解度" = "Initial Understanding";
+"初回復習日" = "First Review Date";
+"学習時間: %@" = "Learning Time: %@";
+"学習記録が正常に保存されました" = "Learning record saved successfully";
+
+// Step Titles
+"復習内容の確認" = "Review Content Confirmation";
+"復習方法を選択" = "Select Review Method";
+"アクティブリコール復習" = "Active Recall Review";
+"復習日の選択" = "Review Date Selection";
+"復習完了" = "Review Complete";
+"学習内容を入力" = "Enter Learning Content";
+"学習方法を選択" = "Select Learning Method";
+"アクティブリコール学習" = "Active Recall Learning";
+"学習記録完了" = "Learning Record Complete";
+
+// Learning and Review Method Cards
+"じっくり復習コース" = "Thorough Review Course";
+"さくっと復習コース" = "Quick Review Course";
+"理解度確認のみ" = "Assessment Only";
+"じっくり学習コース" = "Thorough Learning Course";
+"さくっと学習コース" = "Quick Learning Course";
+"記録のみコース" = "Record Only Course";
+
+// Review Method Descriptions
+"しっかりと時間をかけて復習したい時に" = "When you want to spend time reviewing thoroughly";
+"時間がない時や軽く復習したい時に" = "When you have limited time or want a light review";
+"記憶度だけを確認したい時に" = "When you only want to check memory level";
+
+// Learning Method Descriptions
+"しっかりと時間をかけて学習したい時に" = "When you want to spend time learning thoroughly";
+"時間がない時や軽く学習したい時に" = "When you have limited time or want light learning";
+"既に学習済みの内容を記録して、効果的な復習計画を立てたい時に" = "When you want to record already learned content and create an effective review plan";
+
+// Method Details
+"4ステップのアクティブリコールで完全復習" = "Complete review with 4-step active recall";
+"3ステップの効率的復習" = "Efficient 3-step review";
+"素早く記憶度をチェックして次回の復習日を最適化" = "Quickly check memory level and optimize next review date";
+"4ステップのアクティブリコールで完全習得" = "Complete mastery with 4-step active recall";
+"3ステップの効率的アクティブリコール" = "Efficient 3-step active recall";
+"学習記録から最適な復習タイミングを自動計算。分散学習の効果で長期記憶への定着をサポートします" = "Automatically calculate optimal review timing from learning records. Support long-term memory retention through spaced learning effects";
+
+// Active Recall Steps - Thorough Review
+"以前学んだ内容を思い出してみましょう" = "Let's recall what you learned before";
+"教材を見る前に、まず記憶している内容を思い出してください" = "Before looking at the material, first recall what you remember";
+"🧠 復習のコツ：何も見ずに思い出すことで、現在の記憶状態を正確に把握できます。思い出せない部分があっても心配しないでください。それが復習すべきポイントです。" = "🧠 Review Tip: By recalling without looking at anything, you can accurately grasp your current memory state. Don't worry if there are parts you can't remember. Those are the points you should review.";
+"思い出した内容を整理してみましょう" = "Let's organize what you recalled";
+"覚えている内容を体系的に書き出してください" = "Please systematically write out what you remember";
+"📝 整理の効果：思い出した内容を整理することで、知識の構造が明確になり、記憶がより強化されます。" = "📝 Organization Effect: By organizing recalled content, knowledge structure becomes clear and memory is strengthened.";
+"忘れていた部分を確認しましょう" = "Let's check what you forgot";
+"教材を見て、思い出せなかった部分を重点的に確認してください" = "Look at the material and focus on the parts you couldn't recall";
+"🔍 重点復習：忘れていた部分こそが、今回の復習で最も重要な学習ポイントです。ここに時間をかけることで効率的に記憶を回復できます。" = "🔍 Focused Review: The parts you forgot are the most important learning points in this review. By spending time on these, you can efficiently recover your memory.";
+"全体を通して再度思い出してみましょう" = "Let's recall everything from start to finish again";
+"確認した内容も含めて、全体を再度思い出してください" = "Please recall the entire content again, including what you confirmed";
+"🎯 完全復習：最初から最後まで通して思い出すことで、知識が体系的に整理され、長期記憶への定着が促進されます。" = "🎯 Complete Review: By recalling from beginning to end, knowledge is systematically organized and long-term memory retention is promoted.";
+
+// Active Recall Steps - Quick Review
+"重要ポイントを思い出してみましょう" = "Let's recall the key points";
+"この内容の要点だけを思い出してください" = "Please recall only the main points of this content";
+"⚡ 効率復習：全てを思い出そうとせず、重要なポイントに絞って復習しましょう。短時間でも効果的な復習ができます。" = "⚡ Efficient Review: Instead of trying to recall everything, focus on important points. You can do effective review even in a short time.";
+"思い出せない部分をチェックしましょう" = "Let's check what you couldn't recall";
+"重要だけど思い出せなかった部分を確認してください" = "Please check the important parts you couldn't recall";
+"🎯 ピンポイント復習：思い出せなかった重要ポイントだけを集中的に確認することで、効率的に記憶を補強できます。" = "🎯 Pinpoint Review: By focusing on important points you couldn't recall, you can efficiently strengthen your memory.";
+"キーポイントを再確認しましょう" = "Let's reconfirm the key points";
+"確認したキーポイントをもう一度思い出してください" = "Please recall the confirmed key points once more";
+"🔄 確実な定着：重要ポイントを再度思い出すことで、短時間でも確実な記憶定着を図ることができます。" = "🔄 Reliable Retention: By recalling key points again, you can achieve reliable memory retention even in a short time.";
+
+// Active Recall Steps - Thorough Learning
+"教材をしっかり読み込みましょう" = "Let's read the material thoroughly";
+"まずは学習内容をじっくりと読み込んでください" = "First, please read the learning content thoroughly";
+"💡 ポイント：ただ読むだけでなく、『これは重要そうだな』『ここは覚えておきたい』と意識しながら読むと効果的です。アクティブリコールの準備段階として、しっかりと内容を頭に入れましょう。" = "💡 Point: Don't just read, but read while thinking 'this seems important' and 'I want to remember this'. As preparation for active recall, let's properly absorb the content.";
+"思い出せるだけ書き出してみましょう" = "Let's write out what you can recall";
+"教材を閉じて、覚えている内容を書き出してください" = "Close the material and write out what you remember";
+"🧠 コツ：完璧を目指さなくて大丈夫！思い出せない部分があることで、脳は『これは重要な情報だ』と認識し、次回の記憶定着が向上します。これがアクティブリコールの核心部分です。" = "🧠 Tip: Don't aim for perfection! When there are parts you can't remember, your brain recognizes 'this is important information' and improves memory retention next time. This is the core of active recall.";
+"分からなかった部分を確認しましょう" = "Let's check what you didn't understand";
+"教材を見直して、思い出せなかった部分を確認してください" = "Look at the material again and check the parts you couldn't recall";
+"🔍 重要：思い出せなかった部分こそが、あなたの記憶の弱点です。ここをしっかり確認することで、次回は思い出せるようになります。" = "🔍 Important: The parts you couldn't recall are your memory weaknesses. By confirming these thoroughly, you'll be able to recall them next time.";
+"わからなかった部分を再度書き出してみましょう" = "Let's write out the parts you didn't understand again";
+"確認した内容を、再度思い出して書き出してください" = "Please recall and write out the confirmed content again";
+"🎯 最終確認：一度確認した内容を再度思い出すことで、記憶がより強固になります。この繰り返しが長期記憶への定着につながります。" = "🎯 Final Confirmation: By recalling confirmed content again, memory becomes stronger. This repetition leads to long-term memory retention.";
+
+// Active Recall Steps - Quick Learning
+"教材をざっと眺めてみましょう" = "Let's skim through the material";
+"学習内容を軽く読み通してください" = "Please read through the learning content lightly";
+"⚡ さくっとモード：重要そうな部分に注目しながら、全体的な流れを把握しましょう。完璧でなくても大丈夫です。" = "⚡ Quick Mode: Focus on parts that seem important while grasping the overall flow. It doesn't have to be perfect.";
+"🧠 効率重視：時間は短くても、思い出す作業が記憶を強化します。思い出せた分だけでも十分効果的です。" = "🧠 Efficiency Focus: Even with limited time, the act of recalling strengthens memory. What you can recall is sufficiently effective.";
+"気になった部分だけ確認してみましょう" = "Let's check only the parts that concern you";
+"特に重要だと感じた部分や、思い出しにくかった部分を確認してください" = "Please check parts you felt were particularly important or difficult to recall";
+"🎯 重点確認：全てを確認する必要はありません。重要な部分や不安な部分に絞って確認することで、効率的に学習できます。" = "🎯 Focused Check: You don't need to check everything. By focusing on important or uncertain parts, you can learn efficiently.";
+
+// Activity Notes
+"学習記録: %@ (理解度: %d%%)" = "Learning Record: %@ (Understanding: %d%%)";
+"アクティブリコール学習: %@ (%@, 理解度: %d%%)" = "Active Recall Learning: %@ (%@, Understanding: %d%%)";
+"記憶度確認: %@ (記憶度: %d%%)" = "Memory Check: %@ (Memory: %d%%)";
+"アクティブリコール復習: %@ (%@, 記憶度: %d%%)" = "Active Recall Review: %@ (%@, Memory: %d%%)";
+
+// Additional Goal and Reflection Tab Strings
+"残り: %d分" = "Remaining: %d min";
+"時間" = "time";
+"日" = "day";
+"分" = "min";
+"%d時間%d分" = "%d hours %d min";
+"%d分" = "%d min";
+"%d日" = "%d day";
+"+%d分" = "+%d min";
+"0分" = "0 min";
+"時間 (分)" = "Time (min)";
+"日付" = "Date";
+
+// Streak and Notification
+"ストリークを維持しましょう！" = "Let's maintain the streak!";
+"今日の復習をして、連続学習記録を伸ばしましょう。" = "Do today's review and extend your consecutive study record.";
+"未設定" = "Not set";
+
+// Additional Goal Benefit Strings
+"分の学習で効果的な記憶定着が期待できます" = "minutes of learning can be expected for effective memory retention";
+"毎日の継続で強固な学習習慣を築けます" = "Daily continuation builds strong study habits";
+"達成度を確認してモチベーションを維持できます" = "Check achievement to maintain motivation";
+
+// Additional Missing Localizations for Goals and Methods
+"今日の学習目標" = "Today's Learning Goal";
+"目標" = "Goal";
+"残り" = "Remaining";
+"学習時間" = "Study Time";
+"目標時間" = "Goal Time";
+"今日" = "Today";
+"学習" = "Study";
+"目標: %d分" = "Goal: %d min";
+"実績: %@" = "Achieved: %@";
+"目標達成！" = "Goal Achieved!";
+"目標超過" = "Goal Exceeded";
+"今日の詳細統計" = "Today's Detailed Statistics";
+"学習目標を設定しませんか？" = "Would you like to set a learning goal?";
+"目標を設定する" = "Set Goal";
+"連続学習" = "Study Streak";
+"今日は%d分学習しました" = "You studied %d minutes today";
+"目標の%d分を達成です！" = "You achieved your goal of %d minutes!";
+"%d日連続達成中" = "%d consecutive days achieved";
+"素晴らしい！" = "Excellent!";
+"学習時間推移" = "Study Time Trends";
+"平均:" = "Average:";
+"平均: %@" = "Avg: %@";
+"この期間のデータはありません" = "No data for this period";
+"データがありません" = "No data available";
+"平均: %d分" = "Avg: %d min";
+"全体を通して再度思い出してみましょう" = "Let's recall everything from start to finish again";
+"確認した内容も含めて、全体を再度思い出してください" = "Please recall the entire content again, including what you confirmed";
+"🎯 完全復習：最初から最後まで通して思い出すことで、知識が体系的に整理され、長期記憶への定着が促進されます。" = "🎯 Complete Review: By recalling from beginning to end, knowledge is systematically organized and long-term memory retention is promoted.";
 "回答を適用" = "Apply Answers";
 "回答のインポート" = "Import Answers";
 "キャンセル" = "Cancel";
@@ -562,6 +847,93 @@
 "記録はまだありません" = "No notes yet";
 "右下のボタンから記録を追加できます" = "You can add notes using the button in the bottom right";
 
+// Review Method Details
+"しっかりと時間をかけて復習したい時に" = "When you want to take time for thorough review";
+"時間がない時や軽く復習したい時に" = "When you have limited time or want a quick review";
+"記憶度だけを確認したい時に" = "When you just want to check memory retention";
+"4ステップのアクティブリコールで完全復習" = "Complete review with 4-step active recall";
+"3ステップの効率的復習" = "Efficient 3-step review";
+"素早く記憶度をチェックして次回の復習日を最適化" = "Quickly check memory retention and optimize next review date";
+
+// Learning Method Details
+"じっくり学習コース" = "Thorough Learning Course";
+"記録のみコース" = "Record Only Course";
+"しっかりと時間をかけて学習したい時に" = "When you want to take time for thorough learning";
+"時間がない時や軽く学習したい時に" = "When you have limited time or want light learning";
+"既に学習済みの内容を記録して、効果的な復習計画を立てたい時に" = "When you want to record already learned content and create an effective review plan";
+"4ステップのアクティブリコールで完全習得" = "Complete mastery with 4-step active recall";
+"3ステップの効率的アクティブリコール" = "Efficient 3-step active recall";
+"学習記録から最適な復習タイミングを自動計算。分散学習の効果で長期記憶への定着をサポートします" = "Automatically calculates optimal review timing from learning records. Supports long-term memory retention through spaced learning effects";
+
+// Work Timer Related
+"作業記録: %@" = "Work Record: %@";
+"この記録は作業タイマーによって自動生成されました。" = "This record was automatically generated by the work timer.";
+
+// Notification Settings
+"毎日" = "Daily";
+"平日のみ" = "Weekdays Only";
+"週3回" = "3 Times a Week";
+
+// Activity Types
+"読書" = "Reading";
+"問題演習" = "Exercises";
+"講義視聴" = "Lectures";
+"テスト" = "Tests";
+"プロジェクト" = "Projects";
+"実験/実習" = "Experiments/Practice";
+"復習" = "Review";
+"作業記録" = "Work Record";
+"その他" = "Other";
+
+// HomeView Review Flow
+"復習する内容を確認しましょう" = "Let's review the content";
+"復習対象" = "Review Target";
+"ページ: %@" = "Page: %@";
+"内容を確認しました" = "Content confirmed";
+"記憶度を評価する" = "Evaluate memory retention";
+"復習スタート！" = "Start Review!";
+"復習をスキップして評価に進む" = "Skip review and proceed to evaluation";
+"復習後の記憶度を評価してください" = "Please evaluate your memory retention after review";
+"評価完了" = "Evaluation Complete";
+"次回の復習日を選択してください" = "Please select the next review date";
+"復習日" = "Review Date";
+"推奨日に戻す" = "Reset to recommended date";
+"復習日を設定" = "Set Review Date";
+"保存中..." = "Saving...";
+"復習完了！" = "Review Complete!";
+"復習完了" = "Review Complete";
+"記憶度" = "Memory Retention";
+"次回復習日" = "Next Review Date";
+"復習結果が正常に保存されました" = "Review results have been saved successfully";
+"復習を完了する" = "Complete Review";
+"確認完了" = "Confirmation Complete";
+
+// Goal Achievement Messages
+"目標達成！素晴らしいです" = "Goal achieved! Excellent!";
+"もう少しで達成です！" = "Almost there!";
+"順調に進んでいます" = "Making good progress";
+"良いスタートです" = "Good start";
+"今日も頑張りましょう" = "Let's do our best today";
+"今日の詳細統計" = "Today's Detailed Statistics";
+"%d時間%d分" = "%dh %dm";
+"目標を設定する" = "Set Goal";
+"目標超過" = "Goal Exceeded";
+"+%d分" = "+%d min";
+
+// SettingsView
+"RecallMateアプリを使って科学的に記憶力を強化しています。長期記憶の定着に最適なアプリです！ https://apps.apple.com/app/recallmate/id6744206597" = "Using RecallMate app to scientifically enhance memory! The optimal app for long-term memory retention! https://apps.apple.com/app/recallmate/id6744206597";
+"開発者に言いたいことを言おう！" = "Talk to the developer!";
+"RecallMateを友達に紹介する" = "Introduce RecallMate to friends";
+"効率的な学習方法を友達にも教えてあげましょう" = "Share efficient learning methods with your friends";
+"アプリを共有" = "Share App";
+"アプリ設定" = "App Settings";
+"通知設定" = "Notification Settings";
+"現在の通知時間:" = "Current notification time:";
+"現在時刻を通知時間に設定" = "Set current time as notification time";
+"%@がインストールされていません" = "%@ is not installed";
+"共有するには%@アプリをインストールしてください。" = "Please install the %@ app to share.";
+"OK" = "OK";
+
 // KeywordInputView関連
 "重要単語リスト" = "Important Keywords List";
 "新しい単語を入力して改行で追加\n(スペースで区切った2つの単語は比較問題になります)" = "Enter new keywords and press return to add\n(Two words separated by space will create a comparison question)";
@@ -575,6 +947,79 @@
 "集中時間と休憩時間の切り替えを通知します" = "Notifications for switching between focus and break times";
 "復習リマインダー" = "Review Reminders";
 "最適なタイミングで復習通知を受け取れます" = "Receive review notifications at optimal timing";
+
+// TagEditModalView
+"色を変更" = "Change Color";
+"作業内容を区別しやすくするため、色を変更できます" = "You can change the color to make work content easier to distinguish";
+"作業内容を編集" = "Edit Work Content";
+"同じ名前のタグが既に存在します" = "A tag with the same name already exists";
+"変更の影響について" = "About Change Impact";
+"このタグは復習記録でも使用されている可能性があります。変更はすべての記録に反映されます。" = "This tag may also be used in review records. Changes will be reflected in all records.";
+"使用状況" = "Usage Status";
+"復習記録" = "Review Records";
+"作業記録" = "Work Records";
+
+// NotificationSettingsView
+"通知設定" = "Notification Settings";
+"通知を有効にする" = "Enable Notifications";
+"通知時間" = "Notification Time";
+"通知の種類" = "Notification Types";
+"学習ストリークリマインダー" = "Learning Streak Reminder";
+"復習リマインダー" = "Review Reminder";
+"学習目標達成通知" = "Learning Goal Achievement Notification";
+"通知頻度" = "Notification Frequency";
+"リマインダー頻度" = "Reminder Frequency";
+"毎日" = "Daily";
+"平日のみ" = "Weekdays Only";
+"週3回" = "3 Times a Week";
+"システム情報" = "System Information";
+"システム通知許可" = "System Notification Permission";
+"設定アプリで許可する" = "Allow in Settings App";
+
+// Goal Setting - GoalSettingView
+"学習目標設定" = "Learning Goal Settings";
+"学習目標を有効にする" = "Enable Learning Goal";
+"目標" = "Goal";
+"学習目標" = "Learning Goal";
+"1日の学習目標時間" = "Daily Learning Goal Time";
+"目標時間" = "Goal Time";
+"カスタム:" = "Custom:";
+"目標の効果" = "Goal Benefits";
+"ストリーク記録" = "Streak Records";
+"現在のストリーク" = "Current Streak";
+"最長ストリーク" = "Best Streak";
+"ストリークをリセット" = "Reset Streak";
+"記憶定着の向上" = "Improved Memory Retention";
+"学習習慣の形成" = "Formation of Study Habits";
+"進捗の可視化" = "Progress Visualization";
+"毎日の継続で強固な学習習慣を築けます" = "Build strong study habits through daily continuation";
+"達成度を確認してモチベーションを維持できます" = "Check achievement levels to maintain motivation";
+
+// Time Units
+"分" = "min";
+"時間" = "hour";
+"日" = "day";
+"%d時間%d分" = "%d hour %d min";
+"%d時間" = "%d hour";
+"%d分" = "%d min";
+"%d日" = "%d day";
+
+// Goal Achievement - GoalAchievementCard
+"目標: %d分" = "Goal: %d min";
+"実績: %@" = "Result: %@";
+"目標達成！" = "Goal Achieved!";
+"残り: %d分" = "Remaining: %d min";
+"%d日連続達成" = "%d consecutive days";
+"学習目標を設定しませんか？" = "Why not set a learning goal?";
+"1日の学習目標を設定することで、継続的な学習習慣を身につけることができます。" = "By setting daily learning goals, you can develop continuous study habits.";
+"目標を設定する" = "Set Goal";
+"🎉 目標達成！🎉" = "🎉 Goal Achieved! 🎉";
+"今日は%d分学習しました" = "Studied %d minutes today";
+"目標の%d分を達成です！" = "Achieved the goal of %d minutes!";
+"%d日連続達成中" = "%d consecutive days achieved";
+"素晴らしい！" = "Wonderful!";
+"%d分の学習で効果的な記憶定着が期待できます" = "Effective memory retention can be expected with %d minutes of study";
+"学習の流れ" = "Learning Flow";
 "設定を開く" = "Open Settings";
 "後で" = "Later";
 
@@ -1022,3 +1467,133 @@
 "記憶定着度" = "Memory Retention";
 
 "設定" = "Settings";
+
+// ReviewListItemEnhanced related
+"記憶定着度" = "Memory Retention";
+"完璧な復習: %d回" = "Perfect Reviews: %d times";
+"復習期限 %d日超過" = "Review Overdue: %d days";
+"復習期限: %@" = "Review Due: %@";
+"今日が復習日" = "Review Due Today";
+"復習予定: %@" = "Review Scheduled: %@";
+"復習する" = "Review";
+"復習開始" = "Start Review";
+"未定" = "TBD";
+"昨日" = "Yesterday";
+
+// Enhanced HomeView Header
+"今日の復習" = "Today's Review";
+"明日の復習" = "Tomorrow's Review";
+"昨日の復習" = "Yesterday's Review";
+"件の復習項目" = " review items";
+"件（フィルター適用中）" = " items (filtered)";
+"フィルター中" = "Filtering";
+"新規学習" = "New Learning";
+
+// Enhanced HomeView Header (additional)
+"曜日の復習" = "%@ Review";
+"月日の復習" = "%@ Review";
+
+// Tab titles and date formatting
+"復習管理" = "Review Management";
+"作業記録" = "Work Tracking";
+"振り返り" = "Reflection";
+"今日" = "Today";
+"明日" = "Tomorrow";
+"今月" = "This Month";
+"先月" = "Last Month";
+"来月" = "Next Month";
+"今年" = "This Year";
+"昨年" = "Last Year";
+"来年" = "Next Year";
+
+// DatePicker swipe hint
+"← スワイプで週移動 →" = "← Swipe to navigate weeks →";
+
+// Study time display
+"今日の学習時間" = "Today's Study Time";
+
+// WorkTimerView related strings
+"作業中" = "Working";
+"一時停止中" = "Paused";
+"経過時間: %@" = "Elapsed: %@";
+"再開" = "Resume";
+"一時停止" = "Pause";
+"停止" = "Stop";
+"開始" = "Start";
+"無名のタグ" = "Unnamed Tag";
+"今日: %@" = "Today: %@";
+"%d個のタスク" = "%d Tasks";
+"%d継続中" = "%d Ongoing";
+"新しい作業を追加" = "Add New Work";
+"数学、英語、プログラミングなど" = "Math, English, Programming, etc.";
+"作業記録を始めましょう" = "Let's Start Work Tracking";
+"「新しい作業を追加」から
+作業内容を登録して時間管理を始めることができます" = "You can start time management by
+registering your work from \"Add New Work\"";
+
+// NewTagCreatorView related strings
+"作業内容を追加" = "Add Work Content";
+"キャンセル" = "Cancel";
+"作成" = "Create";
+"エラー" = "Error";
+"OK" = "OK";
+"作業内容名を入力してください" = "Please enter work content name";
+"作業内容名は20文字以内で入力してください" = "Work content name must be within 20 characters";
+"同じ名前の作業内容が既に存在します" = "Work content with the same name already exists";
+"新しい作業内容を追加" = "Add New Work Content";
+"作業時間を記録するためのカテゴリを作成します。" = "Create a category to record work time.";
+"例：数学、プログラミング、英語学習、読書など" = "e.g.: Math, Programming, English Learning, Reading, etc.";
+"使用例" = "Usage Examples";
+"作業内容は以下のような分類で作成することをお勧めします：" = "We recommend creating work content with the following classifications:";
+"学習分野別" = "By Study Field";
+"数学、物理、化学、英語、プログラミング" = "Math, Physics, Chemistry, English, Programming";
+"作業タイプ別" = "By Work Type";
+"資料作成、会議準備、企画書作成、メール対応" = "Document creation, Meeting prep, Proposal writing, Email handling";
+"スキル向上" = "Skill Improvement";
+"読書、オンライン講座、語学学習、資格勉強" = "Reading, Online courses, Language learning, Certification study";
+"色の選択" = "Color Selection";
+"作業内容を区別しやすくするため、色を選んでください" = "Please choose a color to easily distinguish work content";
+"選択中:" = "Selected:";
+"作業内容名を変更" = "Change Work Content Name";
+"作業内容名" = "Work Content Name";
+"新しい名前を入力" = "Enter new name";
+"例: 数学、プログラミング、英語学習" = "e.g.: Math, Programming, English Learning";
+"20文字以内で入力してください" = "Please enter within 20 characters";
+"プレビュー:" = "Preview:";
+"タグ名を入力してください" = "Please enter tag name";
+
+"新規学習完了" = "New Learning Complete";
+"学習記録完了！" = "Learning Record Complete\!";
+"学習記録を保存する" = "Save Learning Record";
+
+// HomeView Memory Evaluation Indicators
+"完璧に覚えています！" = "Perfectly memorized\!";
+"十分に理解できています" = "Well understood";
+"だいたい理解しています" = "Generally understand";
+"要点は覚えています" = "Remember the key points";
+"基本概念を思い出せます" = "Can recall basic concepts";
+"断片的に覚えています" = "Remember fragments";
+"うっすらと覚えています" = "Vaguely remember";
+"ほとんど忘れています" = "Mostly forgotten";
+"ほぼ完全に忘れています" = "Almost completely forgotten";
+"全く覚えていません" = "Completely forgotten";
+
+// HomeView Review Flow UI
+"💡 復習のコツ" = "💡 Review Tips";
+"効果的な復習のために、まず内容をざっと見直して全体像を思い出しましょう。その後、実際に思い出す練習（アクティブリコール）を行うことで、記憶がより強化されます。" = "For effective review, first skim through the content to recall the big picture. Then practice active recall to strengthen your memory.";
+"どのように復習しますか？" = "How would you like to review?";
+
+// HomeView Learning Flow UI
+"今日は何を学習しますか？" = "What would you like to study today?";
+"学習内容のタイトルを入力してください" = "Please enter the title of your study content";
+"例: 英単語の暗記、数学の微分積分" = "e.g. English vocabulary, calculus";
+"選択中のタグ:" = "Selected tags:";
+"学習方法を選択する" = "Select learning method";
+"どのように学習しますか？" = "How would you like to study?";
+"理解度を評価する" = "Evaluate understanding";
+"学習をスキップして評価に進む" = "Skip study and proceed to evaluation";
+"学習内容の理解度を評価してください" = "Please evaluate your understanding of the content";
+"学習記録が正常に保存されました" = "Learning record saved successfully";
+
+// HomeView Step Navigation
+"ステップ %d" = "Step %d";

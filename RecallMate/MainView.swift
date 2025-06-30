@@ -20,7 +20,7 @@ struct MainView: View {
                 // ユーザーが既に作成した記録を効率的に復習できる機能
                 HomeView(isAddingMemo: $isAddingMemo)
                     .tabItem {
-                        Label("復習管理", systemImage: "brain.head.profile")
+                        Label("復習管理".localized, systemImage: "brain.head.profile")
                     }
                     .tag(0)
                 
@@ -29,7 +29,7 @@ struct MainView: View {
                 // 既存の復習管理とは独立した、新しい学習サイクルの開始点
                 WorkTimerView()
                     .tabItem {
-                        Label("作業記録", systemImage: "timer")
+                        Label("作業記録".localized, systemImage: "timer")
                     }
                     .tag(1)
                 
@@ -38,7 +38,7 @@ struct MainView: View {
                 // タグ番号を1から2に変更（作業記録タブの挿入による）
                 ActivityProgressView()
                     .tabItem {
-                        Label("振り返り", systemImage: "list.bullet.rectangle")
+                        Label("振り返り".localized, systemImage: "list.bullet.rectangle")
                     }
                     .tag(2)
                 
@@ -48,7 +48,7 @@ struct MainView: View {
                 SettingsView()
                     .environmentObject(appSettings)
                     .tabItem {
-                        Label("設定", systemImage: "gearshape.fill")
+                        Label("設定".localized, systemImage: "gearshape.fill")
                     }
                     .tag(3)
             }

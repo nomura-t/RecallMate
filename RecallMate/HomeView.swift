@@ -5,6 +5,7 @@ import CoreData
 struct HomeView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
     // MARK: - Core State（コア状態管理）
     @State private var selectedDate = Date()
@@ -33,6 +34,18 @@ struct HomeView: View {
     }
     
     // MARK: - Computed Properties（計算プロパティ）
+    
+    private var isCompact: Bool {
+        horizontalSizeClass == .compact
+    }
+    
+    private var adaptivePadding: CGFloat {
+        isCompact ? 16 : 24
+    }
+    
+    private var contentMaxWidth: CGFloat {
+        isCompact ? .infinity : 800
+    }
     private var dailyMemos: [Memo] {
         let fetchRequest: NSFetchRequest<Memo> = Memo.fetchRequest()
         
@@ -85,8 +98,6 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                TodayStudyTimeSection()
-                
                 DatePickerCalendarView(selectedDate: $selectedDate)
                     .padding(.vertical, 16)
                     .background(
@@ -127,65 +138,211 @@ struct HomeView: View {
     
     private var mainContentSection: some View {
         VStack(spacing: 0) {
-            if !allTags.isEmpty {
-                TagFilterSection(
-                    selectedTags: $selectedTags,
-                    allTags: Array(allTags)
-                )
-                .padding(.top, 16)
+            // スマートでコンパクトなヘッダーセクション
+            VStack(spacing: isCompact ? 8 : 12) {
+                // タグフィルターセクション（コンパクト化）
+                if !allTags.isEmpty {
+                    TagFilterSection(
+                        selectedTags: $selectedTags,
+                        allTags: Array(allTags)
+                    )
+                    .padding(.top, isCompact ? 4 : 8)
+                }
+                
+                // 日付情報とメモ数をコンパクトに統合
+                enhancedHeaderInfo
+                
+                // 新規学習ボタン（今日の場合のみ、より小さく）
+                if Calendar.current.isDateInToday(selectedDate) {
+                    compactNewLearningButton
+                }
             }
+            .padding(.horizontal, adaptivePadding)
+            .padding(.vertical, isCompact ? 6 : 8)
+            .background(modernHeaderBackground)
+            .shadow(color: modernHeaderShadowColor, radius: 2, x: 0, y: 1)
             
-            DayInfoHeaderView(
-                selectedDate: selectedDate,
-                memoCount: dailyMemos.count,
-                selectedTags: selectedTags
-            )
-            
-            if Calendar.current.isDateInToday(selectedDate) {
-                NewLearningButtonView(onStartNewLearning: {
-                    newLearningFlowViewModel.startNewLearning()
-                })
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-            }
-            
+            // メインコンテンツエリア - より多くのスペースを割り当て
             if dailyMemos.isEmpty {
                 EmptyStateView(
                     selectedDate: selectedDate,
                     hasTagFilter: !selectedTags.isEmpty
                 )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
-                memoListSection
+                enhancedMemoListSection
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .frame(maxWidth: contentMaxWidth, maxHeight: .infinity)
         .background(Color(.systemGroupedBackground))
     }
     
-    private var memoListSection: some View {
+    // 改善されたメモリストセクション - 最大スペース割り当て
+    private var enhancedMemoListSection: some View {
         ScrollView {
-            LazyVStack(spacing: 12) {
+            LazyVStack(spacing: isCompact ? 12 : 16) {
                 ForEach(dailyMemos, id: \.id) { memo in
-                    ReviewListItemSimplified(
+                    ReviewListItemEnhanced(
                         memo: memo,
                         selectedDate: selectedDate,
+                        isCompact: isCompact,
                         onStartReview: {
-                            reviewFlowViewModel.startReview(with: memo)
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                                reviewFlowViewModel.startReview(with: memo)
+                            }
                         },
                         onOpenMemo: {
                             // 詳細画面への遷移処理（必要に応じて実装）
                         }
                     )
+                    .transition(.asymmetric(
+                        insertion: .scale(scale: 0.9).combined(with: .opacity).combined(with: .move(edge: .top)),
+                        removal: .scale(scale: 0.9).combined(with: .opacity).combined(with: .move(edge: .leading))
+                    ))
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 100)
+            .padding(.horizontal, adaptivePadding)
+            .padding(.top, isCompact ? 8 : 12)
+            .padding(.bottom, isCompact ? 20 : 24) // 下部の余白を大幅に削減
         }
         .refreshable {
-            forceRefreshData()
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                forceRefreshData()
+            }
+        }
+        .background(Color(.systemGroupedBackground))
+    }
+    
+    // MARK: - Enhanced Header Components（強化されたヘッダーコンポーネント）
+    
+    private var enhancedHeaderInfo: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 8) {
+                    Image(systemName: "calendar")
+                        .font(.caption)
+                        .foregroundColor(.blue)
+                    
+                    Text(headerDateText)
+                        .font(isCompact ? .subheadline : .headline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                }
+                
+                HStack(spacing: 4) {
+                    Image(systemName: "doc.text")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                    
+                    Text(memoCountText)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            
+            Spacer()
+            
+            if !selectedTags.isEmpty {
+                HStack(spacing: 4) {
+                    Image(systemName: "line.3.horizontal.decrease.circle")
+                        .font(.caption)
+                        .foregroundColor(.blue)
+                    
+                    Text("フィルター中".localized)
+                        .font(.caption)
+                        .foregroundColor(.blue)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(Color.blue.opacity(0.1))
+                .cornerRadius(8)
+            }
         }
     }
     
+    private var compactNewLearningButton: some View {
+        Button(action: {
+            newLearningFlowViewModel.startNewLearning()
+        }) {
+            HStack(spacing: 6) {
+                Image(systemName: "plus.circle.fill")
+                    .font(.system(size: isCompact ? 14 : 16))
+                
+                Text("新規学習".localized)
+                    .font(isCompact ? .caption : .subheadline)
+                    .fontWeight(.medium)
+            }
+            .foregroundColor(.white)
+            .padding(.horizontal, isCompact ? 12 : 16)
+            .padding(.vertical, isCompact ? 6 : 8)
+            .background(
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.green, Color.green.opacity(0.8)]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .cornerRadius(20)
+            .shadow(color: Color.green.opacity(0.3), radius: 2, x: 0, y: 1)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+    
+    private var modernHeaderBackground: some View {
+        RoundedRectangle(cornerRadius: 0)
+            .fill(
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color(.systemBackground),
+                        Color(.systemBackground).opacity(0.95)
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+    }
+    
+    private var modernHeaderShadowColor: Color {
+        colorScheme == .dark ? Color.clear : Color.black.opacity(0.08)
+    }
+    
+    private var headerDateText: String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale.current
+        formatter.timeZone = TimeZone.current
+        
+        let calendar = Calendar.current
+        if calendar.isDateInToday(selectedDate) {
+            return "今日の復習".localized
+        } else if calendar.isDateInTomorrow(selectedDate) {
+            return "明日の復習".localized
+        } else if calendar.isDateInYesterday(selectedDate) {
+            return "昨日の復習".localized
+        } else {
+            let daysFromNow = calendar.dateComponents([.day], from: Date(), to: selectedDate).day ?? 0
+            
+            if abs(daysFromNow) <= 7 {
+                formatter.dateStyle = .none
+                formatter.setLocalizedDateFormatFromTemplate("EEEE")
+                let dayOfWeek = formatter.string(from: selectedDate)
+                return String(format: "曜日の復習".localized, dayOfWeek)
+            } else {
+                formatter.dateStyle = .short
+                let dateString = formatter.string(from: selectedDate)
+                return String(format: "月日の復習".localized, dateString)
+            }
+        }
+    }
+    
+    private var memoCountText: String {
+        let count = dailyMemos.count
+        if !selectedTags.isEmpty {
+            return "\(count)" + "件（フィルター適用中）".localized
+        } else {
+            return "\(count)" + "件の復習項目".localized
+        }
+    }
+
     // MARK: - Helper Methods（ヘルパーメソッド）
     
     private func forceRefreshData() {
@@ -391,7 +548,7 @@ struct ReviewContentConfirmationStepView: View {
                                 .font(.system(size: 60))
                                 .foregroundColor(.blue)
                             
-                            Text("復習する内容を確認しましょう")
+                            Text("復習する内容を確認しましょう".localized)
                                 .font(.title2)
                                 .fontWeight(.bold)
                                 .foregroundColor(.primary)
@@ -399,17 +556,17 @@ struct ReviewContentConfirmationStepView: View {
                         }
                         
                         VStack(alignment: .leading, spacing: 16) {
-                            Text("復習対象")
+                            Text("復習対象".localized)
                                 .font(.headline)
                                 .foregroundColor(.primary)
                             
                             VStack(alignment: .leading, spacing: 12) {
-                                Text(memo.title ?? "無題")
+                                Text(memo.title ?? "無題".localized)
                                     .font(.title3)
                                     .fontWeight(.semibold)
                                 
                                 if let pageRange = memo.pageRange, !pageRange.isEmpty {
-                                    Text("ページ: \(pageRange)")
+                                    Text("ページ: %@".localizedWithFormat(pageRange))
                                         .font(.subheadline)
                                         .foregroundColor(.secondary)
                                 }
@@ -417,12 +574,12 @@ struct ReviewContentConfirmationStepView: View {
                                 Divider()
                                     .padding(.vertical, 8)
                                 
-                                Text("💡 復習のコツ")
+                                Text("💡 復習のコツ".localized)
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
                                     .foregroundColor(.blue)
                                 
-                                Text("効果的な復習のために、まず内容をざっと見直して全体像を思い出しましょう。その後、実際に思い出す練習（アクティブリコール）を行うことで、記憶がより強化されます。")
+                                Text("効果的な復習のために、まず内容をざっと見直して全体像を思い出しましょう。その後、実際に思い出す練習（アクティブリコール）を行うことで、記憶がより強化されます。".localized)
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                                     .padding(12)
@@ -454,7 +611,7 @@ struct ReviewContentConfirmationStepView: View {
                     HStack {
                         Image(systemName: "arrow.right.circle.fill")
                             .font(.system(size: 18))
-                        Text("内容を確認しました")
+                        Text("内容を確認しました".localized)
                             .font(.headline)
                     }
                     .foregroundColor(.white)
@@ -493,7 +650,7 @@ struct ReviewMethodSelectionStepView: View {
                             .lineLimit(2)
                     }
                     
-                    Text("どのように復習しますか？")
+                    Text("どのように復習しますか？".localized)
                         .font(.headline)
                         .foregroundColor(.secondary)
                 }
@@ -525,7 +682,7 @@ struct ReviewMethodSelectionStepView: View {
                     HStack {
                         Image(systemName: viewModel.selectedReviewMethod == .assessment ? "arrow.right.circle.fill" : "play.circle.fill")
                             .font(.system(size: 18))
-                        Text(viewModel.selectedReviewMethod == .assessment ? "記憶度を評価する" : "復習スタート！")
+                        Text(viewModel.selectedReviewMethod == .assessment ? "記憶度を評価する".localized : "復習スタート！".localized)
                             .font(.headline)
                     }
                     .foregroundColor(.white)
@@ -592,7 +749,7 @@ struct ActiveReviewGuidanceStepView: View {
                         HStack {
                             Image(systemName: "arrow.right.circle.fill")
                                 .font(.system(size: 18))
-                            Text("次のステップへ")
+                            Text("次のステップへ".localized)
                                 .font(.headline)
                         }
                         .foregroundColor(.white)
@@ -614,7 +771,7 @@ struct ActiveReviewGuidanceStepView: View {
                         HStack {
                             Image(systemName: "checkmark.circle.fill")
                                 .font(.system(size: 18))
-                            Text("復習完了！")
+                            Text("復習完了！".localized)
                                 .font(.headline)
                         }
                         .foregroundColor(.white)
@@ -634,7 +791,7 @@ struct ActiveReviewGuidanceStepView: View {
                 Button(action: {
                     viewModel.proceedToNextStep()  // 記憶度評価ステップへ
                 }) {
-                    Text("復習をスキップして評価に進む")
+                    Text("復習をスキップして評価に進む".localized)
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .underline()
@@ -656,7 +813,7 @@ struct ReviewMemoryAssessmentStepView: View {
             Spacer()
             
             VStack(spacing: 24) {
-                Text("復習後の記憶度を評価してください")
+                Text("復習後の記憶度を評価してください".localized)
                     .font(.title3)
                     .fontWeight(.medium)
                     .multilineTextAlignment(.center)
@@ -736,7 +893,7 @@ struct ReviewMemoryAssessmentStepView: View {
                 HStack {
                     Image(systemName: "arrow.right.circle.fill")
                         .font(.system(size: 18))
-                    Text("評価完了")
+                    Text("評価完了".localized)
                         .font(.headline)
                 }
                 .foregroundColor(.white)
@@ -771,7 +928,7 @@ struct ReviewDateSelectionStepView: View {
                     .font(.system(size: 60))
                     .foregroundColor(.indigo)
                 
-                Text("次回の復習日を選択してください")
+                Text("次回の復習日を選択してください".localized)
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
@@ -791,7 +948,7 @@ struct ReviewDateSelectionStepView: View {
                         .foregroundColor(.blue)
                         .font(.system(size: 16))
                     
-                    Text("記憶度 \(Int(viewModel.recallScore))% に基づく推奨復習日")
+                    Text("記憶度 %d%% に基づく推奨復習日".localizedWithInt(Int(viewModel.recallScore)))
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
@@ -811,12 +968,12 @@ struct ReviewDateSelectionStepView: View {
             .padding(.horizontal, 20)
             
             VStack(spacing: 16) {
-                Text("復習日を選択")
+                Text("復習日を選択".localized)
                     .font(.headline)
                     .foregroundColor(.primary)
                 
                 DatePicker(
-                    "復習日",
+                    "復習日".localized,
                     selection: $viewModel.selectedReviewDate,
                     in: Date()...,
                     displayedComponents: .date
@@ -831,7 +988,7 @@ struct ReviewDateSelectionStepView: View {
                     HStack {
                         Image(systemName: "arrow.counterclockwise")
                             .font(.system(size: 14))
-                        Text("推奨日に戻す")
+                        Text("推奨日に戻す".localized)
                             .font(.subheadline)
                     }
                     .foregroundColor(.blue)
@@ -847,7 +1004,7 @@ struct ReviewDateSelectionStepView: View {
                 HStack {
                     Image(systemName: "arrow.right.circle.fill")
                         .font(.system(size: 18))
-                    Text("復習日を設定")
+                    Text("復習日を設定".localized)
                         .font(.headline)
                 }
                 .foregroundColor(.white)
@@ -885,7 +1042,7 @@ struct ReviewCompletionStepView: View {
                         .scaleEffect(viewModel.isSavingReview ? 0.8 : 1.0)
                         .animation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true), value: viewModel.isSavingReview)
                     
-                    Text(viewModel.isSavingReview ? "保存中..." : (viewModel.reviewSaveSuccess ? "復習完了！" : "復習完了"))
+                    Text(viewModel.isSavingReview ? "保存中...".localized : (viewModel.reviewSaveSuccess ? "復習完了！".localized : "復習完了".localized))
                         .font(.title)
                         .fontWeight(.bold)
                         .foregroundColor(.primary)
@@ -899,7 +1056,7 @@ struct ReviewCompletionStepView: View {
                     
                     HStack(spacing: 16) {
                         VStack(spacing: 4) {
-                            Text("記憶度")
+                            Text("記憶度".localized)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                             
@@ -910,7 +1067,7 @@ struct ReviewCompletionStepView: View {
                         }
                         
                         VStack(spacing: 4) {
-                            Text("次回復習日")
+                            Text("次回復習日".localized)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                             
@@ -934,7 +1091,7 @@ struct ReviewCompletionStepView: View {
                     }
                     
                     if viewModel.reviewSaveSuccess {
-                        Text("復習結果が正常に保存されました")
+                        Text("復習結果が正常に保存されました".localized)
                             .font(.subheadline)
                             .foregroundColor(.green)
                             .padding(.top, 8)
@@ -966,7 +1123,7 @@ struct ReviewCompletionStepView: View {
                                 .font(.system(size: 18))
                         }
                         
-                        Text(viewModel.isSavingReview ? "保存中..." : "復習を完了する")
+                        Text(viewModel.isSavingReview ? "保存中...".localized : "復習を完了する".localized)
                             .font(.headline)
                     }
                     .foregroundColor(.white)
@@ -988,7 +1145,7 @@ struct ReviewCompletionStepView: View {
                     HStack {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 18))
-                        Text("確認完了")
+                        Text("確認完了".localized)
                             .font(.headline)
                     }
                     .foregroundColor(.white)
@@ -1028,13 +1185,13 @@ struct LearningTitleInputStepView: View {
                             .font(.system(size: 80))
                             .foregroundColor(.blue)
                         
-                        Text("今日は何を学習しますか？")
+                        Text("今日は何を学習しますか？".localized)
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.primary)
                             .multilineTextAlignment(.center)
                         
-                        Text("学習内容のタイトルを入力してください")
+                        Text("学習内容のタイトルを入力してください".localized)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
@@ -1047,7 +1204,7 @@ struct LearningTitleInputStepView: View {
                                 .fontWeight(.medium)
                                 .foregroundColor(.primary)
                             
-                            TextField("例: 英単語の暗記、数学の微分積分", text: $viewModel.newLearningTitle)
+                            TextField("例: 英単語の暗記、数学の微分積分".localized, text: $viewModel.newLearningTitle)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .font(.body)
                         }
@@ -1094,7 +1251,7 @@ struct LearningTitleInputStepView: View {
                                 
                                 if !viewModel.newLearningTags.isEmpty {
                                     VStack(alignment: .leading, spacing: 4) {
-                                        Text("選択中のタグ:")
+                                        Text("選択中のタグ:".localized)
                                             .font(.caption)
                                             .foregroundColor(.secondary)
                                         
@@ -1144,7 +1301,7 @@ struct LearningTitleInputStepView: View {
                     HStack {
                         Image(systemName: "arrow.right.circle.fill")
                             .font(.system(size: 18))
-                        Text("学習方法を選択する")
+                        Text("学習方法を選択する".localized)
                             .font(.headline)
                     }
                     .foregroundColor(.white)
@@ -1183,7 +1340,7 @@ struct LearningMethodSelectionStepView: View {
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
                     
-                    Text("どのように学習しますか？")
+                    Text("どのように学習しますか？".localized)
                         .font(.headline)
                         .foregroundColor(.secondary)
                 }
@@ -1215,7 +1372,7 @@ struct LearningMethodSelectionStepView: View {
                     HStack {
                         Image(systemName: viewModel.selectedLearningMethod == .recordOnly ? "arrow.right.circle.fill" : "play.circle.fill")
                             .font(.system(size: 18))
-                        Text(viewModel.selectedLearningMethod == .recordOnly ? "理解度を評価する" : "学習スタート！")
+                        Text(viewModel.selectedLearningMethod == .recordOnly ? "理解度を評価する".localized : "学習スタート！".localized)
                             .font(.headline)
                     }
                     .foregroundColor(.white)
@@ -1282,7 +1439,7 @@ struct ActiveLearningGuidanceStepView: View {
                         HStack {
                             Image(systemName: "arrow.right.circle.fill")
                                 .font(.system(size: 18))
-                            Text("次のステップへ")
+                            Text("次のステップへ".localized)
                                 .font(.headline)
                         }
                         .foregroundColor(.white)
@@ -1324,7 +1481,7 @@ struct ActiveLearningGuidanceStepView: View {
                 Button(action: {
                     viewModel.proceedToNextStep()  // 理解度評価ステップへ
                 }) {
-                    Text("学習をスキップして評価に進む")
+                    Text("学習をスキップして評価に進む".localized)
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .underline()
@@ -1346,7 +1503,7 @@ struct NewLearningInitialAssessmentStepView: View {
             Spacer()
             
             VStack(spacing: 24) {
-                Text("学習内容の理解度を評価してください")
+                Text("学習内容の理解度を評価してください".localized)
                     .font(.title3)
                     .fontWeight(.medium)
                     .multilineTextAlignment(.center)
@@ -1414,7 +1571,7 @@ struct NewLearningInitialAssessmentStepView: View {
                 HStack {
                     Image(systemName: "arrow.right.circle.fill")
                         .font(.system(size: 18))
-                    Text("評価完了")
+                    Text("評価完了".localized)
                         .font(.headline)
                 }
                 .foregroundColor(.white)
@@ -1450,7 +1607,7 @@ struct NewLearningDateSelectionStepView: View {
                     .font(.system(size: 60))
                     .foregroundColor(.indigo)
                 
-                Text("初回復習日を選択してください")
+                Text("初回復習日を選択してください".localized)
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
@@ -1469,7 +1626,7 @@ struct NewLearningDateSelectionStepView: View {
                         .foregroundColor(.orange)
                         .font(.system(size: 16))
                     
-                    Text("理解度 \(Int(viewModel.newLearningInitialScore))% に基づく推奨復習日")
+                    Text("理解度 %d%% に基づく推奨復習日".localizedWithInt(Int(viewModel.newLearningInitialScore)))
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
@@ -1496,12 +1653,12 @@ struct NewLearningDateSelectionStepView: View {
             
             // 日付選択部分
             VStack(spacing: 16) {
-                Text("復習日を選択")
+                Text("復習日を選択".localized)
                     .font(.headline)
                     .foregroundColor(.primary)
                 
                 DatePicker(
-                    "復習日",
+                    "復習日".localized,
                     selection: $viewModel.selectedNewLearningReviewDate,
                     in: Date()...,
                     displayedComponents: .date
@@ -1517,7 +1674,7 @@ struct NewLearningDateSelectionStepView: View {
                     HStack {
                         Image(systemName: "arrow.counterclockwise")
                             .font(.system(size: 14))
-                        Text("推奨日に戻す")
+                        Text("推奨日に戻す".localized)
                             .font(.subheadline)
                     }
                     .foregroundColor(.blue)
@@ -1534,7 +1691,7 @@ struct NewLearningDateSelectionStepView: View {
                 HStack {
                     Image(systemName: "arrow.right.circle.fill")
                         .font(.system(size: 18))
-                    Text("復習日を設定")
+                    Text("復習日を設定".localized)
                         .font(.headline)
                 }
                 .foregroundColor(.white)
@@ -1572,7 +1729,7 @@ struct NewLearningCompletionStepView: View {
                         .scaleEffect(viewModel.isSavingNewLearning ? 0.8 : 1.0)
                         .animation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true), value: viewModel.isSavingNewLearning)
                     
-                    Text(viewModel.isSavingNewLearning ? "保存中..." : (viewModel.newLearningSaveSuccess ? "学習記録完了！" : "新規学習完了"))
+                    Text(viewModel.isSavingNewLearning ? "保存中...".localized : (viewModel.newLearningSaveSuccess ? "学習記録完了！".localized : "新規学習完了".localized))
                         .font(.title)
                         .fontWeight(.bold)
                         .foregroundColor(.primary)
@@ -1595,7 +1752,7 @@ struct NewLearningCompletionStepView: View {
                         }
                         
                         VStack(spacing: 4) {
-                            Text("初回復習日")
+                            Text("初回復習日".localized)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                             
@@ -1619,7 +1776,7 @@ struct NewLearningCompletionStepView: View {
                     }
                     
                     if viewModel.newLearningSaveSuccess {
-                        Text("学習記録が正常に保存されました")
+                        Text("学習記録が正常に保存されました".localized)
                             .font(.subheadline)
                             .foregroundColor(.green)
                             .padding(.top, 8)
@@ -1651,7 +1808,7 @@ struct NewLearningCompletionStepView: View {
                                 .font(.system(size: 18))
                         }
                         
-                        Text(viewModel.isSavingNewLearning ? "保存中..." : "学習記録を保存する")
+                        Text(viewModel.isSavingNewLearning ? "保存中...".localized : "学習記録を保存する".localized)
                             .font(.headline)
                     }
                     .foregroundColor(.white)
@@ -1673,7 +1830,7 @@ struct NewLearningCompletionStepView: View {
                     HStack {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 18))
-                        Text("確認完了")
+                        Text("確認完了".localized)
                             .font(.headline)
                     }
                     .foregroundColor(.white)
@@ -1840,7 +1997,7 @@ struct ReviewMethodCard: View {
                     )
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(method.rawValue)
+                    Text(method.localizedRawValue)
                         .font(.headline)
                         .fontWeight(.semibold)
                         .foregroundColor(isSelected ? .white : .primary)
@@ -1897,7 +2054,7 @@ struct LearningMethodCard: View {
                     )
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(method.rawValue)
+                    Text(method.localizedRawValue)
                         .font(.headline)
                         .fontWeight(.semibold)
                         .foregroundColor(isSelected ? .white : .primary)
@@ -1962,7 +2119,7 @@ struct ActiveRecallGuidanceContent: View {
                             .font(.system(size: 24))
                             .foregroundColor(step.color)
                         
-                        Text("ステップ \(currentStep + 1)")
+                        Text("ステップ %d".localizedFormat(currentStep + 1))
                             .font(.headline)
                             .foregroundColor(.secondary)
                         
@@ -2019,7 +2176,7 @@ struct ActiveRecallGuidanceContent: View {
             .padding(.horizontal, 20)
             
             VStack(alignment: .leading, spacing: 12) {
-                Text("学習の流れ")
+                Text("学習の流れ".localized)
                     .font(.headline)
                     .foregroundColor(.primary)
                 
@@ -2085,16 +2242,16 @@ private func getRetentionColorForLevel(_ level: Int) -> Color {
 
 private func getRetentionDescription(for score: Int16) -> String {
     switch score {
-    case 91...100: return "完璧に覚えています！"
-    case 81...90: return "十分に理解できています"
-    case 71...80: return "だいたい理解しています"
-    case 61...70: return "要点は覚えています"
-    case 51...60: return "基本概念を思い出せます"
-    case 41...50: return "断片的に覚えています"
-    case 31...40: return "うっすらと覚えています"
-    case 21...30: return "ほとんど忘れています"
-    case 1...20: return "ほぼ完全に忘れています"
-    default: return "全く覚えていません"
+    case 91...100: return "完璧に覚えています！".localized
+    case 81...90: return "十分に理解できています".localized
+    case 71...80: return "だいたい理解しています".localized
+    case 61...70: return "要点は覚えています".localized
+    case 51...60: return "基本概念を思い出せます".localized
+    case 41...50: return "断片的に覚えています".localized
+    case 31...40: return "うっすらと覚えています".localized
+    case 21...30: return "ほとんど忘れています".localized
+    case 1...20: return "ほぼ完全に忘れています".localized
+    default: return "全く覚えていません".localized
     }
 }
 
@@ -2169,30 +2326,30 @@ private func getInitialReviewDateExplanation(for score: Int16) -> String {
 private func getThoroughReviewSteps() -> [ActiveRecallStep] {
     return [
         ActiveRecallStep(
-            title: "以前学んだ内容を思い出してみましょう",
-            description: "教材を見る前に、まず記憶している内容を思い出してください",
-            tip: "🧠 復習のコツ：何も見ずに思い出すことで、現在の記憶状態を正確に把握できます。思い出せない部分があっても心配しないでください。それが復習すべきポイントです。",
+            title: "以前学んだ内容を思い出してみましょう".localized,
+            description: "教材を見る前に、まず記憶している内容を思い出してください".localized,
+            tip: "🧠 復習のコツ：何も見ずに思い出すことで、現在の記憶状態を正確に把握できます。思い出せない部分があっても心配しないでください。それが復習すべきポイントです。".localized,
             icon: "brain.head.profile",
             color: .blue
         ),
         ActiveRecallStep(
-            title: "思い出した内容を整理してみましょう",
-            description: "覚えている内容を体系的に書き出してください",
-            tip: "📝 整理の効果：思い出した内容を整理することで、知識の構造が明確になり、記憶がより強化されます。",
+            title: "思い出した内容を整理してみましょう".localized,
+            description: "覚えている内容を体系的に書き出してください".localized,
+            tip: "📝 整理の効果：思い出した内容を整理することで、知識の構造が明確になり、記憶がより強化されます。".localized,
             icon: "square.and.pencil",
             color: .green
         ),
         ActiveRecallStep(
-            title: "忘れていた部分を確認しましょう",
-            description: "教材を見て、思い出せなかった部分を重点的に確認してください",
-            tip: "🔍 重点復習：忘れていた部分こそが、今回の復習で最も重要な学習ポイントです。ここに時間をかけることで効率的に記憶を回復できます。",
+            title: "忘れていた部分を確認しましょう".localized,
+            description: "教材を見て、思い出せなかった部分を重点的に確認してください".localized,
+            tip: "🔍 重点復習：忘れていた部分こそが、今回の復習で最も重要な学習ポイントです。ここに時間をかけることで効率的に記憶を回復できます。".localized,
             icon: "magnifyingglass",
             color: .orange
         ),
         ActiveRecallStep(
-            title: "全体を通して再度思い出してみましょう",
-            description: "確認した内容も含めて、全体を再度思い出してください",
-            tip: "🎯 完全復習：最初から最後まで通して思い出すことで、知識が体系的に整理され、長期記憶への定着が促進されます。",
+            title: "全体を通して再度思い出してみましょう".localized,
+            description: "確認した内容も含めて、全体を再度思い出してください".localized,
+            tip: "🎯 完全復習：最初から最後まで通して思い出すことで、知識が体系的に整理され、長期記憶への定着が促進されます。".localized,
             icon: "arrow.clockwise",
             color: .purple
         )
@@ -2202,23 +2359,23 @@ private func getThoroughReviewSteps() -> [ActiveRecallStep] {
 private func getQuickReviewSteps() -> [ActiveRecallStep] {
     return [
         ActiveRecallStep(
-            title: "重要ポイントを思い出してみましょう",
-            description: "この内容の要点だけを思い出してください",
-            tip: "⚡ 効率復習：全てを思い出そうとせず、重要なポイントに絞って復習しましょう。短時間でも効果的な復習ができます。",
+            title: "重要ポイントを思い出してみましょう".localized,
+            description: "この内容の要点だけを思い出してください".localized,
+            tip: "⚡ 効率復習：全てを思い出そうとせず、重要なポイントに絞って復習しましょう。短時間でも効果的な復習ができます。".localized,
             icon: "star.fill",
             color: .orange
         ),
         ActiveRecallStep(
-            title: "思い出せない部分をチェックしましょう",
-            description: "重要だけど思い出せなかった部分を確認してください",
-            tip: "🎯 ピンポイント復習：思い出せなかった重要ポイントだけを集中的に確認することで、効率的に記憶を補強できます。",
+            title: "思い出せない部分をチェックしましょう".localized,
+            description: "重要だけど思い出せなかった部分を確認してください".localized,
+            tip: "🎯 ピンポイント復習：思い出せなかった重要ポイントだけを集中的に確認することで、効率的に記憶を補強できます。".localized,
             icon: "checkmark.circle",
             color: .green
         ),
         ActiveRecallStep(
-            title: "キーポイントを再確認しましょう",
-            description: "確認したキーポイントをもう一度思い出してください",
-            tip: "🔄 確実な定着：重要ポイントを再度思い出すことで、短時間でも確実な記憶定着を図ることができます。",
+            title: "キーポイントを再確認しましょう".localized,
+            description: "確認したキーポイントをもう一度思い出してください".localized,
+            tip: "🔄 確実な定着：重要ポイントを再度思い出すことで、短時間でも確実な記憶定着を図ることができます。".localized,
             icon: "arrow.clockwise",
             color: .blue
         )
@@ -2228,56 +2385,56 @@ private func getQuickReviewSteps() -> [ActiveRecallStep] {
 private func getThoroughLearningSteps() -> [ActiveRecallStep] {
     return [
         ActiveRecallStep(
-            title: "教材をしっかり読み込みましょう",
-            description: "まずは学習内容をじっくりと読み込んでください",
-            tip: "💡 ポイント：ただ読むだけでなく、『これは重要そうだな』『ここは覚えておきたい』と意識しながら読むと効果的です。アクティブリコールの準備段階として、しっかりと内容を頭に入れましょう。",
+            title: "教材をしっかり読み込みましょう".localized,
+            description: "まずは学習内容をじっくりと読み込んでください".localized,
+            tip: "💡 ポイント：ただ読むだけでなく、『これは重要そうだな』『ここは覚えておきたい』と意識しながら読むと効果的です。アクティブリコールの準備段階として、しっかりと内容を頭に入れましょう。".localized,
             icon: "book.fill",
             color: .blue
         ),
         ActiveRecallStep(
-            title: "思い出せるだけ書き出してみましょう",
-            description: "教材を閉じて、覚えている内容を書き出してください",
-            tip: "🧠 コツ：完璧を目指さなくて大丈夫！思い出せない部分があることで、脳は『これは重要な情報だ』と認識し、次回の記憶定着が向上します。これがアクティブリコールの核心部分です。",
+            title: "思い出せるだけ書き出してみましょう".localized,
+            description: "教材を閉じて、覚えている内容を書き出してください".localized,
+            tip: "🧠 コツ：完璧を目指さなくて大丈夫！思い出せない部分があることで、脳は『これは重要な情報だ』と認識し、次回の記憶定着が向上します。これがアクティブリコールの核心部分です。".localized,
             icon: "pencil.and.outline",
             color: .green
         ),
         ActiveRecallStep(
-            title: "分からなかった部分を確認しましょう",
-            description: "教材を見直して、思い出せなかった部分を確認してください",
-            tip: "🔍 重要：思い出せなかった部分こそが、あなたの記憶の弱点です。ここをしっかり確認することで、次回は思い出せるようになります。",
-                        icon: "magnifyingglass",
-                        color: .orange
-                    ),
-                    ActiveRecallStep(
-                        title: "わからなかった部分を再度書き出してみましょう",
-                        description: "確認した内容を、再度思い出して書き出してください",
-                        tip: "🎯 最終確認：一度確認した内容を再度思い出すことで、記憶がより強固になります。この繰り返しが長期記憶への定着につながります。",
-                        icon: "arrow.clockwise",
-                        color: .purple
-                    )
+            title: "分からなかった部分を確認しましょう".localized,
+            description: "教材を見直して、思い出せなかった部分を確認してください".localized,
+            tip: "🔍 重要：思い出せなかった部分こそが、あなたの記憶の弱点です。ここをしっかり確認することで、次回は思い出せるようになります。".localized,
+            icon: "magnifyingglass",
+            color: .orange
+        ),
+        ActiveRecallStep(
+            title: "わからなかった部分を再度書き出してみましょう".localized,
+            description: "確認した内容を、再度思い出して書き出してください".localized,
+            tip: "🎯 最終確認：一度確認した内容を再度思い出すことで、記憶がより強固になります。この繰り返しが長期記憶への定着につながります。".localized,
+            icon: "arrow.clockwise",
+            color: .purple
+        )
                 ]
             }
 
             private func getQuickLearningSteps() -> [ActiveRecallStep] {
                 return [
                     ActiveRecallStep(
-                        title: "教材をざっと眺めてみましょう",
-                        description: "学習内容を軽く読み通してください",
-                        tip: "⚡ さくっとモード：重要そうな部分に注目しながら、全体的な流れを把握しましょう。完璧でなくても大丈夫です。",
+                        title: "教材をざっと眺めてみましょう".localized,
+                        description: "学習内容を軽く読み通してください".localized,
+                        tip: "⚡ さくっとモード：重要そうな部分に注目しながら、全体的な流れを把握しましょう。完璧でなくても大丈夫です。".localized,
                         icon: "eye",
                         color: .orange
                     ),
                     ActiveRecallStep(
-                        title: "思い出せるだけ書き出してみましょう",
-                        description: "教材を閉じて、覚えている内容を書き出してください",
-                        tip: "🧠 効率重視：時間は短くても、思い出す作業が記憶を強化します。思い出せた分だけでも十分効果的です。",
+                        title: "思い出せるだけ書き出してみましょう".localized,
+                        description: "教材を閉じて、覚えている内容を書き出してください".localized,
+                        tip: "🧠 効率重視：時間は短くても、思い出す作業が記憶を強化します。思い出せた分だけでも十分効果的です。".localized,
                         icon: "pencil.and.outline",
                         color: .green
                     ),
                     ActiveRecallStep(
-                        title: "気になった部分だけ確認してみましょう",
-                        description: "特に重要だと感じた部分や、思い出しにくかった部分を確認してください",
-                        tip: "🎯 重点確認：全てを確認する必要はありません。重要な部分や不安な部分に絞って確認することで、効率的に学習できます。",
+                        title: "気になった部分だけ確認してみましょう".localized,
+                        description: "特に重要だと感じた部分や、思い出しにくかった部分を確認してください".localized,
+                        tip: "🎯 重点確認：全てを確認する必要はありません。重要な部分や不安な部分に絞って確認することで、効率的に学習できます。".localized,
                         icon: "checkmark.circle",
                         color: .blue
                     )

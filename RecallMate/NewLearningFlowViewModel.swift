@@ -375,7 +375,7 @@ class NewLearningFlowViewModel: ObservableObject {
         if selectedLearningMethod == .recordOnly {
             return "学習記録: \(newLearningTitle) (理解度: \(newLearningInitialScore)%)"
         } else {
-            return "アクティブリコール学習: \(newLearningTitle) (\(selectedLearningMethod.rawValue), 理解度: \(newLearningInitialScore)%)"
+            return "アクティブリコール学習: \(newLearningTitle) (\(selectedLearningMethod.localizedRawValue), 理解度: \(newLearningInitialScore)%)"
         }
     }
     

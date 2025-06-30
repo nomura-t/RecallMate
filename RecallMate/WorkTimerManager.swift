@@ -235,7 +235,7 @@ class WorkTimerManager: ObservableObject {
         let fetchRequest: NSFetchRequest<Memo> = Memo.fetchRequest()
         fetchRequest.predicate = NSPredicate(
             format: "title == %@ AND ANY tags.id == %@",
-            "作業記録: \(tag.name ?? "無題")",
+            "作業記録: %@".localizedWithFormat(tag.name ?? "無題".localized),
             tagId as CVarArg // アンラップされたUUIDを使用
         )
         fetchRequest.fetchLimit = 1
@@ -256,8 +256,8 @@ class WorkTimerManager: ObservableObject {
     private func createNewWorkMemo(for tag: Tag, in context: NSManagedObjectContext) -> Memo {
         let workMemo = Memo(context: context)
         workMemo.id = UUID()
-        workMemo.title = "作業記録: \(tag.name ?? "無題")"
-        workMemo.content = "この記録は作業タイマーによって自動生成されました。"
+        workMemo.title = "作業記録: %@".localizedWithFormat(tag.name ?? "無題".localized)
+        workMemo.content = "この記録は作業タイマーによって自動生成されました。".localized
         workMemo.pageRange = ""
         workMemo.recallScore = 0  // 作業記録は記憶度評価なし
         workMemo.createdAt = Date()

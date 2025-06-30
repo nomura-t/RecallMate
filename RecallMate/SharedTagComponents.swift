@@ -78,7 +78,7 @@ struct CurrentColorIndicator: View {
     
     var body: some View {
         HStack {
-            Text("選択中:")
+            Text("選択中:".localized)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
             
@@ -152,14 +152,14 @@ struct UnifiedTagNameSection: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(isEditing ? "作業内容名を変更" : "作業内容名")
+            Text(isEditing ? "作業内容名を変更".localized : "作業内容名".localized)
                 .font(.headline)
                 .foregroundColor(.primary)
             
             // 入力フィールド
             VStack(alignment: .leading, spacing: 8) {
                 TextField(
-                    isEditing ? "新しい名前を入力" : "例: 数学、プログラミング、英語学習",
+                    isEditing ? "新しい名前を入力".localized : "例: 数学、プログラミング、英語学習".localized,
                     text: $tagName
                 )
                 .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -170,7 +170,7 @@ struct UnifiedTagNameSection: View {
                 // 文字数カウンターと制限の表示
                 HStack {
                     if !isEditing {
-                        Text("20文字以内で入力してください")
+                        Text("20文字以内で入力してください".localized)
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -202,7 +202,7 @@ struct TagPreviewSection: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("プレビュー:")
+            Text("プレビュー:".localized)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
             
@@ -211,7 +211,7 @@ struct TagPreviewSection: View {
                     .fill(tagService.colorFromString(selectedColor))
                     .frame(width: 12, height: 12)
                 
-                Text(tagName.isEmpty ? "タグ名を入力してください" : tagName)
+                Text(tagName.isEmpty ? "タグ名を入力してください".localized : tagName)
                     .font(.subheadline)
                     .foregroundColor(tagName.isEmpty ? .secondary : .primary)
                     .italic(tagName.isEmpty)
