@@ -561,10 +561,6 @@ struct ReviewContentConfirmationStepView: View {
                                 .foregroundColor(.primary)
                             
                             VStack(alignment: .leading, spacing: 12) {
-                                Text(memo.title ?? "無題".localized)
-                                    .font(.title3)
-                                    .fontWeight(.semibold)
-                                
                                 if let pageRange = memo.pageRange, !pageRange.isEmpty {
                                     Text("ページ: %@".localizedWithFormat(pageRange))
                                         .font(.subheadline)
@@ -641,15 +637,6 @@ struct ReviewMethodSelectionStepView: View {
         ScrollView {
             VStack(spacing: 32) {
                 VStack(spacing: 16) {
-                    if let memo = viewModel.currentMemo {
-                        Text("「\(memo.title ?? "無題")」")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.primary)
-                            .multilineTextAlignment(.center)
-                            .lineLimit(2)
-                    }
-                    
                     Text("どのように復習しますか？".localized)
                         .font(.headline)
                         .foregroundColor(.secondary)
@@ -933,13 +920,6 @@ struct ReviewDateSelectionStepView: View {
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
                     .multilineTextAlignment(.center)
-                
-                if let memo = viewModel.currentMemo {
-                    Text("「\(memo.title ?? "無題")」")
-                        .font(.headline)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                }
             }
             
             VStack(spacing: 12) {
@@ -1046,13 +1026,6 @@ struct ReviewCompletionStepView: View {
                         .font(.title)
                         .fontWeight(.bold)
                         .foregroundColor(.primary)
-                    
-                    if let memo = viewModel.currentMemo {
-                        Text("「\(memo.title ?? "無題")」")
-                            .font(.headline)
-                            .foregroundColor(.primary)
-                            .multilineTextAlignment(.center)
-                    }
                     
                     HStack(spacing: 16) {
                         VStack(spacing: 4) {
