@@ -89,7 +89,8 @@ class ContentViewModel: ObservableObject {
         reviewDate = ReviewCalculator.calculateNextReviewDate(
             recallScore: recallScore,
             lastReviewedDate: Date(),
-            perfectRecallCount: memo?.perfectRecallCount ?? 0
+            perfectRecallCount: memo?.perfectRecallCount ?? 0,
+            historyEntries: memo?.historyEntriesArray ?? []
         )
     }
     
@@ -208,7 +209,8 @@ class ContentViewModel: ObservableObject {
             let newReviewDate = ReviewCalculator.calculateNextReviewDate(
                 recallScore: recallScore,
                 lastReviewedDate: Date(),
-                perfectRecallCount: currentPerfectRecallCount
+                perfectRecallCount: currentPerfectRecallCount,
+                historyEntries: memoToSave.historyEntriesArray
             )
             memoToSave.nextReviewDate = newReviewDate
         }
@@ -236,7 +238,8 @@ class ContentViewModel: ObservableObject {
                 let newReviewDate = ReviewCalculator.calculateNextReviewDate(
                     recallScore: recallScore,
                     lastReviewedDate: Date(),
-                    perfectRecallCount: updatedPerfectRecallCount
+                    perfectRecallCount: updatedPerfectRecallCount,
+                    historyEntries: memoToSave.historyEntriesArray
                 )
                 memoToSave.nextReviewDate = newReviewDate
                 

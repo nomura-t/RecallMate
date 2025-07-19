@@ -4,7 +4,7 @@ import Foundation
 struct ReviewCalculator {
     
     // メインの計算メソッド - より直接的なアプローチに変更
-    static func calculateNextReviewDate(recallScore: Int16, lastReviewedDate: Date?, perfectRecallCount: Int16) -> Date {
+    static func calculateNextReviewDate(recallScore: Int16, lastReviewedDate: Date?, perfectRecallCount: Int16, historyEntries: [MemoHistoryEntry] = []) -> Date {
         // 新規学習の場合（perfectRecallCount = 0）は、シンプルな計算を使用
         if perfectRecallCount == 0 {
             return calculateInitialReviewDate(recallScore: recallScore, lastReviewedDate: lastReviewedDate)
@@ -14,7 +14,7 @@ struct ReviewCalculator {
         return calculateProgressiveNextReviewDate(
             recallScore: recallScore,
             lastReviewedDate: lastReviewedDate,
-            historyEntries: []
+            historyEntries: historyEntries
         )
     }
     

@@ -12,10 +12,22 @@ struct HomeView: View {
     @Binding var isAddingMemo: Bool
     @State private var selectedTags: [Tag] = []
     @State private var refreshTrigger = UUID()
+    @State private var memoToEdit: Memo?
+    @State private var showingEditSheet = false
+    @State private var showingProfileView = false
+    
+    // MARK: - Social Features State（ソーシャル機能の状態）
+    @State private var showingSocialMenu = false
+    @State private var unreadNotificationCount = 0
+    @State private var showingNotificationsList = false
+    @State private var showingFriendsList = false
+    @State private var showingStudyGroups = false
     
     // MARK: - ViewModels（ビジネスロジック層）
     @StateObject private var reviewFlowViewModel: ReviewFlowViewModel
     @StateObject private var newLearningFlowViewModel: NewLearningFlowViewModel
+    @StateObject private var notificationManager = NotificationManager.shared
+    @StateObject private var friendshipManager = FriendshipManager.shared
     
     // MARK: - Data Fetching（データ取得）
     @FetchRequest(
@@ -115,6 +127,14 @@ struct HomeView: View {
             }
             .navigationTitle("")
             .navigationBarHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    profileButton
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    socialToolbarButton
+                }
+            }
         }
         .onAppear {
             forceRefreshData()
@@ -131,6 +151,42 @@ struct HomeView: View {
         // 新規学習フローのモーダル表示
         .sheet(isPresented: $newLearningFlowViewModel.showingNewLearningFlow) {
             NewLearningFlowSheetView(viewModel: newLearningFlowViewModel, allTags: Array(allTags))
+        }
+        // ソーシャル機能のシート表示
+        .sheet(isPresented: $showingNotificationsList) {
+            NotificationListView()
+        }
+        .sheet(isPresented: $showingFriendsList) {
+            FriendsView()
+        }
+        .sheet(isPresented: $showingStudyGroups) {
+            StudyGroupsView()
+        }
+        .sheet(isPresented: $showingEditSheet) {
+            if let memo = memoToEdit {
+                NavigationView {
+                    ContentView(memo: memo)
+                        .navigationBarItems(
+                            leading: Button("キャンセル") {
+                                showingEditSheet = false
+                            },
+                            trailing: Button("完了") {
+                                showingEditSheet = false
+                            }
+                        )
+                }
+                .onDisappear {
+                    memoToEdit = nil
+                    forceRefreshData()
+                }
+            }
+        }
+        .sheet(isPresented: $showingProfileView) {
+            ProfileView()
+        }
+        .popover(isPresented: $showingSocialMenu) {
+            socialMenuPopover
+                .frame(width: 280, height: 320)
         }
     }
     
@@ -199,6 +255,24 @@ struct HomeView: View {
                         insertion: .scale(scale: 0.9).combined(with: .opacity).combined(with: .move(edge: .top)),
                         removal: .scale(scale: 0.9).combined(with: .opacity).combined(with: .move(edge: .leading))
                     ))
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        Button(role: .destructive) {
+                            withAnimation(.easeInOut) {
+                                deleteMemo(memo)
+                            }
+                        } label: {
+                            Label("削除", systemImage: "trash")
+                        }
+                        
+                        Button {
+                            withAnimation(.easeInOut) {
+                                editMemo(memo)
+                            }
+                        } label: {
+                            Label("編集", systemImage: "pencil")
+                        }
+                        .tint(.blue)
+                    }
                 }
             }
             .padding(.horizontal, adaptivePadding)
@@ -342,8 +416,180 @@ struct HomeView: View {
             return "\(count)" + "件の復習項目".localized
         }
     }
+    
+    // MARK: - Social Features Components（ソーシャル機能コンポーネント）
+    
+    private var profileButton: some View {
+        Button(action: {
+            showingProfileView = true
+        }) {
+            if let imageUrl = friendshipManager.currentUserProfile?.avatarUrl {
+                AsyncImage(url: URL(string: imageUrl)) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } placeholder: {
+                    ProgressView()
+                        .frame(width: 32, height: 32)
+                }
+                .frame(width: 32, height: 32)
+                .clipShape(Circle())
+            } else {
+                Image(systemName: "person.circle.fill")
+                    .font(.system(size: 24))
+                    .foregroundColor(.blue)
+            }
+        }
+    }
+    
+    private var socialToolbarButton: some View {
+        Button(action: {
+            unreadNotificationCount = notificationManager.unreadCount
+            showingSocialMenu = true
+        }) {
+            ZStack {
+                Image(systemName: "person.2.fill")
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundColor(.blue)
+                
+                if unreadNotificationCount > 0 {
+                    NotificationBadgeView(count: unreadNotificationCount)
+                        .offset(x: 12, y: -12)
+                }
+            }
+        }
+        .onAppear {
+            updateUnreadCount()
+        }
+    }
+    
+    private var socialMenuPopover: some View {
+        VStack(spacing: 0) {
+            // ヘッダー
+            HStack {
+                Text("Social")
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                Spacer()
+                Button("Done") {
+                    showingSocialMenu = false
+                }
+                .foregroundColor(.blue)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(Color(.systemGray6))
+            
+            Divider()
+            
+            // メニュー項目
+            VStack(spacing: 0) {
+                socialMenuButton(
+                    icon: "bell.fill",
+                    title: "通知",
+                    badge: unreadNotificationCount,
+                    action: {
+                        showingSocialMenu = false
+                        showingNotificationsList = true
+                    }
+                )
+                
+                Divider()
+                    .padding(.leading, 44)
+                
+                socialMenuButton(
+                    icon: "person.2.fill",
+                    title: "友達",
+                    badge: 0,
+                    action: {
+                        showingSocialMenu = false
+                        showingFriendsList = true
+                    }
+                )
+                
+                Divider()
+                    .padding(.leading, 44)
+                
+                socialMenuButton(
+                    icon: "person.3.fill",
+                    title: "スタディグループ",
+                    badge: 0,
+                    action: {
+                        showingSocialMenu = false
+                        showingStudyGroups = true
+                    }
+                )
+            }
+            .padding(.vertical, 8)
+            
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(.systemBackground))
+    }
+    
+    private func socialMenuButton(icon: String, title: String, badge: Int, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                ZStack {
+                    Image(systemName: icon)
+                        .font(.system(size: 20))
+                        .foregroundColor(.blue)
+                        .frame(width: 32, height: 32)
+                    
+                    if badge > 0 {
+                        NotificationBadgeView(count: badge)
+                            .offset(x: 16, y: -16)
+                    }
+                }
+                
+                Text(title)
+                    .font(.body)
+                    .foregroundColor(.primary)
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(.secondary)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(Color.clear)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+    
+    private func updateUnreadCount() {
+        unreadNotificationCount = notificationManager.unreadCount
+    }
 
     // MARK: - Helper Methods（ヘルパーメソッド）
+    
+    private func deleteMemo(_ memo: Memo) {
+        viewContext.delete(memo)
+        
+        do {
+            try viewContext.save()
+            
+            // 更新を通知
+            NotificationCenter.default.post(
+                name: NSNotification.Name("ForceRefreshMemoData"),
+                object: nil
+            )
+            
+            // フィードバック
+            let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+            impactFeedback.impactOccurred()
+        } catch {
+            print("メモの削除に失敗しました: \(error)")
+        }
+    }
+    
+    private func editMemo(_ memo: Memo) {
+        memoToEdit = memo
+        showingEditSheet = true
+    }
     
     private func forceRefreshData() {
         viewContext.rollback()
@@ -360,70 +606,58 @@ struct ReviewFlowSheetView: View {
     @ObservedObject var viewModel: ReviewFlowViewModel
     
     var body: some View {
-        VStack(spacing: 0) {
-            // ヘッダー部分
-            HStack {
-                Text(viewModel.currentStepTitle)
-                    .font(.title2)
-                    .fontWeight(.bold)
-                
-                Spacer()
-                
-                Button(action: viewModel.closeReviewFlow) {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 24))
-                        .foregroundColor(.gray)
-                }
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 20)
+        ZStack {
+            Color(.systemGray6)
+                .ignoresSafeArea()
             
-            // プログレスバー
-            HStack(spacing: 8) {
-                ForEach(0..<6) { index in
-                    Circle()
-                        .fill(index <= viewModel.reviewStep ? getReviewStepColor(step: index) : Color.gray.opacity(0.3))
-                        .frame(width: index == viewModel.reviewStep ? 12 : 8, height: index == viewModel.reviewStep ? 12 : 8)
-                        .animation(.easeInOut(duration: 0.3), value: viewModel.reviewStep)
-                }
-            }
-            .padding(.top, 16)
-            
-            // メインコンテンツ
-            Group {
-                if viewModel.reviewStep == 0 {
-                    ReviewContentConfirmationStepView(viewModel: viewModel)
-                } else if viewModel.reviewStep == 1 {
-                    ReviewMethodSelectionStepView(viewModel: viewModel)
-                } else if viewModel.reviewStep == 2 {
-                    if viewModel.selectedReviewMethod == .assessment {
-                        ReviewMemoryAssessmentStepView(viewModel: viewModel)
-                    } else {
-                        ActiveReviewGuidanceStepView(viewModel: viewModel)
+            FlowContainerView {
+                VStack(spacing: 0) {
+                    // ヘッダー部分
+                    FlowHeaderView(
+                        currentStep: viewModel.reviewStep,
+                        totalSteps: 6,
+                        stepTitle: viewModel.currentStepTitle,
+                        stepColor: viewModel.currentStepColor,
+                        onClose: viewModel.closeReviewFlow
+                    )
+                    
+                    // メインコンテンツ
+                    Group {
+                        if viewModel.reviewStep == 0 {
+                            ReviewContentConfirmationStepView(viewModel: viewModel)
+                        } else if viewModel.reviewStep == 1 {
+                            ReviewMethodSelectionStepView(viewModel: viewModel)
+                        } else if viewModel.reviewStep == 2 {
+                            if viewModel.selectedReviewMethod == .assessment {
+                                ReviewMemoryAssessmentStepView(viewModel: viewModel)
+                            } else {
+                                ActiveReviewGuidanceStepView(viewModel: viewModel)
+                            }
+                        } else if viewModel.reviewStep == 3 {
+                            ReviewMemoryAssessmentStepView(viewModel: viewModel)
+                        } else if viewModel.reviewStep == 4 {
+                            ReviewDateSelectionStepView(viewModel: viewModel)
+                        } else if viewModel.reviewStep == 5 {
+                            ReviewCompletionStepView(viewModel: viewModel)
+                        }
                     }
-                } else if viewModel.reviewStep == 3 {
-                    ReviewMemoryAssessmentStepView(viewModel: viewModel)
-                } else if viewModel.reviewStep == 4 {
-                    ReviewDateSelectionStepView(viewModel: viewModel)
-                } else if viewModel.reviewStep == 5 {
-                    ReviewCompletionStepView(viewModel: viewModel)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .transition(.asymmetric(
+                        insertion: .move(edge: .trailing).combined(with: .opacity),
+                        removal: .move(edge: .leading).combined(with: .opacity)
+                    ))
+                    .animation(.easeInOut(duration: 0.3), value: viewModel.reviewStep)
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .transition(.asymmetric(
-                insertion: .move(edge: .trailing).combined(with: .opacity),
-                removal: .move(edge: .leading).combined(with: .opacity)
-            ))
-            .animation(.easeInOut(duration: 0.3), value: viewModel.reviewStep)
         }
-        .background(Color(.systemGroupedBackground))
         .onAppear {
             // 復習日の初期計算
             if let memo = viewModel.currentMemo {
                 viewModel.defaultReviewDate = ReviewCalculator.calculateNextReviewDate(
                     recallScore: viewModel.recallScore,
                     lastReviewedDate: Date(),
-                    perfectRecallCount: memo.perfectRecallCount
+                    perfectRecallCount: memo.perfectRecallCount,
+                    historyEntries: memo.historyEntriesArray
                 )
                 viewModel.selectedReviewDate = viewModel.defaultReviewDate
             }
@@ -605,27 +839,10 @@ struct ReviewContentConfirmationStepView: View {
                 
                 Spacer(minLength: 40)
                 
-                Button(action: {
-                    viewModel.proceedToNextStep()
-                }) {
-                    HStack {
-                        Image(systemName: "arrow.right.circle.fill")
-                            .font(.system(size: 18))
-                        Text("内容を確認しました".localized)
-                            .font(.headline)
-                    }
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background(
-                        LinearGradient(
-                            gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .cornerRadius(25)
-                }
+                FlowActionButton(
+                    title: "内容を確認しました".localized,
+                    action: viewModel.proceedToNextStep
+                )
                 .padding(.horizontal, 20)
             }
             .padding(.top, 20)
@@ -806,111 +1023,24 @@ struct ActiveReviewGuidanceStepView: View {
 /// ステップ3: 記憶度評価画面
 struct ReviewMemoryAssessmentStepView: View {
     @ObservedObject var viewModel: ReviewFlowViewModel
-    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         VStack(spacing: 32) {
             Spacer()
             
-            VStack(spacing: 24) {
-                Text("復習後の記憶度を評価してください".localized)
-                    .font(.title3)
-                    .fontWeight(.medium)
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(.primary)
-                
-                ZStack {
-                    Circle()
-                        .stroke(Color.gray.opacity(colorScheme == .dark ? 0.3 : 0.2), lineWidth: 12)
-                        .frame(width: 180, height: 180)
-                    
-                    Circle()
-                        .trim(from: 0, to: CGFloat(viewModel.recallScore) / 100)
-                        .stroke(
-                            getRetentionColor(for: viewModel.recallScore),
-                            style: StrokeStyle(lineWidth: 12, lineCap: .round)
-                        )
-                        .frame(width: 180, height: 180)
-                        .rotationEffect(.degrees(-90))
-                        .animation(.easeInOut(duration: 0.3), value: viewModel.recallScore)
-                    
-                    VStack(spacing: 4) {
-                        Text("\(Int(viewModel.recallScore))")
-                            .font(.system(size: 48, weight: .bold))
-                        Text("%")
-                            .font(.system(size: 20))
-                    }
-                    .foregroundColor(getRetentionColor(for: viewModel.recallScore))
-                }
-                
-                Text(getRetentionDescription(for: viewModel.recallScore))
-                    .font(.title3)
-                    .fontWeight(.medium)
-                    .foregroundColor(getRetentionColor(for: viewModel.recallScore))
-                    .multilineTextAlignment(.center)
-                    .animation(.easeInOut(duration: 0.2), value: viewModel.recallScore)
-                
-                VStack(spacing: 16) {
-                    HStack {
-                        Text("0%")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                        
-                        Slider(value: Binding(
-                            get: { Double(viewModel.recallScore) },
-                            set: { newValue in
-                                let generator = UIImpactFeedbackGenerator(style: .light)
-                                generator.impactOccurred()
-                                viewModel.recallScore = Int16(newValue)
-                            }
-                        ), in: 0...100, step: 1)
-                        .accentColor(getRetentionColor(for: viewModel.recallScore))
-                        
-                        Text("100%")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                    }
-                    
-                    HStack(spacing: 0) {
-                        ForEach(0..<5) { i in
-                            let level = i * 20
-                            let isActive = viewModel.recallScore >= Int16(level)
-                            
-                            Rectangle()
-                                .fill(isActive ? getRetentionColorForLevel(i) : Color.gray.opacity(colorScheme == .dark ? 0.3 : 0.2))
-                                .frame(height: 6)
-                                .cornerRadius(3)
-                        }
-                    }
-                }
-            }
+            MemoryAssessmentView(
+                score: $viewModel.recallScore,
+                scoreLabel: "復習後の記憶度を評価してください".localized,
+                color: getRetentionColor
+            )
             
             Spacer()
             
-            Button(action: {
-                viewModel.proceedToNextStep()  // 復習日選択ステップへ
-            }) {
-                HStack {
-                    Image(systemName: "arrow.right.circle.fill")
-                        .font(.system(size: 18))
-                    Text("評価完了".localized)
-                        .font(.headline)
-                }
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(
-                    LinearGradient(
-                        gradient: Gradient(colors: [
-                            getRetentionColor(for: viewModel.recallScore),
-                            getRetentionColor(for: viewModel.recallScore).opacity(0.8)
-                        ]),
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .cornerRadius(25)
-            }
+            FlowActionButton(
+                title: "評価完了".localized,
+                color: getRetentionColor(for: viewModel.recallScore),
+                action: { viewModel.proceedToNextStep() }
+            )
             .padding(.horizontal, 20)
             .padding(.bottom, 40)
         }
@@ -923,77 +1053,28 @@ struct ReviewDateSelectionStepView: View {
     
     var body: some View {
         VStack(spacing: 32) {
-            VStack(spacing: 16) {
-                Image(systemName: "calendar.badge.clock")
-                    .font(.system(size: 60))
-                    .foregroundColor(.indigo)
-                
-                Text("次回の復習日を選択してください".localized)
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(.primary)
-                    .multilineTextAlignment(.center)
-                
-                if let memo = viewModel.currentMemo {
-                    Text("「\(memo.title ?? "無題")」")
-                        .font(.headline)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                }
-            }
-            
-            VStack(spacing: 16) {
-                Text("復習日を選択".localized)
-                    .font(.headline)
-                    .foregroundColor(.primary)
-                
-                DatePicker(
-                    "復習日".localized,
-                    selection: $viewModel.selectedReviewDate,
-                    in: Date()...,
-                    displayedComponents: .date
-                )
-                .datePickerStyle(.wheel)
-                .labelsHidden()
-                .frame(height: 200)
-                
-                Button(action: {
-                    viewModel.selectedReviewDate = viewModel.defaultReviewDate
-                }) {
-                    HStack {
-                        Image(systemName: "arrow.counterclockwise")
-                            .font(.system(size: 14))
-                        Text("推奨日に戻す".localized)
-                            .font(.subheadline)
-                    }
-                    .foregroundColor(.blue)
-                }
-            }
+            DateSelectionView(
+                selectedDate: $viewModel.selectedReviewDate,
+                defaultDate: viewModel.defaultReviewDate,
+                title: "次回の復習日を選択してください".localized,
+                icon: nil
+            )
             .padding(.horizontal, 20)
+            
+            if let memo = viewModel.currentMemo {
+                Text("「\(memo.title ?? "無題")」")
+                    .font(.headline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+            }
             
             Spacer()
             
-            Button(action: {
-                viewModel.proceedToNextStep()  // 完了ステップへ
-            }) {
-                HStack {
-                    Image(systemName: "arrow.right.circle.fill")
-                        .font(.system(size: 18))
-                    Text("復習日を設定".localized)
-                        .font(.headline)
-                }
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(
-                    LinearGradient(
-                        gradient: Gradient(colors: [Color.indigo, Color.indigo.opacity(0.8)]),
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .cornerRadius(25)
-            }
+            FlowActionButton(
+                title: "復習日を設定".localized,
+                color: .indigo,
+                action: { viewModel.proceedToNextStep() }
+            )
             .padding(.horizontal, 20)
             .padding(.bottom, 40)
         }
@@ -1091,7 +1172,8 @@ struct ReviewCompletionStepView: View {
                     HStack {
                         if viewModel.isSavingReview {
                             ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                .progressViewStyle(CircularProgressViewStyle())
+                                .tint(.white)
                                 .scaleEffect(0.8)
                         } else {
                             Image(systemName: "sparkles")
@@ -1578,10 +1660,6 @@ struct NewLearningDateSelectionStepView: View {
         VStack(spacing: 32) {
             // ヘッダー部分
             VStack(spacing: 16) {
-                Image(systemName: "calendar.badge.plus")
-                    .font(.system(size: 60))
-                    .foregroundColor(.indigo)
-                
                 Text("初回復習日を選択してください".localized)
                     .font(.title2)
                     .fontWeight(.bold)
@@ -1776,7 +1854,8 @@ struct NewLearningCompletionStepView: View {
                     HStack {
                         if viewModel.isSavingNewLearning {
                             ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                .progressViewStyle(CircularProgressViewStyle())
+                                .tint(.white)
                                 .scaleEffect(0.8)
                         } else {
                             Image(systemName: "brain.head.profile")
@@ -2069,6 +2148,134 @@ struct LearningMethodCard: View {
 
 // MARK: - Active Recall Components（アクティブリコールコンポーネント）
 
+private func getThoroughReviewSteps() -> [ActiveRecallStep] {
+    return [
+        ActiveRecallStep(
+            title: "内容を思い出してみましょう".localized,
+            description: "教材を見ずに、覚えている内容を思い出してください".localized,
+            tip: "🧠 ここがポイント：完璧でなくても大丈夫です。思い出せない部分があることで、脳は「これは重要な情報だ」と認識し、記憶の定着が促進されます。".localized,
+            icon: "brain.head.profile",
+            color: .purple
+        ),
+        ActiveRecallStep(
+            title: "忘れていた部分を確認しましょう".localized,
+            description: "教材を見て、思い出せなかった部分を重点的に確認してください".localized,
+            tip: "🔍 重点復習：忘れていた部分こそが、今回の復習で最も重要な学習ポイントです。ここに時間をかけることで効率的に記憶を回復できます。".localized,
+            icon: "magnifyingglass",
+            color: .orange
+        ),
+        ActiveRecallStep(
+            title: "全体を通して再度思い出してみましょう".localized,
+            description: "確認した内容も含めて、全体を再度思い出してください".localized,
+            tip: "🎯 完全復習：最初から最後まで通して思い出すことで、知識が体系的に整理され、長期記憶への定着が促進されます。".localized,
+            icon: "arrow.clockwise",
+            color: .purple
+        )
+    ]
+}
+
+private func getQuickReviewSteps() -> [ActiveRecallStep] {
+    return [
+        ActiveRecallStep(
+            title: "重要ポイントを思い出してみましょう".localized,
+            description: "この内容の要点だけを思い出してください".localized,
+            tip: "⚡ 効率復習：全てを思い出そうとせず、重要なポイントに絞って復習しましょう。短時間でも効果的な復習ができます。".localized,
+            icon: "star.fill",
+            color: .orange
+        ),
+        ActiveRecallStep(
+            title: "思い出せない部分をチェックしましょう".localized,
+            description: "重要だけど思い出せなかった部分を確認してください".localized,
+            tip: "🎯 ピンポイント復習：思い出せなかった重要ポイントだけを集中的に確認することで、効率的に記憶を補強できます。".localized,
+            icon: "checkmark.circle",
+            color: .green
+        ),
+        ActiveRecallStep(
+            title: "キーポイントを再確認しましょう".localized,
+            description: "確認したキーポイントをもう一度思い出してください".localized,
+            tip: "🔄 確実な定着：重要ポイントを再度思い出すことで、短時間でも確実な記憶定着を図ることができます。".localized,
+            icon: "arrow.clockwise",
+            color: .blue
+        )
+    ]
+}
+
+private func getThoroughLearningSteps() -> [ActiveRecallStep] {
+    return [
+        ActiveRecallStep(
+            title: "教材をしっかり読み込みましょう".localized,
+            description: "まずは学習内容をじっくりと読み込んでください".localized,
+            tip: "💡 ポイント：ただ読むだけでなく、『これは重要そうだな』『ここは覚えておきたい』と意識しながら読むと効果的です。アクティブリコールの準備段階として、しっかりと内容を頭に入れましょう。".localized,
+            icon: "book.fill",
+            color: .blue
+        ),
+        ActiveRecallStep(
+            title: "思い出せるだけ書き出してみましょう".localized,
+            description: "教材を閉じて、覚えている内容を書き出してください".localized,
+            tip: "🧠 コツ：完璧を目指さなくて大丈夫！思い出せない部分があることで、脳は『これは重要な情報だ』と認識し、次回の記憶定着が向上します。これがアクティブリコールの核心部分です。".localized,
+            icon: "pencil.and.outline",
+            color: .green
+        ),
+        ActiveRecallStep(
+            title: "分からなかった部分を確認しましょう".localized,
+            description: "教材を見直して、思い出せなかった部分を確認してください".localized,
+            tip: "🔍 重要：思い出せなかった部分こそが、あなたの記憶の弱点です。ここをしっかり確認することで、次回は思い出せるようになります。".localized,
+            icon: "magnifyingglass",
+            color: .orange
+        ),
+        ActiveRecallStep(
+            title: "わからなかった部分を再度書き出してみましょう".localized,
+            description: "確認した内容を、再度思い出して書き出してください".localized,
+            tip: "🎯 最終確認：一度確認した内容を再度思い出すことで、記憶がより強固になります。この繰り返しが長期記憶への定着につながります。".localized,
+            icon: "arrow.clockwise",
+            color: .purple
+        )
+    ]
+}
+
+private func getQuickLearningSteps() -> [ActiveRecallStep] {
+    return [
+        ActiveRecallStep(
+            title: "教材をざっと眺めてみましょう".localized,
+            description: "学習内容を軽く読み通してください".localized,
+            tip: "⚡ さくっとモード：重要そうな部分に注目しながら、全体的な流れを把握しましょう。完璧でなくても大丈夫です。".localized,
+            icon: "eye",
+            color: .orange
+        ),
+        ActiveRecallStep(
+            title: "思い出せるだけ書き出してみましょう".localized,
+            description: "教材を閉じて、覚えている内容を書き出してください".localized,
+            tip: "🧠 効率重視：時間は短くても、思い出す作業が記憶を強化します。思い出せた分だけでも十分効果的です。".localized,
+            icon: "pencil.and.outline",
+            color: .green
+        ),
+        ActiveRecallStep(
+            title: "気になった部分だけ確認してみましょう".localized,
+            description: "特に重要だと感じた部分や、思い出しにくかった部分を確認してください".localized,
+            tip: "🎯 重点確認：全てを確認する必要はありません。重要な部分や不安な部分に絞って確認することで、効率的に学習できます。".localized,
+            icon: "checkmark.circle",
+            color: .blue
+        )
+    ]
+}
+
+private func getInitialReviewDateExplanation(for score: Int16) -> String {
+    switch score {
+    case 90...100:
+        return "優秀な初期記憶度です。長期記憶への効果的な定着を図るため、最適な間隔での復習を設定しています。"
+    case 80...89:
+        return "良好な初期記憶度です。記憶の確実な定着のため、適度な間隔での復習を推奨します。"
+    case 70...79:
+        return "基本的な理解は十分です。記憶を強化するため、やや短めの間隔での復習が効果的です。"
+    case 60...69:
+        return "要点は理解されています。確実な定着のため、比較的短い間隔での復習をお勧めします。"
+    case 50...59:
+        return "基礎的な理解があります。記憶の定着を図るため、短い間隔での復習が必要です。"
+    default:
+        return "記憶を強化するため、短期間での復習を推奨します。繰り返し学習により確実な定着を目指しましょう。"
+    }
+}
+
 struct ActiveRecallStep {
     let title: String
     let description: String
@@ -2191,227 +2398,117 @@ struct ActiveRecallGuidanceContent: View {
             )
         }
     }
-}
-
-// MARK: - Helper Functions（ヘルパー関数）
-
-private func getRetentionColor(for score: Int16) -> Color {
-    switch score {
-    case 81...100: return Color(red: 0.0, green: 0.7, blue: 0.3)
-    case 61...80: return Color(red: 0.3, green: 0.7, blue: 0.0)
-    case 41...60: return Color(red: 0.95, green: 0.6, blue: 0.1)
-    case 21...40: return Color(red: 0.9, green: 0.45, blue: 0.0)
-    default: return Color(red: 0.9, green: 0.2, blue: 0.2)
-    }
-}
-
-private func getRetentionColorForLevel(_ level: Int) -> Color {
-    switch level {
-    case 4: return Color(red: 0.0, green: 0.7, blue: 0.3)
-    case 3: return Color(red: 0.3, green: 0.7, blue: 0.0)
-    case 2: return Color(red: 0.95, green: 0.6, blue: 0.1)
-    case 1: return Color(red: 0.9, green: 0.45, blue: 0.0)
-    default: return Color(red: 0.9, green: 0.2, blue: 0.2)
-    }
-}
-
-private func getRetentionDescription(for score: Int16) -> String {
-    switch score {
-    case 91...100: return "完璧に覚えています！".localized
-    case 81...90: return "十分に理解できています".localized
-    case 71...80: return "だいたい理解しています".localized
-    case 61...70: return "要点は覚えています".localized
-    case 51...60: return "基本概念を思い出せます".localized
-    case 41...50: return "断片的に覚えています".localized
-    case 31...40: return "うっすらと覚えています".localized
-    case 21...30: return "ほとんど忘れています".localized
-    case 1...20: return "ほぼ完全に忘れています".localized
-    default: return "全く覚えていません".localized
-    }
-}
-
-private func formatElapsedTime(_ timeInterval: TimeInterval) -> String {
-    let totalSeconds = Int(timeInterval)
-    let minutes = totalSeconds / 60
-    let seconds = totalSeconds % 60
-    return String(format: "%02d:%02d", minutes, seconds)
-}
-
-private func formatDateForDisplay(_ date: Date) -> String {
-    let calendar = Calendar.current
-    let formatter = DateFormatter()
-    formatter.locale = Locale(identifier: "ja_JP")
-    formatter.timeZone = TimeZone.current
     
-    if calendar.isDateInToday(date) {
-        return "今日"
-    } else if calendar.isDateInTomorrow(date) {
-        return "明日"
-    } else {
-        let daysFromNow = calendar.dateComponents([.day], from: Date(), to: date).day ?? 0
-        
-        if daysFromNow <= 7 {
-            formatter.dateFormat = "E曜日"
-            return formatter.string(from: date)
-        } else if daysFromNow <= 30 {
-            formatter.dateFormat = "M月d日"
-            return formatter.string(from: date)
-        } else {
-            formatter.dateFormat = "M月d日"
-            let dateString = formatter.string(from: date)
-            return "\(dateString) (\(daysFromNow)日後)"
+    // MARK: - Helper Functions（ヘルパー関数）
+    
+    private func getRetentionColor(for score: Int16) -> Color {
+        switch score {
+        case 81...100: return Color(red: 0.0, green: 0.7, blue: 0.3)
+        case 61...80: return Color(red: 0.3, green: 0.7, blue: 0.0)
+        case 41...60: return Color(red: 0.95, green: 0.6, blue: 0.1)
+        case 21...40: return Color(red: 0.9, green: 0.45, blue: 0.0)
+        default: return Color(red: 0.9, green: 0.2, blue: 0.2)
         }
     }
-}
-
-private func getReviewDateExplanation(for score: Int16) -> String {
-    switch score {
-    case 90...100:
-        return "優秀な記憶度のため、長めの間隔での復習が効果的です。忘却曲線に基づいて最適な復習タイミングを提案しています。"
-    case 80...89:
-        return "良好な記憶度です。記憶の定着を確実にするため、適度な間隔での復習を推奨します。"
-    case 70...79:
-        return "基本的な理解は十分です。記憶を強化するため、やや短めの間隔での復習が効果的です。"
-    case 60...69:
-        return "要点は理解されています。確実な定着のため、比較的短い間隔での復習をお勧めします。"
-    case 50...59:
-        return "基礎的な理解があります。記憶の定着を図るため、短い間隔での復習が必要です。"
-    default:
-        return "記憶を強化するため、短期間での復習を推奨します。繰り返し学習により確実な定着を目指しましょう。"
+    
+    private func getRetentionColorForLevel(_ level: Int) -> Color {
+        switch level {
+        case 4: return Color(red: 0.0, green: 0.7, blue: 0.3)
+        case 3: return Color(red: 0.3, green: 0.7, blue: 0.0)
+        case 2: return Color(red: 0.95, green: 0.6, blue: 0.1)
+        case 1: return Color(red: 0.9, green: 0.45, blue: 0.0)
+        default: return Color(red: 0.9, green: 0.2, blue: 0.2)
+        }
     }
-}
-
-private func getInitialReviewDateExplanation(for score: Int16) -> String {
-    switch score {
-    case 90...100:
-        return "非常に高い理解度です。エビングハウスの忘却曲線を考慮し、効率的な復習間隔を設定しています。"
-    case 80...89:
-        return "良好な理解度です。分散学習の効果を最大化するため、科学的根拠に基づいた復習スケジュールを提案します。"
-    case 70...79:
-        return "基本的な理解は十分です。記憶の定着を確実にするため、適切な間隔での初回復習を設定しています。"
-    case 60...69:
-        return "要点は理解されています。長期記憶への移行を促進するため、最適なタイミングでの復習を推奨します。"
-    case 50...59:
-        return "基礎的な理解があります。忘却を防ぐため、比較的早めの復習スケジュールを設定しています。"
-    default:
-        return "学習内容の定着には反復が重要です。短い間隔での復習から始めて徐々に記憶を強化していきます。"
+    
+    private func getRetentionDescription(for score: Int16) -> String {
+        switch score {
+        case 91...100: return "完璧に覚えています！".localized
+        case 81...90: return "十分に理解できています".localized
+        case 71...80: return "だいたい理解しています".localized
+        case 61...70: return "要点は覚えています".localized
+        case 51...60: return "基本概念を思い出せます".localized
+        case 41...50: return "断片的に覚えています".localized
+        case 31...40: return "うっすらと覚えています".localized
+        case 21...30: return "ほとんど忘れています".localized
+        case 1...20: return "ほぼ完全に忘れています".localized
+        default: return "全く覚えていません".localized
+        }
     }
-}
-
-private func getThoroughReviewSteps() -> [ActiveRecallStep] {
-    return [
-        ActiveRecallStep(
-            title: "以前学んだ内容を思い出してみましょう".localized,
-            description: "教材を見る前に、まず記憶している内容を思い出してください".localized,
-            tip: "🧠 復習のコツ：何も見ずに思い出すことで、現在の記憶状態を正確に把握できます。思い出せない部分があっても心配しないでください。それが復習すべきポイントです。".localized,
-            icon: "brain.head.profile",
-            color: .blue
-        ),
-        ActiveRecallStep(
-            title: "思い出した内容を整理してみましょう".localized,
-            description: "覚えている内容を体系的に書き出してください".localized,
-            tip: "📝 整理の効果：思い出した内容を整理することで、知識の構造が明確になり、記憶がより強化されます。".localized,
-            icon: "square.and.pencil",
-            color: .green
-        ),
-        ActiveRecallStep(
-            title: "忘れていた部分を確認しましょう".localized,
-            description: "教材を見て、思い出せなかった部分を重点的に確認してください".localized,
-            tip: "🔍 重点復習：忘れていた部分こそが、今回の復習で最も重要な学習ポイントです。ここに時間をかけることで効率的に記憶を回復できます。".localized,
-            icon: "magnifyingglass",
-            color: .orange
-        ),
-        ActiveRecallStep(
-            title: "全体を通して再度思い出してみましょう".localized,
-            description: "確認した内容も含めて、全体を再度思い出してください".localized,
-            tip: "🎯 完全復習：最初から最後まで通して思い出すことで、知識が体系的に整理され、長期記憶への定着が促進されます。".localized,
-            icon: "arrow.clockwise",
-            color: .purple
-        )
-    ]
-}
-
-private func getQuickReviewSteps() -> [ActiveRecallStep] {
-    return [
-        ActiveRecallStep(
-            title: "重要ポイントを思い出してみましょう".localized,
-            description: "この内容の要点だけを思い出してください".localized,
-            tip: "⚡ 効率復習：全てを思い出そうとせず、重要なポイントに絞って復習しましょう。短時間でも効果的な復習ができます。".localized,
-            icon: "star.fill",
-            color: .orange
-        ),
-        ActiveRecallStep(
-            title: "思い出せない部分をチェックしましょう".localized,
-            description: "重要だけど思い出せなかった部分を確認してください".localized,
-            tip: "🎯 ピンポイント復習：思い出せなかった重要ポイントだけを集中的に確認することで、効率的に記憶を補強できます。".localized,
-            icon: "checkmark.circle",
-            color: .green
-        ),
-        ActiveRecallStep(
-            title: "キーポイントを再確認しましょう".localized,
-            description: "確認したキーポイントをもう一度思い出してください".localized,
-            tip: "🔄 確実な定着：重要ポイントを再度思い出すことで、短時間でも確実な記憶定着を図ることができます。".localized,
-            icon: "arrow.clockwise",
-            color: .blue
-        )
-    ]
-}
-
-private func getThoroughLearningSteps() -> [ActiveRecallStep] {
-    return [
-        ActiveRecallStep(
-            title: "教材をしっかり読み込みましょう".localized,
-            description: "まずは学習内容をじっくりと読み込んでください".localized,
-            tip: "💡 ポイント：ただ読むだけでなく、『これは重要そうだな』『ここは覚えておきたい』と意識しながら読むと効果的です。アクティブリコールの準備段階として、しっかりと内容を頭に入れましょう。".localized,
-            icon: "book.fill",
-            color: .blue
-        ),
-        ActiveRecallStep(
-            title: "思い出せるだけ書き出してみましょう".localized,
-            description: "教材を閉じて、覚えている内容を書き出してください".localized,
-            tip: "🧠 コツ：完璧を目指さなくて大丈夫！思い出せない部分があることで、脳は『これは重要な情報だ』と認識し、次回の記憶定着が向上します。これがアクティブリコールの核心部分です。".localized,
-            icon: "pencil.and.outline",
-            color: .green
-        ),
-        ActiveRecallStep(
-            title: "分からなかった部分を確認しましょう".localized,
-            description: "教材を見直して、思い出せなかった部分を確認してください".localized,
-            tip: "🔍 重要：思い出せなかった部分こそが、あなたの記憶の弱点です。ここをしっかり確認することで、次回は思い出せるようになります。".localized,
-            icon: "magnifyingglass",
-            color: .orange
-        ),
-        ActiveRecallStep(
-            title: "わからなかった部分を再度書き出してみましょう".localized,
-            description: "確認した内容を、再度思い出して書き出してください".localized,
-            tip: "🎯 最終確認：一度確認した内容を再度思い出すことで、記憶がより強固になります。この繰り返しが長期記憶への定着につながります。".localized,
-            icon: "arrow.clockwise",
-            color: .purple
-        )
-                ]
+    
+    private func formatElapsedTime(_ timeInterval: TimeInterval) -> String {
+        let totalSeconds = Int(timeInterval)
+        let minutes = totalSeconds / 60
+        let seconds = totalSeconds % 60
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
+    
+    private func formatDateForDisplay(_ date: Date) -> String {
+        let calendar = Calendar.current
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ja_JP")
+        formatter.timeZone = TimeZone.current
+        
+        if calendar.isDateInToday(date) {
+            return "今日"
+        } else if calendar.isDateInTomorrow(date) {
+            return "明日"
+        } else {
+            let daysFromNow = calendar.dateComponents([.day], from: Date(), to: date).day ?? 0
+            
+            if daysFromNow <= 7 {
+                formatter.dateFormat = "E曜日"
+                return formatter.string(from: date)
+            } else if daysFromNow <= 30 {
+                formatter.dateFormat = "M月d日"
+                return formatter.string(from: date)
+            } else {
+                formatter.dateFormat = "M月d日"
+                let dateString = formatter.string(from: date)
+                return "\(dateString) (\(daysFromNow)日後)"
             }
-
-            private func getQuickLearningSteps() -> [ActiveRecallStep] {
-                return [
-                    ActiveRecallStep(
-                        title: "教材をざっと眺めてみましょう".localized,
-                        description: "学習内容を軽く読み通してください".localized,
-                        tip: "⚡ さくっとモード：重要そうな部分に注目しながら、全体的な流れを把握しましょう。完璧でなくても大丈夫です。".localized,
-                        icon: "eye",
-                        color: .orange
-                    ),
-                    ActiveRecallStep(
-                        title: "思い出せるだけ書き出してみましょう".localized,
-                        description: "教材を閉じて、覚えている内容を書き出してください".localized,
-                        tip: "🧠 効率重視：時間は短くても、思い出す作業が記憶を強化します。思い出せた分だけでも十分効果的です。".localized,
-                        icon: "pencil.and.outline",
-                        color: .green
-                    ),
-                    ActiveRecallStep(
-                        title: "気になった部分だけ確認してみましょう".localized,
-                        description: "特に重要だと感じた部分や、思い出しにくかった部分を確認してください".localized,
-                        tip: "🎯 重点確認：全てを確認する必要はありません。重要な部分や不安な部分に絞って確認することで、効率的に学習できます。".localized,
-                        icon: "checkmark.circle",
-                        color: .blue
-                    )
-                ]
+        }
+    }
+    
+    private func getReviewDateExplanation(for score: Int16) -> String {
+        switch score {
+        case 90...100:
+            return "優秀な記憶度のため、長めの間隔での復習が効果的です。忘却曲線に基づいて最適な復習タイミングを提案しています。"
+        case 80...89:
+            return "良好な記憶度です。記憶の定着を確実にするため、適度な間隔での復習を推奨します。"
+        case 70...79:
+            return "基本的な理解は十分です。記憶を強化するため、やや短めの間隔での復習が効果的です。"
+        case 60...69:
+            return "要点は理解されています。確実な定着のため、比較的短い間隔での復習をお勧めします。"
+        case 50...59:
+            return "基礎的な理解があります。記憶の定着を図るため、短い間隔での復習が必要です。"
+        default:
+            return "記憶を強化するため、短期間での復習を推奨します。繰り返し学習により確実な定着を目指しましょう。"
+        }
+    }
+    
+    // MARK: - Badge Component for Notification Counts
+    
+    /// Badge component to display notification counts
+    struct NotificationBadge: View {
+        let count: Int
+        
+        var body: some View {
+            if count > 0 {
+                ZStack {
+                    Circle()
+                        .fill(Color.red)
+                        .frame(width: 20, height: 20)
+                    
+                    Text(count > 99 ? "99+" : "\(count)")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
+                }
             }
+        }
+    }
+    
+    
+}

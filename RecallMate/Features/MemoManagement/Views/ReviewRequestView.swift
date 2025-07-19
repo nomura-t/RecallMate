@@ -2,6 +2,11 @@
 import SwiftUI
 import StoreKit
 
+// iOS 18以降の新しいAppStore APIのインポート
+#if canImport(AppStore)
+import AppStore
+#endif
+
 struct ReviewRequestView: View {
     @Binding var isPresented: Bool
     @State private var hasRespondedPositively = false
@@ -87,11 +92,14 @@ struct ReviewRequestView: View {
     }
     
     private func requestReview() {
-        // iOS 14.0以降でのレビュー依頼方法
-        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-            // StoreKitの古いAPIを使用（iOS 18で非推奨だが動作する）
-            // 新しいAppStore APIへの移行は将来のバージョンで実装予定
-            if #available(iOS 14.0, *) {
+        // iOS 18以降では新しいAppStore APIを使用
+        if #available(iOS 18.0, *) {
+            if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+                AppStore.requestReview(in: scene)
+            }
+        } else {
+            // iOS 14.0-17.x では従来のStoreKit APIを使用
+            if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
                 SKStoreReviewController.requestReview(in: scene)
             }
         }

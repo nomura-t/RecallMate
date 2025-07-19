@@ -107,7 +107,8 @@ struct ReviewCompletionView: View {
                     HStack {
                         if isSubmitting {
                             ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                .progressViewStyle(CircularProgressViewStyle())
+                                .tint(.white)
                                 .scaleEffect(0.8)
                         } else {
                             Image(systemName: "checkmark.circle.fill")
@@ -176,7 +177,8 @@ struct ReviewCompletionView: View {
         let nextReviewDate = ReviewCalculator.calculateNextReviewDate(
             recallScore: recallScore,
             lastReviewedDate: Date(),
-            perfectRecallCount: memo.perfectRecallCount
+            perfectRecallCount: memo.perfectRecallCount,
+            historyEntries: memo.historyEntriesArray
         )
         memo.nextReviewDate = nextReviewDate
         

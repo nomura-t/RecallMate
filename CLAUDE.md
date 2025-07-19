@@ -4,92 +4,102 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-RecallMate is an iOS app built with SwiftUI that helps users track learning activities and manage recall-based studying. The app focuses on spaced repetition learning techniques and time-based study tracking.
+RecallMate is an iOS app built with SwiftUI that implements spaced repetition learning techniques with social features. The app helps users track learning activities, manage recall-based studying, and connect with other learners.
 
 ## Development Commands
 
 ### Building and Running
-
-- **Build**: Use Xcode to build the project (`⌘+B`)
-- **Run**: Use Xcode to run on simulator or device (`⌘+R`)
-- **Test**: Use Xcode to run tests (`⌘+U`)
+- **Build**: Xcode → Product → Build (`⌘+B`)
+- **Run**: Xcode → Product → Run (`⌘+R`)
+- **Clean**: Xcode → Product → Clean Build Folder (`⌘+⇧+K`)
+- **Test**: Xcode → Product → Test (`⌘+U`)
 
 ### Testing
+- **Run specific test**: Click on the diamond next to test method in Xcode
+- **Test files**: `RecallMateTests/` (uses Swift Testing framework with `import Testing`)
+- **UI Tests**: `RecallMateUITests/`
 
-- **Unit Tests**: Located in `RecallMateTests/`
-- **UI Tests**: Located in `RecallMateUITests/`
-- Tests use Swift Testing framework (`import Testing`)
+### Linting and Type Checking
+- **Swift format**: Use Xcode's built-in formatting (`⌃+I`)
+- **SwiftLint**: If installed, runs automatically during build
 
 ## Architecture
 
-### Core Data Model
+### Core Stack
+- **SwiftUI + MVVM** with `@StateObject` and `ObservableObject`
+- **Core Data** for local persistence
+- **Supabase** for cloud sync and authentication
+- **Combine** for reactive programming
 
-The app uses Core Data with the following main entities:
+### Authentication System
+- **Providers**: Apple Sign In, Google Sign In, Guest (Anonymous)
+- **Manager**: `AuthenticationManager.shared` (singleton)
+- **State**: `AuthenticationStateManager` handles auth state
+- **Guest Features**: Limited functionality defined in `GuestUserFeatures.swift`
 
-- **Memo**: Primary learning content with recall scores and review dates
-- **LearningActivity**: Time-tracked activities with types (reading, exercise, lecture, etc.)
-- **Tag**: Categorization system for memos
-- **StreakData**: Tracks learning streaks and consistency
-- **ComparisonQuestion**: Custom questions for memo review
-- **MemoHistoryEntry**: Historical recall performance data
+### Data Layer
+Core Data Entities:
+- `Memo` - Learning content with spaced repetition tracking
+- `LearningActivity` - Time-tracked study sessions
+- `Tag` - Content categorization
+- `MemoHistoryEntry` - Review performance history
+- `StudyGroup`, `GroupMember` - Social learning features
+- `SocialNotification` - In-app notifications
 
-### App Structure
-
-- **SwiftUI + MVVM**: Uses SwiftUI with view models for state management
-- **Three-tab interface**:
-  1. 復習管理 (Review Management) - `HomeView`
-  2. 作業記録 (Work Recording) - `WorkTimerView`
-  3. 振り返り (Reflection) - `ActivityProgressView`
-
-### Key Managers
-
-- **PersistenceController**: Core Data stack management
-- **ReviewManager**: App Store review prompts and task completion tracking
-- **StreakTracker**: Learning streak calculation and maintenance
-- **NotificationSettingsManager**: Push notification management
-- **TagService**: Tag management and operations
-
-### Localization
-
-- Supports multiple languages: English, Japanese, Chinese (Simplified/Traditional/Hong Kong)
-- Localization files in `*.lproj/Localizable.strings`
-
-## File Organization
-
-### Core Files
-
-- `RecallMateApp.swift`: Main app entry point with Core Data initialization
-- `MainView.swift`: Tab-based main interface
-- `Persistence.swift`: Core Data setup and preview data
-- `ContentView.swift`: Main memo creation/editing interface
-
-### Feature Areas
-
-- **Timer/Work Tracking**: `WorkTimerView.swift`, `WorkTimerManager.swift`
-- **Review System**: `ReviewCalculator.swift`, `ReviewManager.swift`
-- **Activity Tracking**: `ActivityProgressView.swift`, `ActivityTracker.swift`
-- **Settings**: `AppSettings.swift`, `SettingsView.swift`
-- **Notifications**: `NotificationSettingsManager.swift`, `StreakNotificationManager.swift`
-
-### UI Components
-
-- Shared components in `SharedComponents.swift`
-- Canvas/drawing support with PencilKit integration
-- Tag management UI in `TagChip.swift`, `TagSelectionView.swift`
-
-## Code Conventions
-
-- Swift naming conventions (camelCase, PascalCase)
-- Japanese comments throughout codebase
-- SwiftUI declarative syntax
-- Core Data with `@FetchRequest` and `@StateObject`
-- Environment objects for shared state (`AppSettings`)
-- Combine framework for reactive programming where applicable
-
-## 🚨 Safe "YOLO" mode の設定
-
-このプロジェクトでは、タスク自動化のために以下の方法を **許容** します：
-
-```bash
-claude --dangerously-skip-permissions
+### Feature Organization
 ```
+RecallMate/
+├── Core/
+│   ├── Models/         # Core Data models, domain models
+│   ├── Services/       # Business logic, managers
+│   └── Protocols/      # Service protocols for DI
+├── Features/
+│   ├── Home/          # Main review interface
+│   ├── MemoManagement/# CRUD operations for memos
+│   ├── WorkTimer/     # Study session tracking
+│   ├── Social/        # Friends, groups, rankings
+│   ├── Profile/       # User profile management
+│   └── Authentication/# Login/signup flows
+└── Shared/
+    └── Components/    # Reusable UI components
+```
+
+### Social Features Architecture
+- **Friends System**: Follow/follower relationships
+- **Study Groups**: Create/join groups with member roles
+- **Rankings**: Leaderboards based on study time
+- **Notifications**: Real-time updates for social interactions
+- **Gradual Access Model**: Public content viewable without auth
+
+### Key Managers and Services
+- `PersistenceController` - Core Data stack
+- `SupabaseManager` - Cloud sync and auth
+- `ReviewCalculator` - Spaced repetition algorithm
+- `NotificationManager` - In-app notifications
+- `FriendshipManager` - Social connections
+- `StudyGroupManager` - Group functionality
+
+### Dependency Injection
+- `DIContainer` provides service instances
+- Protocol-based design for testability
+- Unified models in `UnifiedModels.swift`
+
+## Localization
+- Languages: English, Japanese, Chinese (Simplified/Traditional)
+- Files: `*.lproj/Localizable.strings`
+- Usage: `"key".localized` extension
+
+## Supabase Configuration
+Required tables (see SQL files in project root):
+- `user_profiles` - Extended user data
+- `study_groups` - Group information
+- `group_members` - Group membership
+- `friendships` - Friend relationships
+- `social_notifications` - Notification data
+
+## Recent Major Updates
+1. **Authentication System** - Apple/Google/Guest login
+2. **Social Features** - Friends, groups, rankings
+3. **Profile Management** - Editable user profiles
+4. **Guest User Support** - Limited feature access
+5. **Clean Architecture** - Protocol-based services with DI

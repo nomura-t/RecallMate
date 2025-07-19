@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		970D9AD72E12E55E0062760A /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 970D99E02E12E4880062760B /* Supabase */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		9772E8752D6BD9A5004CF4BD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				970D9AD72E12E55E0062760A /* Supabase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +117,7 @@
 			);
 			name = RecallMate;
 			packageProductDependencies = (
+				970D99E02E12E4880062760B /* Supabase */,
 			);
 			productName = RecallMate;
 			productReference = 9772E85E2D6BD9A2004CF4BD /* RecallMate.app */;
@@ -199,6 +205,9 @@
 			);
 			mainGroup = 9772E8552D6BD9A2004CF4BD;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				970D99DF2E12E4880062760A /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9772E85F2D6BD9A2004CF4BD /* Products */;
 			projectDirPath = "";
@@ -401,10 +410,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "";
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
-				INFOPLIST_KEY_LSApplicationQueriesSchemes = (
-					line,
-					twitter,
-				);
+				INFOPLIST_KEY_LSApplicationQueriesSchemes = "line twitter";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -446,10 +452,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "";
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
-				INFOPLIST_KEY_LSApplicationQueriesSchemes = (
-					line,
-					twitter,
-				);
+				INFOPLIST_KEY_LSApplicationQueriesSchemes = "line twitter";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -605,6 +608,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		970D99DF2E12E4880062760A /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		970D99E02E12E4880062760B /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 970D99DF2E12E4880062760A /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 9772E8562D6BD9A2004CF4BD /* Project object */;
 }

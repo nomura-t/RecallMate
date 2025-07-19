@@ -9,6 +9,7 @@ struct SettingsView: View {
     
     // 設定クラスをEnvironmentObjectとして追加
     @EnvironmentObject private var appSettings: AppSettings
+    @StateObject private var authManager = AuthenticationManager.shared
     
     // シェア関連の状態変数
     @State private var isShareSheetPresented = false
@@ -19,10 +20,97 @@ struct SettingsView: View {
     @State private var showSocialShareView = false // ソーシャルシェアビュー表示用状態変数を追加
     @StateObject private var notificationObserver = NotificationSettingsObserver()
     @State private var showAppInfoView = false
+    @State private var showLoginView = false
+    @State private var showMigrationView = false
 
     var body: some View {
         NavigationStack {
             Form {
+                // アカウント管理セクション
+                Section(header: Text("アカウント".localized)) {
+                    if authManager.isAuthenticated {
+                        // 認証済みユーザー情報表示
+                        HStack {
+                            Image(systemName: "person.crop.circle.fill")
+                                .font(.system(size: 24))
+                                .foregroundColor(.blue)
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(authManager.userProfile?.displayName ?? "ユーザー")
+                                    .font(.headline)
+                                
+                                Text("認証方法: \(authManager.authProviderName)")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                
+                                if let studyCode = authManager.userProfile?.studyCode {
+                                    Text("学習コード: \(studyCode)")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            
+                            Spacer()
+                        }
+                        .padding(.vertical, 4)
+                        
+                        // 匿名ユーザーの場合はアップグレード提案
+                        if authManager.isAnonymousUser {
+                            Button(action: {
+                                showMigrationView = true
+                            }) {
+                                HStack {
+                                    Image(systemName: "arrow.up.circle")
+                                        .foregroundColor(.orange)
+                                    Text("アカウントをアップグレード")
+                                        .foregroundColor(.orange)
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(.secondary)
+                                        .font(.caption)
+                                }
+                            }
+                        }
+                        
+                        // サインアウトボタン
+                        Button(action: {
+                            Task {
+                                await authManager.signOut()
+                            }
+                        }) {
+                            HStack {
+                                Image(systemName: "arrow.right.square")
+                                    .foregroundColor(.red)
+                                Text("サインアウト")
+                                    .foregroundColor(.red)
+                            }
+                        }
+                        .disabled(authManager.isLoading)
+                        
+                    } else {
+                        // 未認証ユーザー
+                        Button(action: {
+                            showLoginView = true
+                        }) {
+                            HStack {
+                                Image(systemName: "person.crop.circle")
+                                    .foregroundColor(.blue)
+                                Text("ログイン")
+                                    .foregroundColor(.blue)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.secondary)
+                                    .font(.caption)
+                            }
+                        }
+                        
+                        Text("ログインしてデータを安全に保存し、フレンド機能を使用しましょう")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .padding(.top, 4)
+                    }
+                }
+                
                 // 「このアプリについて」セクションを追加
                 Section(header: Text("アプリ情報".localized)) {
                     // 開発者のTwitterリンクを追加
@@ -188,6 +276,12 @@ struct SettingsView: View {
                 }
             }
         )
+        .sheet(isPresented: $showLoginView) {
+            LoginView()
+        }
+        .sheet(isPresented: $showMigrationView) {
+            AccountMigrationView()
+        }
     }
     
     // Twitterプロフィールを開くメソッドを追加

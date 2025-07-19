@@ -78,7 +78,8 @@ class NewLearningFlowViewModel: ObservableObject {
             let newReviewDate = ReviewCalculator.calculateNextReviewDate(
                 recallScore: self.newLearningInitialScore,
                 lastReviewedDate: Date(),
-                perfectRecallCount: 0 // 新規学習なので0
+                perfectRecallCount: 0, // 新規学習なので0
+                historyEntries: [] // 新規学習なので空配列
             )
             
             // 計算が完了したらメインスレッドでUI更新

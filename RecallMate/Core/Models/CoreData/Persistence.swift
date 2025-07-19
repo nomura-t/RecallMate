@@ -1,7 +1,7 @@
 import CoreData
 
-struct PersistenceController {
-    static let shared = PersistenceController()
+public struct PersistenceController {
+    public static let shared = PersistenceController()
 
     // ✅ `preview` を追加
     static let preview: PersistenceController = {
@@ -28,9 +28,9 @@ struct PersistenceController {
         return controller
     }()
 
-    let container: NSPersistentContainer
+    public let container: NSPersistentContainer
 
-    init(inMemory: Bool = false) {
+    public init(inMemory: Bool = false) {
         container = NSPersistentContainer(name: "RecallMate")
 
         if inMemory {

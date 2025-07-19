@@ -81,6 +81,17 @@ class WorkTimerManager: ObservableObject {
         // ハプティックフィードバック
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.impactOccurred()
+        
+        // StudySessionManagerと連携
+        Task { @MainActor in
+            await StudySessionManager.shared.syncWithWorkTimer(isTimerRunning: true)
+        }
+        
+        // リアルタイム学習状態を更新
+        updateStudyStatus(isStudying: true)
+        
+        // ハートビートを開始
+        startHeartbeat()
     }
     
     // タイマー一時停止
@@ -112,6 +123,14 @@ class WorkTimerManager: ObservableObject {
         // ハプティックフィードバック
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
+        
+        // StudySessionManagerと連携（一時停止）
+        Task { @MainActor in
+            await StudySessionManager.shared.syncWithWorkTimer(isTimerRunning: false)
+        }
+        
+        // リアルタイム学習状態を更新
+        updateStudyStatus(isStudying: false)
     }
     
     // タイマー再開
@@ -138,6 +157,14 @@ class WorkTimerManager: ObservableObject {
         // ハプティックフィードバック
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.impactOccurred()
+        
+        // StudySessionManagerと連携（再開）
+        Task { @MainActor in
+            await StudySessionManager.shared.syncWithWorkTimer(isTimerRunning: true)
+        }
+        
+        // リアルタイム学習状態を更新
+        updateStudyStatus(isStudying: true)
     }
     
     // タイマー停止と記録保存
@@ -215,6 +242,14 @@ class WorkTimerManager: ObservableObject {
                 object: nil
             )
         }
+        
+        // StudySessionManagerと連携（停止）
+        Task { @MainActor in
+            await StudySessionManager.shared.syncWithWorkTimer(isTimerRunning: false)
+        }
+        
+        // リアルタイム学習状態を更新
+        updateStudyStatus(isStudying: false)
     }
     
     // 経過時間を更新
@@ -366,5 +401,100 @@ class WorkTimerManager: ObservableObject {
         }
         
         taskManager.updateTask(updatedTask)
+    }
+    
+    // MARK: - Study Status Integration
+    
+    /// リアルタイム学習状態を更新
+    private func updateStudyStatus(isStudying: Bool) {
+        Task { @MainActor in
+            await updateStudyStatusAsync(isStudying: isStudying)
+        }
+    }
+    
+    /// 非同期で学習状態を更新
+    private func updateStudyStatusAsync(isStudying: Bool) async {
+        guard let userId = SupabaseManager.shared.currentUser?.id else {
+            print("⚠️ WorkTimerManager: ユーザーがサインインしていません")
+            return
+        }
+        
+        let studySubject = getStudySubject()
+        
+        do {
+            let supabaseClient = SupabaseManager.shared.client
+            
+            // update_study_status関数を呼び出し
+            struct UpdateStudyStatusParams: Codable {
+                let p_user_id: String
+                let p_is_studying: Bool
+                let p_study_subject: String?
+            }
+            
+            let params = UpdateStudyStatusParams(
+                p_user_id: userId.uuidString,
+                p_is_studying: isStudying,
+                p_study_subject: studySubject
+            )
+            
+            try await supabaseClient
+                .rpc("update_study_status", params: params)
+                .execute()
+            
+            print("✅ WorkTimerManager: 学習状態更新成功 - 学習中: \(isStudying)")
+            if let subject = studySubject {
+                print("   - 学習内容: \(subject)")
+            }
+        } catch {
+            print("❌ WorkTimerManager: 学習状態更新エラー - \(error)")
+        }
+    }
+    
+    /// 現在の学習内容を取得
+    private func getStudySubject() -> String? {
+        if let task = currentTask {
+            return task.title
+        } else if let tag = currentTag {
+            return tag.name
+        }
+        return nil
+    }
+    
+    /// 定期的に学習状態のハートビートを送信
+    private func startHeartbeat() {
+        // 30秒ごとにハートビートを送信
+        Timer.scheduledTimer(withTimeInterval: 30.0, repeats: true) { [weak self] _ in
+            guard let self = self, self.isRunning else { return }
+            
+            Task { @MainActor in
+                await self.sendHeartbeat()
+            }
+        }
+    }
+    
+    /// ハートビートを送信して学習状態を更新
+    private func sendHeartbeat() async {
+        guard let userId = SupabaseManager.shared.currentUser?.id else { return }
+        
+        do {
+            let supabaseClient = SupabaseManager.shared.client
+            
+            // 現在のセッション時間を計算
+            let currentMinutes = Int(totalElapsedTime / 60)
+            
+            // user_study_statusテーブルを直接更新
+            try await supabaseClient
+                .from("user_study_status")
+                .update([
+                    "current_session_minutes": "\(currentMinutes)",
+                    "last_heartbeat": Date().ISO8601Format()
+                ])
+                .eq("user_id", value: userId.uuidString)
+                .execute()
+            
+            print("🔄 WorkTimerManager: ハートビート送信完了 - セッション時間: \(currentMinutes)分")
+        } catch {
+            print("❌ WorkTimerManager: ハートビート送信エラー - \(error)")
+        }
     }
 }

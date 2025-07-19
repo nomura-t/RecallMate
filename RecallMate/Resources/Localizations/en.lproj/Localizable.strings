@@ -49,6 +49,15 @@
 "検出された回答" = "Detected Answers";
 "問題%@" = "Question %@";
 
+// ソーシャル機能関連
+"ソーシャル" = "Social";
+"友達" = "Friends";
+"グループ" = "Groups";
+"通知" = "Notifications";
+"ソーシャル機能を使用するには" = "To use social features";
+"友達との学習共有やグループ機能を利用するために、アカウントにログインしてください。" = "Please log in to your account to use friend sharing and group features.";
+"ログイン・新規登録" = "Login / Sign Up";
+
 // タスク管理モーダル関連
 "完了" = "Done";
 "無名のタグ" = "Unnamed Tag";
@@ -1610,3 +1619,88 @@ registering your work from \"Add New Work\"";
 // NewLearningFlowViewModel Learning Notes
 "学習記録: %@ (理解度: %d%%)" = "Learning Record: %@ (Understanding: %d%%)";
 "アクティブリコール学習: %@ (%@, 理解度: %d%%)" = "Active Recall Learning: %@ (%@, Understanding: %d%%)";
+
+// Online learning features
+"オンライン" = "Online";
+"オンライン学習" = "Online Learning";
+"クラウドと同期して学習データを管理" = "Manage learning data synced with cloud";
+"データ同期" = "Data Sync";
+"学習記録をクラウドに自動保存" = "Automatically save learning records to cloud";
+"共有学習" = "Shared Learning";
+"友達と学習進捗を共有" = "Share learning progress with friends";
+"詳細分析" = "Detailed Analytics";
+"学習パターンの詳細分析" = "Detailed analysis of learning patterns";
+"ランキング" = "Rankings";
+"学習時間ランキングで競争" = "Compete in study time rankings";
+"接続状況" = "Connection Status";
+"オフライン" = "Offline";
+"接続" = "Connect";
+"接続中..." = "Connecting...";
+"認証済み" = "Authenticated";
+"接続済み" = "Connected";
+"接続エラー" = "Connection Error";
+"接続テスト" = "Connection Test";
+"匿名サインイン" = "Anonymous Sign In";
+"フレンド状態" = "Friend Status";
+"テスト結果" = "Test Results";
+"現在のユーザー" = "Current User";
+"オンラインフレンド" = "Online Friends";
+"テスト開始" = "Test Started";
+"テスト完了" = "Test Completed";
+"データベース接続確認済み" = "Database Connection Verified";
+"データベース接続エラー" = "Database Connection Error";
+"匿名ユーザーでサインイン完了" = "Anonymous Sign In Complete";
+"匿名サインインエラー" = "Anonymous Sign In Error";
+"匿名認証成功" = "Anonymous Auth Success";
+"匿名認証失敗" = "Anonymous Auth Failed";
+"データベース接続成功" = "Database Connection Success";
+"データベース接続失敗" = "Database Connection Failed";
+"匿名ユーザー" = "Anonymous User";
+"閉じる" = "Close";
+
+// Friend management related
+"フレンド管理" = "Friend Management";
+"フレンド追加" = "Add Friend";
+"プロフィール編集" = "Edit Profile";
+"学習コードを共有してフレンドを追加しよう" = "Share study codes to add friends";
+"あなたの学習コード" = "Your Study Code";
+"学習コード" = "Study Code";
+"未設定" = "Not Set";
+"表示名" = "Display Name";
+"フレンド一覧" = "Friends List";
+"まだフレンドがいません" = "No friends yet";
+"右上の + ボタンからフレンドを追加できます" = "You can add friends using the + button in the top right";
+"フレンドを追加" = "Add Friend";
+"フレンド削除" = "Remove Friend";
+"をフレンドから削除しますか？" = "Remove from friends?";
+"相手の学習コードを入力してフレンドに追加" = "Enter friend's study code to add them";
+"例: ABC123" = "e.g. ABC123";
+"6文字の英数字を入力してください" = "Enter 6 alphanumeric characters";
+"使い方" = "How to Use";
+"学習コードを取得" = "Get Study Code";
+"フレンドに追加したい人から学習コードを教えてもらう" = "Get the study code from the person you want to add";
+"コードを入力" = "Enter Code";
+"上の入力欄に6文字の学習コードを入力する" = "Enter the 6-character study code in the field above";
+"「フレンドを追加」ボタンをタップして完了" = "Tap 'Add Friend' button to complete";
+"フレンド追加完了" = "Friend Added";
+"フレンドが正常に追加されました！" = "Friend has been successfully added!";
+"ニックネームを入力" = "Enter nickname";
+"フレンドに表示される名前です" = "This name will be shown to friends";
+"アカウント情報" = "Account Information";
+"ユーザーID:" = "User ID:";
+"メール:" = "Email:";
+"このコードを友達に教えてフレンド追加してもらえます" = "Share this code with friends to let them add you";
+"学習コードについて" = "About Study Codes";
+"あなた専用の6文字のコードです" = "Your unique 6-character code";
+"フレンドに教えることで追加してもらえます" = "Share with friends to let them add you";
+"必要に応じて新しいコードに変更できます" = "You can generate a new code when needed";
+"保存完了" = "Saved";
+"プロフィールが正常に更新されました" = "Profile has been successfully updated";
+"名無しユーザー" = "Anonymous User";
+"追加日:" = "Added:";
+"フレンドを削除" = "Remove Friend";
+"管理" = "Manage";
+"合計" = "Total";
+"人" = "people";
+
+"オンライン機能は現在開発中です。\n近日公開予定です！" = "Online features are currently under development.\nComing soon!";

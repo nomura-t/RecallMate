@@ -11,7 +11,9 @@ struct MainView: View {
 
     @StateObject private var viewState = MainViewState()
     @StateObject private var reviewManager = ReviewManager.shared
+    @StateObject private var authManager = AuthenticationManager.shared
     @State private var showingReviewRequest = false
+    @State private var showingLoginView = false
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
@@ -33,24 +35,38 @@ struct MainView: View {
                     }
                     .tag(1)
                 
-                // タブ3: 振り返り - 統計情報とアクティビティ分析
+                // タブ3: ソーシャル - ユーザー間のコラボレーション機能
+                // 友達管理、スタディグループ、ディスカッション機能
+                SocialView()
+                    .tabItem {
+                        Label("ソーシャル".localized, systemImage: "person.2.fill")
+                    }
+                    .tag(2)
+                
+                // タブ4: データ管理 - クラウド同期とバックアップ機能
+                // データの同期、バックアップ、エクスポート/インポート機能
+                OnlineLearningView()
+                    .tabItem {
+                        Label("データ管理".localized, systemImage: "icloud")
+                    }
+                    .tag(3)
+                
+                // タブ5: 振り返り - 統計情報とアクティビティ分析
                 // 復習記録と作業記録の両方を統合した包括的な分析を提供
-                // タグ番号を1から2に変更（作業記録タブの挿入による）
                 ActivityProgressView()
                     .tabItem {
                         Label("振り返り".localized, systemImage: "list.bullet.rectangle")
                     }
-                    .tag(2)
+                    .tag(4)
                 
-                // タブ4: 設定 - アプリケーションの個人設定
+                // タブ6: 設定 - アプリケーションの個人設定
                 // 通知設定、表示設定、データ管理などの機能
-                // タグ番号を2から3に変更
                 SettingsView()
                     .environmentObject(appSettings)
                     .tabItem {
                         Label("設定".localized, systemImage: "gearshape.fill")
                     }
-                    .tag(3)
+                    .tag(5)
             }
             // TabViewの外観カスタマイズ
             // iOS 15以降のタブバーの透明化に対応し、一貫した見た目を提供
@@ -78,6 +94,11 @@ struct MainView: View {
             if !viewState.isShowingOnboarding && !viewState.hasCheckedNotifications {
                 viewState.hasCheckedNotifications = true
                 viewState.checkNotificationPermission()
+            }
+            
+            // 認証状態を確認
+            Task {
+                await authManager.checkCurrentSession()
             }
         }
         .animation(Animation.easeInOut(duration: 0.3), value: viewState.isShowingOnboarding)

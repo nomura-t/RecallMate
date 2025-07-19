@@ -3,7 +3,7 @@ import CoreData
 import SwiftUI
 
 // 学習活動タイプの列挙型を拡張
-enum ActivityType: String, CaseIterable, Identifiable {
+public enum ActivityType: String, CaseIterable, Identifiable {
     case reading = "読書"
     case exercise = "問題演習"
     case lecture = "講義視聴"
@@ -14,14 +14,14 @@ enum ActivityType: String, CaseIterable, Identifiable {
     case workTimer = "作業記録" // 新規追加
     case other = "その他"
     
-    var id: String { self.rawValue }
+    public var id: String { self.rawValue }
     
-    var localizedRawValue: String {
+    public var localizedRawValue: String {
         return self.rawValue.localized
     }
     
     // アイコン名
-    var iconName: String {
+    public var iconName: String {
         switch self {
         case .reading: return "book.fill"
         case .exercise: return "doc.badge.plus"
@@ -36,7 +36,7 @@ enum ActivityType: String, CaseIterable, Identifiable {
     }
     
     // 活動の色
-    var color: String {
+    public var color: String {
         switch self {
         case .reading: return "blue"
         case .exercise: return "green"
