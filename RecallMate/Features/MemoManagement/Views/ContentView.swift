@@ -216,63 +216,128 @@ struct ContentView: View {
     private var recordTab: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 16) {
-                // タイトルとページ範囲 - エレガントなフォームデザイン
-                VStack(spacing: 0) {
-                    VStack(alignment: .leading, spacing: 12) {
-                        // タイトル入力
-                        VStack(alignment: .leading, spacing: 6) {
-                            HStack {
-                                Text("タイトル".localized)
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                                
-                                if viewModel.shouldFocusTitle {
-                                    Text("(必須)".localized)
-                                        .font(.caption)
-                                        .foregroundColor(.red)
-                                }
+                // タイトルとページ範囲
+                VStack(alignment: .leading, spacing: 12) {
+                    // タイトル入力
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack {
+                            Text("タイトル".localized)
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+
+                            if viewModel.shouldFocusTitle {
+                                Text("(必須)".localized)
+                                    .font(.caption)
+                                    .foregroundColor(.red)
                             }
-                            
-                            TextField("学習内容のタイトルを入力".localized, text: $viewModel.title)
-                                .font(.headline)
-                                .padding()
-                                .background(AppColors.background)
-                                .cornerRadius(12)
-                                .shadow(
-                                    color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.05),
-                                    radius: 2,
-                                    x: 0,
-                                    y: 1
-                                )
-                                .focused($titleFieldFocused)
-                                .id(titleField)
-                                .onChange(of: viewModel.title) { _, _ in
-                                    viewModel.contentChanged = true
-                                }
-                                .onChange(of: titleFieldFocused) { _, newValue in
-                                    viewModel.onTitleFocusChanged(isFocused: newValue)
-                                }
                         }
+
+                        TextField("学習内容のタイトルを入力".localized, text: $viewModel.title)
+                            .font(.headline)
+                            .padding()
+                            .background(AppColors.background)
+                            .cornerRadius(12)
+                            .shadow(
+                                color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.05),
+                                radius: 2, x: 0, y: 1
+                            )
+                            .focused($titleFieldFocused)
+                            .id(titleField)
+                            .onChange(of: viewModel.title) { _, _ in
+                                viewModel.contentChanged = true
+                            }
+                            .onChange(of: titleFieldFocused) { _, newValue in
+                                viewModel.onTitleFocusChanged(isFocused: newValue)
+                            }
                     }
-                    .padding(16)
-                    .background(AppColors.cardBackground)
-                    .cornerRadius(16)
-                    .shadow(
-                        color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.05),
-                        radius: 3,
-                        x: 0,
-                        y: 2
-                    )
+
+                    // ページ範囲
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("ページ範囲".localized)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+
+                        TextField("例: 第3章 p.45-52".localized, text: $viewModel.pageRange)
+                            .font(.body)
+                            .padding()
+                            .background(AppColors.background)
+                            .cornerRadius(12)
+                            .shadow(
+                                color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.05),
+                                radius: 2, x: 0, y: 1
+                            )
+                            .onChange(of: viewModel.pageRange) { _, _ in
+                                viewModel.contentChanged = true
+                            }
+                    }
                 }
+                .padding(16)
+                .background(AppColors.cardBackground)
+                .cornerRadius(16)
+                .shadow(
+                    color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.05),
+                    radius: 3, x: 0, y: 2
+                )
                 .padding(.horizontal, 16)
                 .padding(.top, 8)
-                
+
+                // メモ・ノート
+                VStack(alignment: .leading, spacing: 6) {
+                    Label("メモ・ノート".localized, systemImage: "note.text")
+                        .font(.headline)
+                        .foregroundColor(AppColors.primaryText)
+
+                    ZStack(alignment: .topLeading) {
+                        if viewModel.content.isEmpty {
+                            Text("学習内容のメモを入力...".localized)
+                                .foregroundColor(.gray.opacity(0.5))
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 12)
+                        }
+                        TextEditor(text: $viewModel.content)
+                            .font(.body)
+                            .frame(minHeight: 120)
+                            .padding(8)
+                            .focused($contentFieldFocused)
+                            .id(contentField)
+                            .onChange(of: viewModel.content) { _, _ in
+                                viewModel.contentChanged = true
+                            }
+                    }
+                    .background(AppColors.background)
+                    .cornerRadius(12)
+                    .shadow(
+                        color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.05),
+                        radius: 2, x: 0, y: 1
+                    )
+
+                    // キャンバス（手書き）ボタン
+                    Button(action: { isDrawing = true }) {
+                        HStack {
+                            Image(systemName: "pencil.tip.crop.circle")
+                                .font(.subheadline)
+                            Text("手書きメモ".localized)
+                                .font(.subheadline)
+                        }
+                        .foregroundColor(AppColors.accent)
+                        .padding(.vertical, 8)
+                    }
+                }
+                .padding(16)
+                .background(AppColors.cardBackground)
+                .cornerRadius(16)
+                .shadow(
+                    color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.05),
+                    radius: 3, x: 0, y: 2
+                )
+                .padding(.horizontal, 16)
+
                 // 記憶定着度セクション
                 VStack(alignment: .leading, spacing: 12) {
                     Label("記憶定着度振り返り".localized, systemImage: "brain.head.profile")
                         .font(.headline)
                         .foregroundColor(AppColors.primaryText)
-                    
+
                     ModernRecallSection(viewModel: viewModel)
                         .id("recallSliderSection")
                         .onChange(of: viewModel.recallScore) { _, _ in
@@ -285,19 +350,14 @@ struct ContentView: View {
                 .cornerRadius(16)
                 .shadow(
                     color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.05),
-                    radius: 3,
-                    x: 0,
-                    y: 2
+                    radius: 3, x: 0, y: 2
                 )
                 .padding(.horizontal, 16)
             }
-            .padding(.bottom, 20)
+            .padding(.bottom, 80)
         }
         .background(AppColors.groupedBackground)
-        .onTapGesture {
-            // キーボードを閉じる
-            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-        }
+        .scrollDismissesKeyboard(.interactively)
     }
     
     // MARK: - ヘルパーメソッド

@@ -1843,3 +1843,10 @@ registering your work from \"Add New Work\"";
 "登録済みプリセット" = "Saved Presets";
 "最大20件まで登録できます" = "Up to 20 presets allowed";
 "完了" = "Done";
+
+// Edit Screen
+"ページ範囲" = "Page Range";
+"例: 第3章 p.45-52" = "e.g. Ch.3 p.45-52";
+"メモ・ノート" = "Notes";
+"学習内容のメモを入力..." = "Enter study notes...";
+"手書きメモ" = "Handwritten Note";
