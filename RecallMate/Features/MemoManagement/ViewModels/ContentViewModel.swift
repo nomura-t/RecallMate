@@ -13,8 +13,6 @@ class ContentViewModel: ObservableObject {
     @Published var reviewDate: Date? = nil
     @Published var keywords = [String]()
     @Published var comparisonQuestions: [ComparisonQuestion] = []
-    @Published var selectedTags: [Tag] = []
-    
     // アクティビティ関連のプロパティ
     @Published var contentChanged = false
     @Published var recordActivityOnSave = true
@@ -79,8 +77,7 @@ class ContentViewModel: ObservableObject {
             keywords = savedKeywords.filter { !$0.isEmpty }
         }
         
-        // 関連する比較問題とタグを読み込み
-        selectedTags = memo.tagsArray
+        // 関連する比較問題を読み込み
     }
     
     // 次回復習日を更新 - シンプルな通常計算のみ
@@ -129,21 +126,6 @@ class ContentViewModel: ObservableObject {
             viewContext.refresh(memoToRecord, mergeChanges: true)
         } catch {
             // エラーハンドリング（実際のアプリではログ出力等を行う）
-        }
-    }
-    
-    // タグの更新処理 - 記録に紐付けられたタグを管理
-    private func updateTags(for memo: Memo) {
-        // 既存のタグをすべて削除してから新しいタグを設定
-        // これにより、タグの状態を確実に同期できる
-        let currentTags = memo.tags as? Set<Tag> ?? []
-        for tag in currentTags {
-            memo.removeTag(tag)
-        }
-        
-        // 選択されたタグを追加
-        for tag in selectedTags {
-            memo.addTag(tag)
         }
     }
     
@@ -201,8 +183,9 @@ class ContentViewModel: ObservableObject {
                 
                 // 最適化された復習日を設定
                 let calendar = Calendar.current
-                let adjustedDate = calendar.date(byAdding: .day, value: Int(adjustedInterval), to: Date())!
-                memoToSave.nextReviewDate = adjustedDate
+                if let adjustedDate = calendar.date(byAdding: .day, value: Int(adjustedInterval), to: Date()) {
+                    memoToSave.nextReviewDate = adjustedDate
+                }
             }
         } else {
             // 通常の復習日計算：科学的アルゴリズムを使用
@@ -217,9 +200,6 @@ class ContentViewModel: ObservableObject {
         
         // 単語リストを永続化形式で保存
         memoToSave.keywords = keywords.joined(separator: ",")
-        
-        // タグの関連付けを更新
-        updateTags(for: memoToSave)
         
         do {
             // データベースへの保存を実行
@@ -328,68 +308,13 @@ class ContentViewModel: ObservableObject {
         reviewDate = nil
         keywords = []
         comparisonQuestions = []
-        
-        // タグの保持は条件に応じて
-        if !preserveTags {
-            selectedTags = []
-        }
     }
-    
+
     // 日付フォーマット用ヘルパーメソッド
     func formattedDate(_ date: Date?) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         return date != nil ? formatter.string(from: date!) : "未設定"
-    }
-    
-    // タグの即時更新と保存
-    func updateAndSaveTags() {
-        guard let memoToUpdate = memo else {
-            return
-        }
-        
-        // 保留中の変更を先に保存
-        if viewContext.hasChanges {
-            do {
-                try viewContext.save()
-            } catch {
-                // エラーハンドリング
-            }
-        }
-        
-        // タグの関連付けを更新
-        let currentTags = memoToUpdate.tags as? Set<Tag> ?? []
-        for tag in currentTags {
-            memoToUpdate.removeTag(tag)
-        }
-        
-        for tag in selectedTags {
-            memoToUpdate.addTag(tag)
-        }
-        
-        // 変更を保存
-        do {
-            try viewContext.save()
-            viewContext.refresh(memoToUpdate, mergeChanges: true)
-            
-            // 更新通知を送信
-            NotificationCenter.default.post(
-                name: NSNotification.Name("ForceRefreshMemoData"),
-                object: nil,
-                userInfo: ["memoID": memoToUpdate.objectID]
-            )
-        } catch {
-            // エラーハンドリング
-        }
-    }
-
-    // タグデータのリフレッシュ
-    func refreshTags() {
-        guard let memoToRefresh = memo else { return }
-        
-        viewContext.refresh(memoToRefresh, mergeChanges: true)
-        let refreshedTags = memoToRefresh.tagsArray
-        selectedTags = refreshedTags
     }
 }
 

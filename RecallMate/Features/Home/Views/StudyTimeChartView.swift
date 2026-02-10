@@ -226,7 +226,7 @@ struct StudyTimeChartView: View {
         for day in 0..<7 {
             let date = calendar.date(byAdding: .day, value: -6 + day, to: calendar.startOfDay(for: dateRange.end)) ?? Date()
             let startOfDay = calendar.startOfDay(for: date)
-            let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!.addingTimeInterval(-1)
+            let endOfDay = (calendar.date(byAdding: .day, value: 1, to: startOfDay) ?? startOfDay).addingTimeInterval(-1)
             
             // その日のアクティビティを集計
             let dayActivities = activities.filter { activity in
@@ -255,7 +255,7 @@ struct StudyTimeChartView: View {
         for day in 0..<30 {
             let date = calendar.date(byAdding: .day, value: -29 + day, to: calendar.startOfDay(for: dateRange.end)) ?? Date()
             let startOfDay = calendar.startOfDay(for: date)
-            let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!.addingTimeInterval(-1)
+            let endOfDay = (calendar.date(byAdding: .day, value: 1, to: startOfDay) ?? startOfDay).addingTimeInterval(-1)
             
             // その日のアクティビティを集計
             let dayActivities = activities.filter { activity in
@@ -286,10 +286,10 @@ struct StudyTimeChartView: View {
             
             // 月の初日と最終日を計算
             var components = calendar.dateComponents([.year, .month], from: date)
-            let startOfMonth = calendar.date(from: components)!
-            
-            components.month = components.month! + 1
-            let startOfNextMonth = calendar.date(from: components)!
+            guard let startOfMonth = calendar.date(from: components) else { continue }
+
+            components.month = (components.month ?? 1) + 1
+            guard let startOfNextMonth = calendar.date(from: components) else { continue }
             let endOfMonth = startOfNextMonth.addingTimeInterval(-1)
             
             // その月のアクティビティを集計

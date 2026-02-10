@@ -2,7 +2,6 @@ import SwiftUI
 
 struct ProfileEditView: View {
     @StateObject private var authManager = AuthenticationManager.shared
-    @StateObject private var friendshipManager = FriendshipManager.shared
     @Environment(\.dismiss) private var dismiss
     
     @State private var displayName: String = ""
@@ -147,7 +146,7 @@ struct ProfileEditView: View {
     
     // MARK: - Methods
     private func loadCurrentProfile() {
-        guard let profile = friendshipManager.currentUserProfile else {
+        guard let profile = authManager.userProfile else {
             // デフォルト値を設定
             displayName = authManager.currentUser?.email?.components(separatedBy: "@").first ?? ""
             return
@@ -188,7 +187,7 @@ struct ProfileEditView: View {
             let iconId = selectedIcon.id
             
             // プロフィール更新
-            let success = await friendshipManager.updateProfile(
+            let success = await authManager.updateProfile(
                 fullName: trimmedDisplayName,
                 nickname: trimmedNickname.isEmpty ? nil : trimmedNickname,
                 bio: trimmedBio.isEmpty ? nil : trimmedBio,

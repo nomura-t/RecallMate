@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		970D9AD72E12E55E0062760A /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 970D99E02E12E4880062760B /* Supabase */; };
+		97D0B6B52F3ACB5000A3A555 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97D0B6B42F3ACB5000A3A555 /* WidgetKit.framework */; };
+		97D0B6B72F3ACB5000A3A555 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97D0B6B62F3ACB5000A3A555 /* SwiftUI.framework */; };
+		97D0B6C62F3ACB5200A3A555 /* RecallMateWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 97D0B6B22F3ACB5000A3A555 /* RecallMateWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -25,17 +28,61 @@
 			remoteGlobalIDString = 9772E85D2D6BD9A2004CF4BD;
 			remoteInfo = RecallMate;
 		};
+		97D0B6C42F3ACB5200A3A555 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9772E8562D6BD9A2004CF4BD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 97D0B6B12F3ACB5000A3A555;
+			remoteInfo = RecallMateWidgetExtension;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		97D0B6C72F3ACB5200A3A555 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				97D0B6C62F3ACB5200A3A555 /* RecallMateWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		9772E85E2D6BD9A2004CF4BD /* RecallMate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RecallMate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9772E8742D6BD9A5004CF4BD /* RecallMateTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecallMateTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9772E87E2D6BD9A5004CF4BD /* RecallMateUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecallMateUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		97D0B6B22F3ACB5000A3A555 /* RecallMateWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RecallMateWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		97D0B6B42F3ACB5000A3A555 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		97D0B6B62F3ACB5000A3A555 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		975474E72E2D547B0011CEB3 /* Exceptions for "RecallMate" folder in "RecallMate" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 9772E85D2D6BD9A2004CF4BD /* RecallMate */;
+		};
+		97D0B6CB2F3ACB5200A3A555 /* Exceptions for "RecallMateWidget" folder in "RecallMateWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 97D0B6B12F3ACB5000A3A555 /* RecallMateWidgetExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		9772E8602D6BD9A2004CF4BD /* RecallMate */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				975474E72E2D547B0011CEB3 /* Exceptions for "RecallMate" folder in "RecallMate" target */,
+			);
 			path = RecallMate;
 			sourceTree = "<group>";
 		};
@@ -47,6 +94,14 @@
 		9772E8812D6BD9A5004CF4BD /* RecallMateUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = RecallMateUITests;
+			sourceTree = "<group>";
+		};
+		97D0B6B82F3ACB5000A3A555 /* RecallMateWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				97D0B6CB2F3ACB5200A3A555 /* Exceptions for "RecallMateWidget" folder in "RecallMateWidgetExtension" target */,
+			);
+			path = RecallMateWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -74,6 +129,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		97D0B6AF2F3ACB5000A3A555 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				97D0B6B72F3ACB5000A3A555 /* SwiftUI.framework in Frameworks */,
+				97D0B6B52F3ACB5000A3A555 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -83,6 +147,8 @@
 				9772E8602D6BD9A2004CF4BD /* RecallMate */,
 				9772E8772D6BD9A5004CF4BD /* RecallMateTests */,
 				9772E8812D6BD9A5004CF4BD /* RecallMateUITests */,
+				97D0B6B82F3ACB5000A3A555 /* RecallMateWidget */,
+				97D0B6B32F3ACB5000A3A555 /* Frameworks */,
 				9772E85F2D6BD9A2004CF4BD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -93,8 +159,18 @@
 				9772E85E2D6BD9A2004CF4BD /* RecallMate.app */,
 				9772E8742D6BD9A5004CF4BD /* RecallMateTests.xctest */,
 				9772E87E2D6BD9A5004CF4BD /* RecallMateUITests.xctest */,
+				97D0B6B22F3ACB5000A3A555 /* RecallMateWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		97D0B6B32F3ACB5000A3A555 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				97D0B6B42F3ACB5000A3A555 /* WidgetKit.framework */,
+				97D0B6B62F3ACB5000A3A555 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -107,10 +183,12 @@
 				9772E85A2D6BD9A2004CF4BD /* Sources */,
 				9772E85B2D6BD9A2004CF4BD /* Frameworks */,
 				9772E85C2D6BD9A2004CF4BD /* Resources */,
+				97D0B6C72F3ACB5200A3A555 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				97D0B6C52F3ACB5200A3A555 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				9772E8602D6BD9A2004CF4BD /* RecallMate */,
@@ -169,6 +247,28 @@
 			productReference = 9772E87E2D6BD9A5004CF4BD /* RecallMateUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		97D0B6B12F3ACB5000A3A555 /* RecallMateWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 97D0B6CA2F3ACB5200A3A555 /* Build configuration list for PBXNativeTarget "RecallMateWidgetExtension" */;
+			buildPhases = (
+				97D0B6AE2F3ACB5000A3A555 /* Sources */,
+				97D0B6AF2F3ACB5000A3A555 /* Frameworks */,
+				97D0B6B02F3ACB5000A3A555 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				97D0B6B82F3ACB5000A3A555 /* RecallMateWidget */,
+			);
+			name = RecallMateWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = RecallMateWidgetExtension;
+			productReference = 97D0B6B22F3ACB5000A3A555 /* RecallMateWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -176,7 +276,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1620;
+				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
 					9772E85D2D6BD9A2004CF4BD = {
@@ -189,6 +289,9 @@
 					9772E87D2D6BD9A5004CF4BD = {
 						CreatedOnToolsVersion = 16.2;
 						TestTargetID = 9772E85D2D6BD9A2004CF4BD;
+					};
+					97D0B6B12F3ACB5000A3A555 = {
+						CreatedOnToolsVersion = 16.4;
 					};
 				};
 			};
@@ -216,6 +319,7 @@
 				9772E85D2D6BD9A2004CF4BD /* RecallMate */,
 				9772E8732D6BD9A5004CF4BD /* RecallMateTests */,
 				9772E87D2D6BD9A5004CF4BD /* RecallMateUITests */,
+				97D0B6B12F3ACB5000A3A555 /* RecallMateWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -236,6 +340,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		9772E87C2D6BD9A5004CF4BD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		97D0B6B02F3ACB5000A3A555 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -266,6 +377,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		97D0B6AE2F3ACB5000A3A555 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -278,6 +396,11 @@
 			isa = PBXTargetDependency;
 			target = 9772E85D2D6BD9A2004CF4BD /* RecallMate */;
 			targetProxy = 9772E87F2D6BD9A5004CF4BD /* PBXContainerItemProxy */;
+		};
+		97D0B6C52F3ACB5200A3A555 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 97D0B6B12F3ACB5000A3A555 /* RecallMateWidgetExtension */;
+			targetProxy = 97D0B6C42F3ACB5200A3A555 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -408,6 +531,7 @@
 				DEVELOPMENT_TEAM = UF646AVHYA;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RecallMate/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "";
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_LSApplicationQueriesSchemes = "line twitter";
@@ -419,8 +543,7 @@
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeRight UIInterfaceOrientationLandscapeLeft";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
@@ -450,6 +573,7 @@
 				DEVELOPMENT_TEAM = UF646AVHYA;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RecallMate/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "";
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_LSApplicationQueriesSchemes = "line twitter";
@@ -461,8 +585,7 @@
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeRight UIInterfaceOrientationLandscapeLeft";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
@@ -568,6 +691,65 @@
 			};
 			name = Release;
 		};
+		97D0B6C82F3ACB5200A3A555 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UF646AVHYA;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RecallMateWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RecallMateWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = tenten.RecallMate.RecallMateWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		97D0B6C92F3ACB5200A3A555 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UF646AVHYA;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RecallMateWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RecallMateWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = tenten.RecallMate.RecallMateWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -603,6 +785,15 @@
 			buildConfigurations = (
 				9772E88F2D6BD9A5004CF4BD /* Debug */,
 				9772E8902D6BD9A5004CF4BD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		97D0B6CA2F3ACB5200A3A555 /* Build configuration list for PBXNativeTarget "RecallMateWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				97D0B6C82F3ACB5200A3A555 /* Debug */,
+				97D0B6C92F3ACB5200A3A555 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

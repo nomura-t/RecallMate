@@ -1,11 +1,18 @@
 import SwiftUI
 
+// MARK: - Legacy Card Modifiers (AppTheme.themeCard() に統合)
+
 struct CardDecorationModifier: ViewModifier {
+    @Environment(\.colorScheme) private var colorScheme
+
     func body(content: Content) -> some View {
         content
-            .background(Color.white)
-            .cornerRadius(10)
-            .shadow(color: Color.black.opacity(0.15), radius: 4, x: 0, y: 2)
+            .background(colorScheme == .dark ? Color(.systemGray6) : Color(.systemBackground))
+            .cornerRadius(AppTheme.Radius.md)
+            .shadow(
+                color: colorScheme == .dark ? Color.clear : Color.black.opacity(0.1),
+                radius: 4, x: 0, y: 2
+            )
     }
 }
 
@@ -14,16 +21,19 @@ extension View {
         self.modifier(CardDecorationModifier())
     }
 }
-import SwiftUI
 
-// ViewExtensions.swift に追加
 struct CardStyleModifier: ViewModifier {
+    @Environment(\.colorScheme) private var colorScheme
+
     func body(content: Content) -> some View {
         content
-            .padding(16)
-            .background(Color.white)
-            .cornerRadius(12)
-            .shadow(color: Color.black.opacity(0.1), radius: 3, x: 0, y: 1)
+            .padding(AppTheme.Spacing.md)
+            .background(colorScheme == .dark ? Color(.systemGray6) : Color(.systemBackground))
+            .cornerRadius(AppTheme.Radius.md)
+            .shadow(
+                color: colorScheme == .dark ? Color.clear : Color.black.opacity(0.08),
+                radius: 3, x: 0, y: 1
+            )
     }
 }
 

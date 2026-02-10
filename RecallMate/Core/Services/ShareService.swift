@@ -14,16 +14,21 @@ class ShareService {
     func canShareTo(platform: SocialPlatform) -> Bool {
         switch platform {
         case .line:
-            return UIApplication.shared.canOpenURL(URL(string: "line://")!)
+            guard let url = URL(string: "line://") else { return false }
+            return UIApplication.shared.canOpenURL(url)
         case .whatsapp:
-            return UIApplication.shared.canOpenURL(URL(string: "whatsapp://")!)
+            guard let url = URL(string: "whatsapp://") else { return false }
+            return UIApplication.shared.canOpenURL(url)
         case .facebook:
-            return UIApplication.shared.canOpenURL(URL(string: "fb://")!)
+            guard let url = URL(string: "fb://") else { return false }
+            return UIApplication.shared.canOpenURL(url)
         case .instagram:
-            return UIApplication.shared.canOpenURL(URL(string: "instagram://")!)
+            guard let url = URL(string: "instagram://") else { return false }
+            return UIApplication.shared.canOpenURL(url)
         case .twitter:
-            return UIApplication.shared.canOpenURL(URL(string: "twitter://")!) ||
-                   UIApplication.shared.canOpenURL(URL(string: "x://")!)
+            let twitterAvailable = URL(string: "twitter://").map { UIApplication.shared.canOpenURL($0) } ?? false
+            let xAvailable = URL(string: "x://").map { UIApplication.shared.canOpenURL($0) } ?? false
+            return twitterAvailable || xAvailable
         case .system:
             return true
         }
@@ -33,13 +38,12 @@ class ShareService {
     func shareViaLINE(text: String? = nil) {
         let shareText = text ?? defaultShareText
         let encodedText = shareText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        let lineURL = URL(string: "https://line.me/R/msg/text/?\(encodedText)")!
-        
+        guard let lineURL = URL(string: "https://line.me/R/msg/text/?\(encodedText)") else { return }
+
         if UIApplication.shared.canOpenURL(lineURL) {
             UIApplication.shared.open(lineURL)
             logShare(platform: .line)
         } else {
-            // LINEアプリがインストールされていない場合
             notifyMissingApp(name: "LINE")
         }
     }
@@ -48,13 +52,12 @@ class ShareService {
     func shareViaWhatsApp(text: String? = nil) {
         let shareText = text ?? defaultShareText
         let encodedText = shareText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        let whatsappURL = URL(string: "whatsapp://send?text=\(encodedText)")!
-        
+        guard let whatsappURL = URL(string: "whatsapp://send?text=\(encodedText)") else { return }
+
         if UIApplication.shared.canOpenURL(whatsappURL) {
             UIApplication.shared.open(whatsappURL)
             logShare(platform: .whatsapp)
         } else {
-            // WhatsAppアプリがインストールされていない場合
             notifyMissingApp(name: "WhatsApp")
         }
     }
@@ -94,19 +97,15 @@ class ShareService {
         let encodedText = shareText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         
         // まずXの新URLスキームを試す
-        let xURL = URL(string: "x://post?text=\(encodedText)")!
-        
-        // 次に従来のTwitterURLスキームを試す
-        let twitterURL = URL(string: "twitter://post?message=\(encodedText)")!
-        
-        if UIApplication.shared.canOpenURL(xURL) {
+        if let xURL = URL(string: "x://post?text=\(encodedText)"),
+           UIApplication.shared.canOpenURL(xURL) {
             UIApplication.shared.open(xURL)
             logShare(platform: .twitter)
-        } else if UIApplication.shared.canOpenURL(twitterURL) {
+        } else if let twitterURL = URL(string: "twitter://post?message=\(encodedText)"),
+                  UIApplication.shared.canOpenURL(twitterURL) {
             UIApplication.shared.open(twitterURL)
             logShare(platform: .twitter)
         } else {
-            // X/Twitterアプリがインストールされていない場合
             notifyMissingApp(name: "X（Twitter）")
         }
     }

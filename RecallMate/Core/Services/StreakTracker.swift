@@ -4,21 +4,36 @@ import CoreData
 
 class StreakTracker {
     static let shared = StreakTracker()
-    
+
     private init() {}
-    
+
+    /// 学習活動が実際に行われた時のみ呼び出すこと
+    /// アプリ起動時には呼ばない（ストリーク水増し防止）
     func checkAndUpdateStreak(in context: NSManagedObjectContext) {
-        // StreakData が存在しなければ作成
         let fetchRequest = NSFetchRequest<StreakData>(entityName: "StreakData")
-        
+
         do {
             let results = try context.fetch(fetchRequest)
             let streakData: StreakData
-            
+
             if let existingData = results.first {
                 streakData = existingData
             } else {
+                // 初回作成: ストリーク0から開始（実際の活動で1になる）
                 streakData = StreakData(context: context)
+                streakData.currentStreak = 0
+                streakData.longestStreak = 0
+                streakData.lastActiveDate = nil
+                streakData.streakStartDate = nil
+                try context.save()
+                // 初回作成後、この呼び出し自体が学習活動トリガーなので続行
+            }
+
+            let calendar = Calendar.current
+            let today = calendar.startOfDay(for: Date())
+
+            // lastActiveDate がない場合（初めての学習活動）
+            guard let lastActiveDate = streakData.lastActiveDate else {
                 streakData.currentStreak = 1
                 streakData.longestStreak = 1
                 streakData.lastActiveDate = Date()
@@ -26,40 +41,32 @@ class StreakTracker {
                 try context.save()
                 return
             }
-            
-            // 最後のアクティブ日を取得
-            guard let lastActiveDate = streakData.lastActiveDate else {
-                streakData.lastActiveDate = Date()
-                try context.save()
+
+            let lastActive = calendar.startOfDay(for: lastActiveDate)
+
+            guard let dayDifference = calendar.dateComponents([.day], from: lastActive, to: today).day else {
                 return
             }
-            
-            let calendar = Calendar.current
-            let today = calendar.startOfDay(for: Date())
-            let lastActive = calendar.startOfDay(for: lastActiveDate)
-            
-            // 日数差を計算
-            if let dayDifference = calendar.dateComponents([.day], from: lastActive, to: today).day {
-                if dayDifference == 0 {
-                    // 同じ日なら何もしない
-                    return
-                } else if dayDifference == 1 {
-                    // 連続日であれば、ストリークを増加
-                    streakData.currentStreak += 1
-                    // 最長ストリークを更新
-                    if streakData.currentStreak > streakData.longestStreak {
-                        streakData.longestStreak = streakData.currentStreak
-                    }
-                } else {
-                    // 1日以上空いた場合、ストリークをリセット
-                    streakData.currentStreak = 1
-                    streakData.streakStartDate = today
+
+            if dayDifference == 0 {
+                // 同じ日: 何もしない（既にカウント済み）
+                return
+            } else if dayDifference == 1 {
+                // 連続日: ストリーク増加
+                streakData.currentStreak += 1
+                if streakData.currentStreak > streakData.longestStreak {
+                    streakData.longestStreak = streakData.currentStreak
                 }
-                
-                streakData.lastActiveDate = Date()
-                try context.save()
+            } else {
+                // 2日以上空いた: リセットして1から
+                streakData.currentStreak = 1
+                streakData.streakStartDate = today
             }
+
+            streakData.lastActiveDate = Date()
+            try context.save()
         } catch {
+            print("StreakTracker: ストリーク更新に失敗 - \(error)")
         }
     }
 }

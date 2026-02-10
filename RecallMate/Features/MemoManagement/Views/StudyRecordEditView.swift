@@ -289,7 +289,6 @@ struct StudyRecordsListView: View {
                 // 記録一覧
                 if filteredActivities.isEmpty {
                     EmptyStateView(
-                        selectedDate: selectedDate,
                         hasTagFilter: false
                     )
                 } else {

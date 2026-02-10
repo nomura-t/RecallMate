@@ -22,7 +22,6 @@ struct ContentView: View {
     @State private var isDrawing = false
     @State private var canvasView = PKCanvasView()
     @State private var toolPicker = PKToolPicker()
-    @State private var showTagSelection = false
     @State private var sessionId: UUID? = nil
     
     // UIKitスクロール用のトリガー
@@ -45,13 +44,6 @@ struct ContentView: View {
 
     @State private var showUnsavedChangesAlert = false
 
-    // すべてのタグを取得
-    @FetchRequest(
-        entity: Tag.entity(),
-        sortDescriptors: [NSSortDescriptor(keyPath: \Tag.name, ascending: true)],
-        animation: .default)
-    private var allTags: FetchedResults<Tag>
-    
     init(memo: Memo? = nil) {
         self.memo = memo
         self._viewModel = StateObject(wrappedValue: ContentViewModel(viewContext: PersistenceController.shared.container.viewContext, memo: memo))
@@ -172,24 +164,6 @@ struct ContentView: View {
                     viewModel.recordActivityOnSave = true
                 }
         }
-        .sheet(isPresented: $showTagSelection, onDismiss: handleTagSelectionDismiss) {
-            NavigationView {
-                TagSelectionView(
-                    selectedTags: $viewModel.selectedTags,
-                    onTagsChanged: memo != nil ? {
-                        viewModel.contentChanged = true
-                        viewModel.recordActivityOnSave = true
-                    } : nil
-                )
-                .environment(\.managedObjectContext, viewContext)
-                .navigationTitle("タグを選択".localized)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("完了".localized) { showTagSelection = false }
-                    }
-                }
-            }
-        }
         .sheet(isPresented: $showQuestionEditor, onDismiss: handleQuestionEditorDismiss) {
         }
         .environmentObject(ViewSettings())
@@ -293,124 +267,6 @@ struct ContentView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 8)
                 
-                // タグセクション - ダークモード対応
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack {
-                        Label("タグ".localized, systemImage: "tag.fill")
-                            .font(.headline)
-                            .foregroundColor(AppColors.primaryText)
-                        
-                        Spacer()
-                        
-                        Button(action: {
-                            showTagSelection = true
-                        }) {
-                            Label("新規タグ".localized, systemImage: "plus")
-                                .font(.caption)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 5)
-                                .background(AppColors.accent.opacity(0.1))
-                                .foregroundColor(AppColors.accent)
-                                .cornerRadius(12)
-                        }
-                    }
-                    
-                    // タグリスト - 水平スクロール（ダークモード対応）
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            ForEach(allTags) { tag in
-                                Button(action: {
-                                    toggleTag(tag)
-                                }) {
-                                    HStack(spacing: 4) {
-                                        Circle()
-                                            .fill(tag.swiftUIColor())
-                                            .frame(width: 8, height: 8)
-                                        
-                                        Text(tag.name ?? "")
-                                            .font(.subheadline)
-                                    }
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
-                                    .background(
-                                        viewModel.selectedTags.contains(where: { $0.id == tag.id })
-                                        ? tag.swiftUIColor().opacity(0.2)
-                                        : (colorScheme == .dark ? Color(.systemGray5) : Color.white)
-                                    )
-                                    .foregroundColor(
-                                        viewModel.selectedTags.contains(where: { $0.id == tag.id })
-                                        ? tag.swiftUIColor()
-                                        : AppColors.primaryText
-                                    )
-                                    .cornerRadius(16)
-                                    .shadow(
-                                        color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.05),
-                                        radius: 2,
-                                        x: 0,
-                                        y: 1
-                                    )
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            }
-                        }
-                        .padding(.vertical, 6)
-                    }
-                    
-                    // 選択されたタグ - ダークモード対応
-                    VStack(alignment: .leading, spacing: 8) {
-                        if viewModel.selectedTags.isEmpty {
-                            Text("選択中: なし".localized)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        } else {
-                            Text("選択中:".localized)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            
-                            // FlowLayoutではなく通常のScrollViewを使用
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 8) {
-                                    ForEach(viewModel.selectedTags) { tag in
-                                        HStack(spacing: 4) {
-                                            Circle()
-                                                .fill(tag.swiftUIColor())
-                                                .frame(width: 8, height: 8)
-                                            
-                                            Text(tag.name ?? "")
-                                                .font(.caption)
-                                            
-                                            Button(action: {
-                                                removeTag(tag)
-                                            }) {
-                                                Image(systemName: "xmark.circle.fill")
-                                                    .font(.system(size: 12))
-                                                    .foregroundColor(.gray)
-                                            }
-                                            .buttonStyle(PlainButtonStyle())
-                                        }
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 4)
-                                        .background(tag.swiftUIColor().opacity(colorScheme == .dark ? 0.15 : 0.1))
-                                        .cornerRadius(10)
-                                    }
-                                }
-                            }
-                            .frame(height: 30) // 固定高さを設定
-                        }
-                    }
-                    .padding(.top, 4) // 少し余白を追加
-                }
-                .padding(16)
-                .background(AppColors.cardBackground)
-                .cornerRadius(16)
-                .shadow(
-                    color: colorScheme == .dark ? Color.black.opacity(0.2) : Color.black.opacity(0.05),
-                    radius: 3,
-                    x: 0,
-                    y: 2
-                )
-                .padding(.horizontal, 16)
-                
                 // 記憶定着度セクション
                 VStack(alignment: .leading, spacing: 12) {
                     Label("記憶定着度振り返り".localized, systemImage: "brain.head.profile")
@@ -445,42 +301,6 @@ struct ContentView: View {
     }
     
     // MARK: - ヘルパーメソッド
-    
-    // タグ選択のトグル
-    private func toggleTag(_ tag: Tag) {
-        if viewModel.selectedTags.contains(where: { $0.id == tag.id }) {
-            // 解除
-            removeTag(tag)
-        } else {
-            // 選択
-            viewModel.selectedTags.append(tag)
-            viewModel.contentChanged = true
-            viewModel.recordActivityOnSave = true
-            
-            // タグ変更時に即時保存
-            if memo != nil {
-                DispatchQueue.main.async {
-                    viewModel.updateAndSaveTags()
-                }
-            }
-        }
-    }
-    
-    // タグ削除
-    private func removeTag(_ tag: Tag) {
-        if let index = viewModel.selectedTags.firstIndex(where: { $0.id == tag.id }) {
-            viewModel.selectedTags.remove(at: index)
-            viewModel.contentChanged = true
-            viewModel.recordActivityOnSave = true
-            
-            // タグ変更時に即時保存
-            if memo != nil {
-                DispatchQueue.main.async {
-                    viewModel.updateAndSaveTags()
-                }
-            }
-        }
-    }
     
     // 戻るボタンのハンドリング
     private func handleBackButton() {
@@ -518,14 +338,6 @@ struct ContentView: View {
                     in: context
                 )
             }
-        }
-    }
-
-    // タグ選択画面閉じた後の処理
-    private func handleTagSelectionDismiss() {
-        if memo != nil {
-            viewModel.updateAndSaveTags()
-            viewModel.contentChanged = true
         }
     }
 

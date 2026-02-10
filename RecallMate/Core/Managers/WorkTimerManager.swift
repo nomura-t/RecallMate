@@ -82,10 +82,7 @@ class WorkTimerManager: ObservableObject {
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.impactOccurred()
         
-        // StudySessionManagerと連携
-        Task { @MainActor in
-            await StudySessionManager.shared.syncWithWorkTimer(isTimerRunning: true)
-        }
+        // 学習セッション同期（将来拡張用）
         
         // リアルタイム学習状態を更新
         updateStudyStatus(isStudying: true)
@@ -124,10 +121,7 @@ class WorkTimerManager: ObservableObject {
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
         
-        // StudySessionManagerと連携（一時停止）
-        Task { @MainActor in
-            await StudySessionManager.shared.syncWithWorkTimer(isTimerRunning: false)
-        }
+        // 学習セッション同期（将来拡張用）
         
         // リアルタイム学習状態を更新
         updateStudyStatus(isStudying: false)
@@ -158,10 +152,7 @@ class WorkTimerManager: ObservableObject {
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.impactOccurred()
         
-        // StudySessionManagerと連携（再開）
-        Task { @MainActor in
-            await StudySessionManager.shared.syncWithWorkTimer(isTimerRunning: true)
-        }
+        // 学習セッション同期（将来拡張用）
         
         // リアルタイム学習状態を更新
         updateStudyStatus(isStudying: true)
@@ -243,10 +234,7 @@ class WorkTimerManager: ObservableObject {
             )
         }
         
-        // StudySessionManagerと連携（停止）
-        Task { @MainActor in
-            await StudySessionManager.shared.syncWithWorkTimer(isTimerRunning: false)
-        }
+        // 学習セッション同期（将来拡張用）
         
         // リアルタイム学習状態を更新
         updateStudyStatus(isStudying: false)

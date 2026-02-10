@@ -70,7 +70,7 @@ struct StudyGoalProgressView: View {
     private func fetchTodaysStudyData() {
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: Date())
-        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!.addingTimeInterval(-1)
+        let endOfDay = (calendar.date(byAdding: .day, value: 1, to: startOfDay) ?? startOfDay).addingTimeInterval(-1)
         
         let fetchRequest: NSFetchRequest<LearningActivity> = LearningActivity.fetchRequest()
         fetchRequest.predicate = NSPredicate(

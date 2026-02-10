@@ -57,33 +57,12 @@ struct LoginView: View {
     
     private var authButtonsSection: some View {
         VStack(spacing: 16) {
-            appleSignInButton
             googleSignInButton
             anonymousSignInButton
         }
         .padding(.horizontal, 32)
     }
     
-    private var appleSignInButton: some View {
-        Button(action: {
-            Task {
-                await authManager.signInWithApple()
-            }
-        }) {
-            HStack {
-                Image(systemName: "applelogo")
-                    .font(.system(size: 20))
-                Text("Apple でサインイン")
-                    .font(.headline)
-            }
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity)
-            .frame(height: 50)
-            .background(Color.black)
-            .cornerRadius(8)
-        }
-        .disabled(authManager.isLoading)
-    }
     
     private var googleSignInButton: some View {
         Button(action: {
@@ -92,7 +71,7 @@ struct LoginView: View {
             }
         }) {
             HStack {
-                Image("google-logo") // Google ロゴ画像を Assets に追加する必要があります
+                Image("google-logo")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 20, height: 20)
@@ -189,7 +168,7 @@ struct AccountMigrationView: View {
                         .font(.title)
                         .fontWeight(.bold)
                     
-                    Text("現在はゲストユーザーです。\nApple アカウントでログインして、\nデータを安全に保存しましょう。")
+                    Text("現在はゲストユーザーです。\nGoogle アカウントでログインして、\nデータを安全に保存しましょう。")
                         .font(.body)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
@@ -231,15 +210,21 @@ struct AccountMigrationView: View {
                         }
                     }) {
                         HStack {
-                            Image(systemName: "applelogo")
-                                .font(.system(size: 20))
-                            Text("Apple でアップグレード")
+                            Image("google-logo")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 20, height: 20)
+                            Text("Google でアップグレード")
                                 .font(.headline)
                         }
-                        .foregroundColor(.white)
+                        .foregroundColor(.black)
                         .frame(maxWidth: .infinity)
                         .frame(height: 50)
-                        .background(Color.black)
+                        .background(Color.white)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                        )
                         .cornerRadius(8)
                     }
                     .disabled(authManager.isLoading)

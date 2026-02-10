@@ -591,7 +591,7 @@ struct WorkTimerCard: View {
         
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: Date())
-        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!.addingTimeInterval(-1)
+        let endOfDay = (calendar.date(byAdding: .day, value: 1, to: startOfDay) ?? startOfDay).addingTimeInterval(-1)
         
         let activities = LearningActivity.fetchWorkTimerActivities(
             from: startOfDay,

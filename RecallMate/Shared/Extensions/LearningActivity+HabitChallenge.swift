@@ -27,7 +27,7 @@ extension LearningActivity {
     static func hasMinimumLearningForDate(_ date: Date, in context: NSManagedObjectContext) -> Bool {
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: date)
-        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!.addingTimeInterval(-1)
+        let endOfDay = (calendar.date(byAdding: .day, value: 1, to: startOfDay) ?? startOfDay).addingTimeInterval(-1)
         
         let request: NSFetchRequest<LearningActivity> = LearningActivity.fetchRequest()
         request.predicate = NSPredicate(format: "date >= %@ AND date <= %@", startOfDay as NSDate, endOfDay as NSDate)

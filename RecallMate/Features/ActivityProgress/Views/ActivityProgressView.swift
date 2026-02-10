@@ -40,7 +40,7 @@ struct ActivityProgressView: View {
     private var dateRange: (start: Date, end: Date) {
         let calendar = Calendar.current
         let now = Date()
-        let endOfDay = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: now)!
+        let endOfDay = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: now) ?? now
         
         switch selectedTab {
         case 0: // 日間

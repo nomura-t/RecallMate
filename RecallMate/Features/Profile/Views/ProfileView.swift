@@ -2,8 +2,6 @@ import SwiftUI
 
 struct ProfileView: View {
     @StateObject private var authManager = AuthenticationManager.shared
-    @StateObject private var friendshipManager = FriendshipManager.shared
-    @StateObject private var studySessionManager = StudySessionManager.shared
     @State private var showingEditProfile = false
     @State private var studyStats: UserStudyStats?
     @State private var isLoadingStats = false
@@ -19,7 +17,7 @@ struct ProfileView: View {
                     studyStatsSection
                     
                     // 自己紹介セクション
-                    if let bio = friendshipManager.currentUserProfile?.statusMessage,
+                    if let bio = authManager.userProfile?.statusMessage,
                        !bio.isEmpty {
                         bioSection(bio: bio)
                     }
@@ -58,7 +56,7 @@ struct ProfileView: View {
         VStack(spacing: UIConstants.mediumSpacing) {
             // アバター
             Group {
-                if let profile = friendshipManager.currentUserProfile,
+                if let profile = authManager.userProfile,
                    let iconId = profile.avatarUrl {
                     AvatarIconView(icon: AvatarIcons.icon(for: iconId), size: 120)
                 } else {
@@ -69,12 +67,12 @@ struct ProfileView: View {
             
             // 名前とニックネーム
             VStack(spacing: UIConstants.smallSpacing) {
-                Text(friendshipManager.currentUserProfile?.fullName ?? "未設定")
+                Text(authManager.userProfile?.fullName ?? "未設定")
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(AppColors.textPrimary)
                 
-                if let nickname = friendshipManager.currentUserProfile?.nickname,
+                if let nickname = authManager.userProfile?.nickname,
                    !nickname.isEmpty {
                     Text("@\\(nickname)")
                         .font(.subheadline)
@@ -89,7 +87,7 @@ struct ProfileView: View {
                         .font(.caption)
                         .foregroundColor(AppColors.textSecondary)
                     
-                    Text(friendshipManager.currentUserProfile?.studyCode ?? "未設定")
+                    Text(authManager.userProfile?.studyCode ?? "未設定")
                         .font(.subheadline)
                         .fontWeight(.medium)
                         .foregroundColor(AppColors.textPrimary)
@@ -103,7 +101,7 @@ struct ProfileView: View {
                         .font(.caption)
                         .foregroundColor(AppColors.textSecondary)
                     
-                    Text("\\(friendshipManager.currentUserProfile?.currentLevel ?? 1)")
+                    Text("\\(authManager.userProfile?.currentLevel ?? 1)")
                         .font(.subheadline)
                         .fontWeight(.medium)
                         .foregroundColor(AppColors.textPrimary)
@@ -192,7 +190,7 @@ struct ProfileView: View {
                 
                 InfoRow(
                     title: "登録日",
-                    value: formatDate(friendshipManager.currentUserProfile?.createdAt ?? Date()),
+                    value: formatDate(authManager.userProfile?.createdAt ?? Date()),
                     icon: "calendar"
                 )
                 
@@ -243,18 +241,18 @@ struct ProfileView: View {
     }
     
     private func refreshData() async {
-        await friendshipManager.refreshAllData()
-        await loadStudyStats()
+        await authManager.refreshProfile()
+        loadStudyStats()
     }
     
     private func formatTime(_ minutes: Int) -> String {
         let hours = minutes / 60
-        let mins = minutes % 60
+        let remainingMinutes = minutes % 60
         
         if hours > 0 {
-            return "\\(hours)時間\\(mins)分"
+            return "\(hours)時間\(remainingMinutes)分"
         } else {
-            return "\\(mins)分"
+            return "\(remainingMinutes)分"
         }
     }
     

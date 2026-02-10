@@ -1,11 +1,11 @@
-// OnboardingView.swift
+// OnboardingView.swift - 強化版
 import SwiftUI
 
 struct OnboardingView: View {
     @Binding var isShowingOnboarding: Bool
     @State private var currentPage = 0
-    
-    // チュートリアルページの内容
+    @State private var iconAnimations: [Bool] = Array(repeating: false, count: 6)
+
     private let pages: [(image: String, title: String, description: String)] = [
         (
             image: "doc.text",
@@ -32,100 +32,195 @@ struct OnboardingView: View {
             title: "集中タイマー".localized,
             description: "集中力を最大化するテクニックを活用しましょう。".localized
         ),
-        // 最後に脳アイコン誘導を追加
         (
             image: "brain.head.profile",
             title: "記録を作成してみましょう".localized,
             description: "ホーム画面に戻ったら、右下の脳アイコンをタップして最初の記録を作成してみましょう！".localized
         )
     ]
-    
+
     var body: some View {
         ZStack {
-            // 背景オーバーレイ（画面全体をカバー）
+            // 背景
             Color(.systemBackground)
                 .edgesIgnoringSafeArea(.all)
-                .opacity(0.95)
-            
-            // コンテンツ部分（中央に位置する小さいカード）
-            VStack {
+
+            VStack(spacing: 0) {
                 // スキップボタン
                 HStack {
                     Spacer()
-                    Button("スキップ".localized) {
-                        withAnimation {
-                            isShowingOnboarding = false
-                            saveOnboardingShown()
-                        }
+                    Button(action: { dismissOnboarding() }) {
+                        Text("スキップ".localized)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
                     }
-                    .padding()
                 }
-                
+                .padding(.top, 8)
+                .padding(.trailing, 8)
+
                 Spacer()
-                
-                // コンテンツカード - サイズを制限
-                VStack {
+
+                // コンテンツカード
+                VStack(spacing: 0) {
+                    // ページコンテンツ
                     TabView(selection: $currentPage) {
                         ForEach(0..<pages.count, id: \.self) { index in
-                            VStack(spacing: 15) {
-                                Image(systemName: pages[index].image)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 80, height: 80)
-                                    .foregroundColor(.blue)
-                                
-                                Text(pages[index].title)
-                                    .font(.headline)
-                                    .fontWeight(.bold)
-                                
-                                Text(pages[index].description)
-                                    .font(.subheadline)
-                                    .multilineTextAlignment(.center)
-                                    .padding(.horizontal)
-                                    .foregroundColor(.secondary)
-                            }
-                            .tag(index)
-                            .padding()
+                            onboardingPage(index: index)
+                                .tag(index)
                         }
                     }
-                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
-                    .frame(height: 280) // 高さを制限
-                    
-                    // 次へ/開始ボタン - クリック領域を修正
-                    Button(action: {
-                        if currentPage < pages.count - 1 {
-                            withAnimation {
-                                currentPage += 1
-                            }
-                        } else {
-                            withAnimation {
-                                isShowingOnboarding = false
-                                saveOnboardingShown()
-                            }
-                        }
-                    }) {
-                        Text(currentPage == pages.count - 1 ? "RecallMateを始める".localized : "次へ".localized)
-                            .font(.headline)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                    }
-                    .padding(.horizontal)
-                    .padding(.bottom)
+                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                    .frame(height: 300)
+
+                    // カスタムプログレスインジケータ
+                    progressIndicator
+                        .padding(.top, 12)
+
+                    // ナビゲーションボタン
+                    navigationButton
+                        .padding(.horizontal, AppTheme.Spacing.lg)
+                        .padding(.top, 20)
+                        .padding(.bottom, AppTheme.Spacing.lg)
                 }
                 .background(Color(.secondarySystemBackground))
-                .cornerRadius(20)
-                .shadow(radius: 10)
-                .padding(.horizontal, 40) // 水平方向のパディングを追加して小さく
-                
+                .cornerRadius(AppTheme.Radius.xl)
+                .shadow(color: Color.black.opacity(0.1), radius: 12, x: 0, y: 4)
+                .padding(.horizontal, 32)
+
                 Spacer()
             }
         }
+        .onChange(of: currentPage) { _ in
+            let feedback = UISelectionFeedbackGenerator()
+            feedback.selectionChanged()
+            animateIcon(at: currentPage)
+        }
+        .onAppear {
+            animateIcon(at: 0)
+        }
     }
-    
-    // オンボーディングが表示されたことを保存
+
+    // MARK: - Page Content
+
+    private func onboardingPage(index: Int) -> some View {
+        VStack(spacing: 20) {
+            // アニメーション付きアイコン
+            ZStack {
+                Circle()
+                    .fill(pageColor(for: index).opacity(0.1))
+                    .frame(width: 100, height: 100)
+                    .scaleEffect(iconAnimations[index] ? 1.0 : 0.8)
+
+                Image(systemName: pages[index].image)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 48, height: 48)
+                    .foregroundColor(pageColor(for: index))
+                    .scaleEffect(iconAnimations[index] ? 1.0 : 0.5)
+                    .rotationEffect(.degrees(iconAnimations[index] ? 0 : -10))
+            }
+            .animation(.spring(response: 0.6, dampingFraction: 0.7), value: iconAnimations[index])
+
+            // テキスト
+            VStack(spacing: 10) {
+                Text(pages[index].title)
+                    .font(.title3)
+                    .fontWeight(.bold)
+                    .multilineTextAlignment(.center)
+
+                Text(pages[index].description)
+                    .font(.subheadline)
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.secondary)
+                    .lineSpacing(4)
+                    .padding(.horizontal, 8)
+            }
+        }
+        .padding(.horizontal, AppTheme.Spacing.md)
+    }
+
+    // MARK: - Progress Indicator
+
+    private var progressIndicator: some View {
+        HStack(spacing: 6) {
+            ForEach(0..<pages.count, id: \.self) { index in
+                Capsule()
+                    .fill(index == currentPage ? pageColor(for: currentPage) : Color.gray.opacity(0.3))
+                    .frame(width: index == currentPage ? 24 : 8, height: 8)
+                    .animation(AppTheme.Anim.standard, value: currentPage)
+            }
+        }
+    }
+
+    // MARK: - Navigation Button
+
+    private var navigationButton: some View {
+        Button(action: {
+            let feedback = UIImpactFeedbackGenerator(style: currentPage == pages.count - 1 ? .medium : .light)
+            feedback.impactOccurred()
+
+            if currentPage < pages.count - 1 {
+                withAnimation(AppTheme.Anim.spring) {
+                    currentPage += 1
+                }
+            } else {
+                dismissOnboarding()
+            }
+        }) {
+            HStack(spacing: 8) {
+                if currentPage == pages.count - 1 {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 18))
+                }
+                Text(currentPage == pages.count - 1 ? "RecallMateを始める".localized : "次へ".localized)
+                    .fontWeight(.semibold)
+                if currentPage < pages.count - 1 {
+                    Image(systemName: "arrow.right")
+                        .font(.system(size: 14))
+                }
+            }
+            .foregroundColor(.white)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .background(
+                LinearGradient(
+                    colors: [pageColor(for: currentPage), pageColor(for: currentPage).opacity(0.8)],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .cornerRadius(AppTheme.Radius.md)
+            .shadow(
+                color: pageColor(for: currentPage).opacity(0.3),
+                radius: 4, x: 0, y: 2
+            )
+        }
+    }
+
+    // MARK: - Helpers
+
+    private func pageColor(for index: Int) -> Color {
+        let colors: [Color] = [.blue, .purple, .orange, .green, .red, .orange]
+        return colors[index % colors.count]
+    }
+
+    private func animateIcon(at index: Int) {
+        // リセットしてからアニメーション
+        iconAnimations[index] = false
+        withAnimation(.spring(response: 0.6, dampingFraction: 0.7).delay(0.1)) {
+            iconAnimations[index] = true
+        }
+    }
+
+    private func dismissOnboarding() {
+        withAnimation(AppTheme.Anim.standard) {
+            isShowingOnboarding = false
+            saveOnboardingShown()
+        }
+    }
+
     private func saveOnboardingShown() {
         UserDefaults.standard.set(true, forKey: "hasSeenOnboarding")
     }

@@ -212,7 +212,8 @@ extension LearningActivity {
                 result[normalizedDate] = level
             }
             
-            currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate)!
+            guard let nextDate = calendar.date(byAdding: .day, value: 1, to: currentDate) else { break }
+            currentDate = nextDate
         }
         
         return result

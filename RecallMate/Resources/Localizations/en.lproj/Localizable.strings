@@ -1704,3 +1704,142 @@ registering your work from \"Add New Work\"";
 "人" = "people";
 
 "オンライン機能は現在開発中です。\n近日公開予定です！" = "Online features are currently under development.\nComing soon!";
+
+// MARK: - StreakHeroCard & Notifications
+"日" = "days";
+"最長 %d日" = "Best %d days";
+"学習済み" = "Studied";
+"今日もストリーク維持！" = "Streak maintained today!";
+"%d日連続達成！素晴らしい継続力です" = "%d day streak! Amazing consistency!";
+"%d日連続学習中！今日も維持しましょう" = "%d day streak! Keep it going today";
+"今日から新しいストリークを始めましょう" = "Start a new streak today!";
+"ストリークを維持しましょう！" = "Keep your streak going!";
+"%d日連続学習中！今日の復習をして記録を伸ばしましょう。" = "%d day streak! Review today to extend your record.";
+"今日の復習をして、連続学習記録を始めましょう。" = "Review today and start a study streak.";
+"%d日連続学習中！" = "%d day streak!";
+"今日も記録を伸ばしましょう" = "Extend your record today";
+"ストリークが途切れそうです！" = "Your streak is about to break!";
+"%d日連続の記録が今日で途切れます。あと2時間です！" = "Your %d day streak will break today. Only 2 hours left!";
+"ストリークが途切れました" = "Your streak has broken";
+"今日から新しいストリークを始めましょう！" = "Start a new streak today!";
+"ログインしてデータを安全に保存しましょう" = "Log in to safely save your data";
+
+// MARK: - Review Flow Simplification & Completion Feedback
+"記憶度を評価してください" = "Rate your memory retention";
+"復習完了" = "Review Complete";
+"復習完了！" = "Review Complete!";
+"次回復習日" = "Next Review";
+"日付を変更" = "Change date";
+"閉じる" = "Close";
+"前回" = "Before";
+"今回" = "After";
+"自動で閉じます..." = "Closing automatically...";
+"日連続学習中！" = " day study streak!";
+"記憶度の評価" = "Memory Assessment";
+
+// MARK: - StreakHeroCard Enhancement
+"残り%d件" = "%d remaining";
+"本日の復習完了！" = "All reviews done!";
+"次の復習を始める" = "Start next review";
+"残り%d時間%d分" = "%dh %dm left";
+
+// MARK: - FeaturedReviewCard
+"最優先の復習" = "Priority Review";
+"今すぐ復習" = "Review Now";
+"今日" = "Today";
+"%d日遅れ" = "%d days overdue";
+
+// MARK: - ProFeature
+"Pro機能" = "Pro Feature";
+
+// MARK: - UX Polish
+// EmptyState
+"最初のメモを追加しましょう" = "Add your first memo";
+"学習内容を記録して、最適なタイミングで復習しましょう" = "Record what you learn and review at the optimal timing";
+"メモを追加" = "Add Memo";
+"別のタグを選択するか、フィルターを解除してください" = "Try selecting a different tag or clear the filter";
+"カレンダーから別の日付を選択してください" = "Select a different date from the calendar";
+"この日の復習記録はありません" = "No review records for this day";
+// Celebration
+"今日の復習完了！" = "All reviews done for today!";
+"おめでとう！素晴らしい学習習慣です" = "Congratulations! Great study habit!";
+// Settings
+"設定" = "Settings";
+
+// MARK: - HomeView Redesign
+"復習を始める" = "Start Review";
+"全て完了!" = "All Done!";
+"残り" = "Remaining";
+"完了!" = "Done!";
+"期限超過" = "Overdue";
+"カレンダー" = "Calendar";
+"この日の復習項目はありません" = "No review items for this day";
+"復習するメモがありません" = "No memos to review";
+"新しいメモを追加して学習を始めましょう" = "Add new memos to start learning";
+"最終復習" = "Last Review";
+"復習履歴" = "Review History";
+"作成日" = "Created";
+"復習する" = "Review";
+"%d日前" = "%d days ago";
+
+// Review flow improvement + Quick add
+"思い出す" = "Recall";
+"頭の中で思い出してください" = "Try to recall from memory";
+"答えを見る" = "Show Answer";
+"新しい学習" = "New Learning";
+"学習タイトル" = "Learning Title";
+
+// New Learning 4-Step Flow
+"読む" = "Read";
+"閉じる" = "Close";
+"確認" = "Verify";
+"評価に進む" = "Proceed to Assessment";
+"学習した内容をよく読みましょう" = "Read through the learning material carefully";
+"教材を閉じてください" = "Close your study materials";
+"頭の中で内容を思い出してみましょう" = "Try to recall the content from memory";
+"教材を開いて答え合わせしましょう" = "Open your materials and check your answers";
+"理解度を評価してください" = "Rate your understanding";
+"保存する" = "Save";
+"学習を記録しました！" = "Learning recorded!";
+
+// All Memos List
+"すべてのメモ" = "All Memos";
+"メモがありません" = "No memos";
+"件" = " items";
+
+// Long-term Memory
+"長期記憶に定着しました" = "Committed to Long-term Memory";
+"削除する" = "Delete";
+"残す" = "Keep";
+"このメモは4回以上高スコアで復習されました。復習リストから削除しますか？" = "This memo has been reviewed with high scores 4+ times. Remove it from the review list?";
+
+// Active Recall Guide
+"アクティブリコールとは？" = "What is Active Recall?";
+"教材を見ずに頭の中で思い出す学習法です。受動的に読むよりも、能動的に思い出すことで記憶が強化されます。" = "A study method where you recall information from memory without looking at materials. Actively recalling strengthens memory more than passive reading.";
+"実践の流れ" = "How It Works";
+"① 学習内容を読む → ② 教材を閉じる → ③ 頭の中で思い出す → ④ 答え合わせ。この4ステップを繰り返しましょう。" = "① Read the material → ② Close your materials → ③ Recall from memory → ④ Check your answers. Repeat these 4 steps.";
+"復習で記憶を定着" = "Solidify with Reviews";
+"最適なタイミングで復習することで、記憶が長期的に定着します。RecallMateが復習日を自動で計算します。" = "Reviewing at optimal intervals helps memories stick long-term. RecallMate automatically calculates your review dates.";
+"わかりました" = "Got it";
+"理解度" = "Understanding";
+
+// ActiveRecallStepView
+"次のステップ: %@" = "Next: %@";
+
+// Title Presets & Suggestions
+"教材プリセット" = "Material Presets";
+"追加" = "Add";
+"詳細情報（任意）" = "Details (Optional)";
+"章" = "Chapter";
+"ページ" = "Page";
+"章・ページ（任意）" = "Chapter & Page (Optional)";
+"開始p." = "From p.";
+"終了p." = "To p.";
+"未設定" = "Not set";
+"プリセット管理" = "Manage Presets";
+"プリセット名を入力" = "Enter preset name";
+"新しいプリセット" = "New Preset";
+"プリセットがありません" = "No presets yet";
+"登録済みプリセット" = "Saved Presets";
+"最大20件まで登録できます" = "Up to 20 presets allowed";
+"完了" = "Done";
